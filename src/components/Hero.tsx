@@ -18,6 +18,16 @@ export default function Hero() {
     { src: "/images/banners/banner4.jpg", alt: "Perfect Hair Every Day" }
   ];
 
+  const nextSlide = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setCurrentSlide((prev) => (prev + 1) % banners.length);
+  };
+
+  const prevSlide = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setCurrentSlide((prev) => (prev - 1 + banners.length) % banners.length);
+  };
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % banners.length);
@@ -31,9 +41,12 @@ export default function Hero() {
       style={{
         position: "relative",
         width: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
         overflow: "hidden",
-        backgroundColor: "#ffffff",
-        padding: "88px 0 0 0" // Account for top banner and fixed navbar height
+        backgroundColor: "var(--bg-primary)",
+        padding: "120px 24px 48px 24px" // Premium spacing below fixed navbar
       }}
     >
       <div 
@@ -41,8 +54,12 @@ export default function Hero() {
         style={{ 
           position: "relative", 
           width: "100%", 
+          maxWidth: "1400px",
           aspectRatio: "1024 / 683", // Keep original aspect ratio to fit the content exactly
+          margin: "0 auto",
+          borderRadius: "16px",
           overflow: "hidden",
+          boxShadow: "var(--shadow-md)",
           transform: `translateY(${(progress - 0.5) * -15}px)`, // Slight parallax lift
           transition: "transform 0.1s ease-out"
         }}
@@ -67,12 +84,68 @@ export default function Hero() {
               fill
               priority={idx === 0}
               loading={idx === 0 ? undefined : "lazy"}
-              sizes="100vw"
+              sizes="(max-width: 1440px) 100vw, 1400px"
               style={{ objectFit: "cover", objectPosition: "center" }}
               quality={90}
             />
           </div>
         ))}
+
+        {/* Left Arrow */}
+        <button
+          onClick={prevSlide}
+          style={{
+            position: "absolute",
+            left: "20px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            width: "44px",
+            height: "44px",
+            borderRadius: "50%",
+            backgroundColor: "#ffffff",
+            border: "1px solid var(--border-color)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: "var(--shadow-md)",
+            zIndex: 10,
+            fontSize: "20px",
+            color: "var(--text-primary)",
+            transition: "all 0.2s ease"
+          }}
+          className="carousel-nav-btn"
+          aria-label="Previous slide"
+        >
+          ‹
+        </button>
+
+        {/* Right Arrow */}
+        <button
+          onClick={nextSlide}
+          style={{
+            position: "absolute",
+            right: "20px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            width: "44px",
+            height: "44px",
+            borderRadius: "50%",
+            backgroundColor: "#ffffff",
+            border: "1px solid var(--border-color)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: "var(--shadow-md)",
+            zIndex: 10,
+            fontSize: "20px",
+            color: "var(--text-primary)",
+            transition: "all 0.2s ease"
+          }}
+          className="carousel-nav-btn"
+          aria-label="Next slide"
+        >
+          ›
+        </button>
 
         {/* Slide navigation dots */}
         <div style={{
@@ -103,6 +176,14 @@ export default function Hero() {
           ))}
         </div>
       </div>
+
+      <style jsx global>{`
+        .carousel-nav-btn:hover {
+          background-color: var(--text-primary) !important;
+          color: #ffffff !important;
+          transform: translateY(-50%) scale(1.08) !important;
+        }
+      `}</style>
     </section>
   );
 }
