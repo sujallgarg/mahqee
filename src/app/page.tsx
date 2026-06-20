@@ -1,66 +1,43 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+
+import React, { useState } from "react";
+import Hero from "@/components/Hero";
+import BestSellers from "@/components/BestSellers";
+import Scrollytelling from "@/components/Scrollytelling";
+import BundleBanner from "@/components/BundleBanner";
+import CategoryGrid from "@/components/CategoryGrid";
+import Testimonials from "@/components/Testimonials";
+import ProductDetailsModal from "@/components/ProductDetailsModal";
+import { Product } from "@/context/CartContext";
 
 export default function Home() {
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main style={{ minHeight: "100vh", position: "relative" }}>
+      {/* 1. Hero Carousel (Screenshot 1 matching) */}
+      <Hero />
+
+      {/* 2. Curated Best Sellers Grid (Screenshot 2 matching) */}
+      <BestSellers onLearnMore={(prod) => setSelectedProduct(prod)} />
+
+      {/* 3. Apple-style Scrollytelling Section */}
+      <Scrollytelling />
+
+      {/* 4. Build Your Own Bundle Banner (Screenshot 3 matching) */}
+      <BundleBanner />
+
+      {/* 5. Shop by Category Grid (Screenshot 4 matching) */}
+      <CategoryGrid />
+
+      {/* 6. Customer Testimonials Slide deck (Screenshot 5 matching) */}
+      <Testimonials />
+
+      {/* 7. Product Specs Details Modal overlay */}
+      <ProductDetailsModal 
+        product={selectedProduct} 
+        onClose={() => setSelectedProduct(null)} 
+      />
+    </main>
   );
 }
