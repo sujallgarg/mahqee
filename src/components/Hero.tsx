@@ -41,12 +41,9 @@ export default function Hero() {
       style={{
         position: "relative",
         width: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
         overflow: "hidden",
-        backgroundColor: "var(--bg-primary)",
-        padding: "120px 24px 48px 24px" // Premium spacing below fixed navbar
+        backgroundColor: "#ffffff",
+        padding: "88px 0 0 0" // Account for fixed navbar + top notification bar height
       }}
     >
       <div 
@@ -54,12 +51,7 @@ export default function Hero() {
         style={{ 
           position: "relative", 
           width: "100%", 
-          maxWidth: "1400px",
-          aspectRatio: "1024 / 683", // Keep original aspect ratio to fit the content exactly
-          margin: "0 auto",
-          borderRadius: "16px",
           overflow: "hidden",
-          boxShadow: "var(--shadow-md)",
           transform: `translateY(${(progress - 0.5) * -15}px)`, // Slight parallax lift
           transition: "transform 0.1s ease-out"
         }}
@@ -84,7 +76,7 @@ export default function Hero() {
               fill
               priority={idx === 0}
               loading={idx === 0 ? undefined : "lazy"}
-              sizes="(max-width: 1440px) 100vw, 1400px"
+              sizes="100vw"
               style={{ objectFit: "cover", objectPosition: "center" }}
               quality={90}
             />
@@ -178,6 +170,19 @@ export default function Hero() {
       </div>
 
       <style jsx global>{`
+        .carousel-container {
+          aspect-ratio: 1024 / 270; /* Fits 1024x683 banners as a premium wide-screen layout */
+        }
+        @media (max-width: 1024px) {
+          .carousel-container {
+            aspect-ratio: 1024 / 340;
+          }
+        }
+        @media (max-width: 768px) {
+          .carousel-container {
+            aspect-ratio: 1024 / 480; /* Taller on mobile so text remains legible and is not cropped too heavily */
+          }
+        }
         .carousel-nav-btn:hover {
           background-color: var(--text-primary) !important;
           color: #ffffff !important;
