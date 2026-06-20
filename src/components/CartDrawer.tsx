@@ -1,7 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { useCart, CartItem } from "@/context/CartContext";
+import Image from "next/image";
+import { useCart, CartItem, Product } from "@/context/CartContext";
+import ProductDetailsModal from "./ProductDetailsModal";
 
 export default function CartDrawer() {
   const {
@@ -15,6 +17,7 @@ export default function CartDrawer() {
 
   const [checkoutStep, setCheckoutStep] = useState<"cart" | "processing" | "success">("cart");
   const [orderNumber, setOrderNumber] = useState("");
+  const [selectedCartProduct, setSelectedCartProduct] = useState<Product | null>(null);
 
   const handleCheckout = () => {
     setCheckoutStep("processing");
@@ -191,21 +194,51 @@ export default function CartDrawer() {
                       }}
                     >
                       {/* Mini Product Representation */}
-                      <div style={{
-                        width: "60px",
-                        height: "60px",
-                        backgroundColor: "var(--bg-primary)",
-                        borderRadius: "12px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center"
-                      }}>
-                        {renderCartItemMiniGraphic(item)}
+                      <div 
+                        onClick={() => setSelectedCartProduct(item.product)}
+                        style={{
+                          width: "60px",
+                          height: "60px",
+                          backgroundColor: "var(--bg-primary)",
+                          borderRadius: "12px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          cursor: "pointer",
+                          overflow: "hidden",
+                          position: "relative",
+                          border: "1px solid var(--border-color)",
+                          transition: "var(--transition-fast)"
+                        }}
+                        className="cart-item-image-wrapper"
+                      >
+                        {item.product.image && item.product.image.startsWith("/images/") ? (
+                          <Image 
+                            src={item.product.image} 
+                            alt={item.product.name} 
+                            fill
+                            sizes="60px"
+                            style={{ objectFit: "cover" }}
+                          />
+                        ) : (
+                          renderCartItemMiniGraphic(item)
+                        )}
                       </div>
 
                       {/* Info & Quantity controls */}
                       <div style={{ flex: "1" }}>
-                        <h4 style={{ fontSize: "15px", color: "var(--text-primary)", fontWeight: "500", marginBottom: "2px" }}>
+                        <h4 
+                          onClick={() => setSelectedCartProduct(item.product)}
+                          style={{ 
+                            fontSize: "15px", 
+                            color: "var(--text-primary)", 
+                            fontWeight: "500", 
+                            marginBottom: "2px",
+                            cursor: "pointer",
+                            transition: "var(--transition-fast)"
+                          }}
+                          className="cart-item-title-link"
+                        >
                           {item.product.name}
                         </h4>
                         
@@ -327,8 +360,24 @@ export default function CartDrawer() {
         )}
       </div>
 
+      {selectedCartProduct && (
+        <ProductDetailsModal 
+          product={selectedCartProduct} 
+          onClose={() => setSelectedCartProduct(null)} 
+        />
+      )}
+
       {/* Local keyframe animations & spinner styles */}
       <style jsx global>{`
+        .cart-item-title-link:hover {
+          color: var(--accent-pink) !important;
+          text-decoration: underline;
+        }
+        .cart-item-image-wrapper:hover {
+          transform: scale(1.02);
+          border-color: var(--accent-pink) !important;
+        }
+
         @keyframes fadeInBackdrop {
           from { opacity: 0; }
           to { opacity: 1; }

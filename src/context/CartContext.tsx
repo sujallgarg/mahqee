@@ -46,9 +46,9 @@ export const productsData: Product[] = [
     category: "Oils",
     price: 199,
     description: "Designed with a premium floral pattern, the 360 Floral Comb features wide-spaced teeth crafted to gently detangle thick, dense, and curly hair. Prevents hair breakage, distributes natural scalp oils evenly, and adds a luxury aesthetic to your vanity.",
-    image: "/images/floral-comb.png",
+    image: "/images/floral-comb2.png",
     images: [
-      "/images/floral-comb.png",
+      "/images/floral-comb2.png",
       "/images/category-haircare.png"
     ],
     ingredients: ["Premium Cellulose Acetate", "Wide-teeth Detangling Layout", "Anti-static coating"],
