@@ -31,12 +31,9 @@ export default function Hero() {
       style={{
         position: "relative",
         width: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
         overflow: "hidden",
-        backgroundColor: "var(--bg-secondary)",
-        padding: "120px 24px 60px 24px" // Account for fixed navbar
+        backgroundColor: "#ffffff",
+        padding: "88px 0 0 0" // Account for top banner and fixed navbar height
       }}
     >
       <div 
@@ -44,11 +41,8 @@ export default function Hero() {
         style={{ 
           position: "relative", 
           width: "100%", 
-          maxWidth: "1400px",
-          margin: "0 auto",
-          borderRadius: "16px",
+          aspectRatio: "1024 / 683", // Keep original aspect ratio to fit the content exactly
           overflow: "hidden",
-          boxShadow: "var(--shadow-md)",
           transform: `translateY(${(progress - 0.5) * -15}px)`, // Slight parallax lift
           transition: "transform 0.1s ease-out"
         }}
@@ -73,7 +67,7 @@ export default function Hero() {
               fill
               priority={idx === 0}
               loading={idx === 0 ? undefined : "lazy"}
-              sizes="(max-width: 1440px) 100vw, 1400px"
+              sizes="100vw"
               style={{ objectFit: "cover", objectPosition: "center" }}
               quality={90}
             />
@@ -109,22 +103,6 @@ export default function Hero() {
           ))}
         </div>
       </div>
-
-      <style jsx>{`
-        .carousel-container {
-          height: 420px;
-        }
-        @media (max-width: 1024px) {
-          .carousel-container {
-            height: 320px;
-          }
-        }
-        @media (max-width: 768px) {
-          .carousel-container {
-            height: 220px;
-          }
-        }
-      `}</style>
     </section>
   );
 }
