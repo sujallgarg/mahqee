@@ -38,105 +38,21 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const productsData: Product[] = [
+
   {
-    id: "orchid-serum",
-    name: "Vitamin C Serum",
-    tagline: "Brightening & Anti-Aging",
-    category: "Serums",
-    price: 399,
-    description: "A potent Vitamin C serum that brightens skin tone, reduces dark spots, and promotes collagen production for a youthful glow.",
-    image: "/images/mahqee-vitamin-c.png",
-    images: [
-      "/images/mahqee-vitamin-c.png",
-      "/images/vit_c_texture.png",
-      "/images/vit_c_lifestyle.png"
-    ],
-    ingredients: ["Vitamin C (15%)", "Ferulic Acid", "Hyaluronic Acid"],
-    benefits: ["Brightens overall skin tone", "Reduces hyperpigmentation", "Fights free radical damage"]
-  },
-  {
-    id: "alchemists-oil",
-    name: "Rose Water",
-    tagline: "Hydrating & Soothing Toner",
-    category: "Toners",
+    id: "floral-comb",
+    name: "Floral Comb",
+    tagline: "Extra Width for Dense Hair",
+    category: "Oils",
     price: 199,
-    description: "Pure, distilled rose water to hydrate, refresh, and balance your skin's pH. Perfect for sensitive skin.",
-    image: "/images/mahqee-rose-water.png",
+    description: "Designed with a premium floral pattern, the 360 Floral Comb features wide-spaced teeth crafted to gently detangle thick, dense, and curly hair. Prevents hair breakage, distributes natural scalp oils evenly, and adds a luxury aesthetic to your vanity.",
+    image: "/images/floral-comb.png",
     images: [
-      "/images/mahqee-rose-water.png",
-      "/images/rose_water_texture.png",
-      "/images/rose_water_lifestyle.png"
+      "/images/floral-comb.png",
+      "/images/category-haircare.png"
     ],
-    ingredients: ["100% Pure Rosa Damascena Extract"],
-    benefits: ["Soothes redness and irritation", "Hydrates and refreshes", "Balances skin pH"]
-  },
-  {
-    id: "cleansing-balm",
-    name: "Salicylic Acid + LHA 02% Cleanser",
-    tagline: "Acne, Breakouts & Oiliness",
-    category: "Cleansers",
-    price: 249,
-    description: "A gentle yet effective daily cleanser formulated with Salicylic Acid and LHA to deeply cleanse, reduce excess sebum, and prevent acne breakouts without stripping the skin barrier.",
-    image: "/images/mahqee-cleanser.png",
-    images: [
-      "/images/mahqee-cleanser.png",
-      "/images/cleanser_texture.png",
-      "/images/cleanser_lifestyle.png"
-    ],
-    ingredients: ["Salicylic Acid (2%)", "LHA (Capryloyl Salicylic Acid)", "Oat Extract", "Zinc PCA"],
-    benefits: ["Reduces excess sebum and oiliness", "Deeply cleanses pores", "Prevents acne and breakouts"]
-  },
-  {
-    id: "rose-hydrosol",
-    name: "Retinol Night Cream",
-    tagline: "Fine Lines & Wrinkles",
-    category: "Creams",
-    price: 499,
-    description: "A rich night cream formulated with encapsulated Retinol to visibly reduce fine lines, wrinkles, and uneven texture while you sleep.",
-    image: "/images/mahqee-retinol-cream.png",
-    images: [
-      "/images/mahqee-retinol-cream.png",
-      "/images/category-bodycare.png",
-      "/images/sunscreen.png"
-    ],
-    ingredients: ["Encapsulated Retinol (0.3%)", "Ceramides", "Peptides"],
-    benefits: ["Reduces appearance of fine lines", "Improves skin elasticity", "Nourishes deeply overnight"]
-  },
-  {
-    id: "jasmine-cream",
-    name: "Vitamin B5 10% Moisturizer",
-    tagline: "Damaged Barrier, Oily & Dehydrated",
-    category: "Creams",
-    price: 332,
-    description: "A lightweight, oil-free moisturizer with 10% Vitamin B5 to nourish, heal, and repair damaged skin barriers while hydrating oily and dehydrated skin types.",
-    image: "/images/moisturizer.png",
-    images: [
-      "/images/moisturizer.png",
-      "/images/category-bodycare.png",
-      "/images/cleanser.png"
-    ],
-    colors: [
-      { name: "Clarity White", hex: "#ffffff", image: "/images/moisturizer.png" },
-      { name: "Orchid Petal", hex: "#ed74b2", image: "/images/moisturizer.png" }
-    ],
-    ingredients: ["Vitamin B5 (Panthenol 10%)", "Copper PCA", "Zinc PCA", "Hyaluronic Acid"],
-    benefits: ["Repairs damaged skin barrier", "Deeply hydrates without oiliness", "Calms and heals skin irritation"]
-  },
-  {
-    id: "eye-nectar",
-    name: "Luminous Eye Nectar",
-    tagline: "Brighten and de-puff delicate eyes.",
-    category: "Creams",
-    price: 399,
-    description: "A cooling, high-potency eye treatment featuring Caffeine and Vitamin C. With an ultra-smooth metal rollerball simulator design, it brightens dark circles, drains fluid retention, and firms eye contours.",
-    image: "/images/serum.png",
-    images: [
-      "/images/serum.png",
-      "/images/category-skincare.png",
-      "/images/sunscreen.png"
-    ],
-    ingredients: ["Green Coffee Caffeine", "Vitamin C (Tetrahexyldecyl Ascorbate)", "Arnica Extract", "Coenzyme Q10"],
-    benefits: ["Visibly reduces under-eye puffiness", "Brightens stubborn dark circles", "Smoothes fine lines around eyes"]
+    ingredients: ["Premium Cellulose Acetate", "Wide-teeth Detangling Layout", "Anti-static coating"],
+    benefits: ["Gently detangles thick and curly hair", "Prevents breakage and hair loss", "Distributes natural oils evenly"]
   }
 ];
 
