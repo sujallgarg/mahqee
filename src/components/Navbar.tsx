@@ -99,8 +99,8 @@ export default function Navbar() {
               height={48}
               style={{ 
                 height: "48px", 
-                width: "auto",
-                objectFit: "contain" 
+                width: "113px",
+                // objectFit: "contain" 
               }}
               priority
             />
