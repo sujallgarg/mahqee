@@ -25,12 +25,14 @@ export default function Home() {
       {/* 2.5. Eyelash Curler Banner */}
       {/* <CurlerBanner /> */}
 
-      {/* 3. Apple-style Scrollytelling Section */}
-      <Scrollytelling onLearnMore={(prod) => setSelectedProduct(prod)} />
 
       {/* 5. Shop by Category Grid (Screenshot 4 matching) */}
       <CategoryGrid />
 
+      {/* 3. Apple-style Scrollytelling Section */}
+      <Scrollytelling onLearnMore={(prod) => setSelectedProduct(prod)} />
+
+        
       {/* 4. Build Your Own Bundle Banner (Screenshot 3 matching) */}
       <BundleBanner />
 

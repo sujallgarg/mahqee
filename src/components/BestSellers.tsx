@@ -28,7 +28,7 @@ export default function BestSellers({ onLearnMore, isSubpage = false }: BestSell
     <section 
       ref={sectionRef}
       style={{
-        padding: isSubpage ? "20px 0 120px 0" : "120px 0",
+        padding: isSubpage ? "20px 0 var(--section-padding-y) 0" : "var(--section-padding-y) 0",
         backgroundColor: isSubpage ? "transparent" : "#ffffff",
         borderTop: isSubpage ? "none" : "1px solid var(--border-color)",
         position: "relative",

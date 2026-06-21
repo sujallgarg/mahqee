@@ -53,7 +53,7 @@ export default function SkinInsightsPage() {
   return (
     <main style={{
       minHeight: "100vh",
-      padding: "160px 24px 120px 24px",
+      padding: "var(--page-top-padding) 24px var(--page-bottom-padding) 24px",
       backgroundColor: "var(--bg-primary)"
     }}>
       <div className="container" style={{ maxWidth: "680px" }}>
@@ -127,7 +127,7 @@ export default function SkinInsightsPage() {
               <label style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)", display: "block", marginBottom: "12px" }}>
                 1. Select your Skin Type:
               </label>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px" }}>
+              <div className="skininsights-question-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px" }}>
                 {["Oily", "Dry", "Combination", "Sensitive"].map((type) => (
                   <button
                     key={type}
@@ -155,7 +155,7 @@ export default function SkinInsightsPage() {
               <label style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)", display: "block", marginBottom: "12px" }}>
                 2. What is your primary Skin Concern?
               </label>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px" }}>
+              <div className="skininsights-question-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px" }}>
                 {["Acne/Breakouts", "Aging/Wrinkles", "Redness/Barrier Repair", "Dehydration/Dullness"].map((concern) => (
                   <button
                     key={concern}

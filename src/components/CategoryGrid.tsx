@@ -27,7 +27,7 @@ export default function CategoryGrid() {
     <section 
       ref={gridRef}
       style={{
-        padding: "120px 0",
+        padding: "var(--section-padding-y) 0",
         backgroundColor: "#ffffff"
       }}
     >

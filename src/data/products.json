@@ -33,9 +33,17 @@
     "price": 199,
     "description": "Premium cosmetic wedges designed for smooth, streak-free liquid and cream foundation application.",
     "image": "/images/makeup-wedges.png",
-    "images": ["/images/makeup-wedges.png"],
-    "ingredients": ["Latex-free premium polymer", "Soft-touch blending surface"],
-    "benefits": ["Precise and even cosmetic blending", "Minimal product absorption and waste"]
+    "images": [
+      "/images/makeup-wedges.png"
+    ],
+    "ingredients": [
+      "Latex-free premium polymer",
+      "Soft-touch blending surface"
+    ],
+    "benefits": [
+      "Precise and even cosmetic blending",
+      "Minimal product absorption and waste"
+    ]
   },
   {
     "id": "pink-scrunchie",
@@ -45,9 +53,17 @@
     "price": 128,
     "description": "Luxury light pink satin scrunchie designed to hold hair comfortably without causing pulling, snagging, or creasing.",
     "image": "/images/pink-scrunchie.png",
-    "images": ["/images/pink-scrunchie.png"],
-    "ingredients": ["100% Premium satin silk wrapper", "High-elastic inner core band"],
-    "benefits": ["Frizz-free and crease-free styling", "Prevents hair breakage and pulling split ends"]
+    "images": [
+      "/images/pink-scrunchie.png"
+    ],
+    "ingredients": [
+      "100% Premium satin silk wrapper",
+      "High-elastic inner core band"
+    ],
+    "benefits": [
+      "Frizz-free and crease-free styling",
+      "Prevents hair breakage and pulling split ends"
+    ]
   },
   {
     "id": "face-roller",
@@ -57,32 +73,16 @@
     "price": 1870,
     "description": "Authentic rose quartz facial roller designed to reduce morning puffiness, stimulate lymphatic drainage, and assist product absorption.",
     "image": "/images/face-roller.png",
-    "images": ["/images/face-roller.png"],
-    "ingredients": ["100% Natural certified rose quartz stone", "Noise-free smooth silicone inserts"],
-    "benefits": ["Reduces inflammation and morning puffiness", "Improves blood circulation and skin elasticity"]
-  },
-  {
-    "id": "hair-rollers",
-    "name": "Hair Roller Medium",
-    "tagline": "Heatless Blowout Volume",
-    "category": "Tools",
-    "price": 182,
-    "description": "Medium-sized self-grip velcro rollers to create bouncy blowouts and root lift without thermal damage.",
-    "image": "/images/hair-rollers.png",
-    "images": ["/images/hair-rollers.png"],
-    "ingredients": ["Premium self-grip velcro material", "Lightweight hollow inner core"],
-    "benefits": ["Adds dramatic root lift and volume", "Gentle heatless styling for daily curls"]
-  },
-  {
-    "id": "makeup-bag",
-    "name": "Makeup Organiser Bag Brown",
-    "tagline": "Luxury Vegan Leather Organizer",
-    "category": "Tools",
-    "price": 697,
-    "description": "Sleek, double-compartment vanity travel organizer bag crafted from premium brown textured vegan leather.",
-    "image": "/images/makeup-bag.png",
-    "images": ["/images/makeup-bag.png"],
-    "ingredients": ["Waterproof saffiano vegan leather", "Premium gold metallic zip hardware"],
-    "benefits": ["Double zipper compartments for layout organization", "Spacious layout with compact exterior shape"]
+    "images": [
+      "/images/face-roller.png"
+    ],
+    "ingredients": [
+      "100% Natural certified rose quartz stone",
+      "Noise-free smooth silicone inserts"
+    ],
+    "benefits": [
+      "Reduces inflammation and morning puffiness",
+      "Improves blood circulation and skin elasticity"
+    ]
   }
 ]

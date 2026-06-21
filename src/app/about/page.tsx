@@ -8,7 +8,7 @@ export default function AboutPage() {
   return (
     <main style={{
       minHeight: "100vh",
-      padding: "160px 24px 120px 24px",
+      padding: "var(--page-top-padding) 24px var(--page-bottom-padding) 24px",
       backgroundColor: "var(--bg-primary)"
     }}>
       <div className="container" style={{ maxWidth: "800px" }}>

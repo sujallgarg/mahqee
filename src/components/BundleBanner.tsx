@@ -7,7 +7,7 @@ export default function BundleBanner() {
   return (
     <section 
       style={{
-        padding: "100px 0",
+        padding: "var(--section-padding-y) 0",
         backgroundColor: "var(--bg-primary)"
       }}
     >
@@ -62,18 +62,26 @@ export default function BundleBanner() {
           </div>
 
           {/* Right graphics column - Empty to let the background image toolkit show */}
-          <div style={{ minHeight: "240px" }} />
+          <div className="bundle-spacer-col" />
 
         </div>
       </div>
 
       <style jsx global>{`
+        .bundle-spacer-col {
+          min-height: 240px;
+        }
         @media (max-width: 768px) {
           .bundle-banner-grid {
             grid-template-columns: 1fr !important;
             padding: 48px 24px !important;
             text-align: center !important;
-            background-position: 70% center !important;
+            background-image: none !important;
+            background-color: #faf6f5 !important;
+            min-height: min-content !important;
+          }
+          .bundle-spacer-col {
+            display: none !important;
           }
           .bundle-banner-grid > div {
             margin: 0 auto;

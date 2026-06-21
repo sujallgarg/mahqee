@@ -101,7 +101,7 @@ export default function Testimonials() {
     <section 
       ref={testimonialsRef}
       style={{
-        padding: "120px 0",
+        padding: "var(--section-padding-y) 0",
         backgroundColor: "#ffffff",
         borderTop: "1px solid var(--border-color)",
         overflow: "hidden",
@@ -133,7 +133,7 @@ export default function Testimonials() {
         </h2>
 
         {/* Carousel buttons */}
-        <div style={{
+        {/* <div style={{
           position: "absolute",
           top: "0px",
           right: "24px",
@@ -173,7 +173,7 @@ export default function Testimonials() {
           >
             ›
           </button>
-        </div>
+        </div> */}
 
         {/* Horizontal Reviews Track */}
         <div 

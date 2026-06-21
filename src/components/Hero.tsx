@@ -39,6 +39,7 @@ export default function Hero() {
   return (
     <section 
       ref={sectionRef}
+      className="hero-section"
       style={{
         position: "relative",
         width: "100%",
@@ -46,8 +47,7 @@ export default function Hero() {
         alignItems: "center",
         justifyContent: "center",
         overflow: "hidden",
-        backgroundColor: "var(--bg-primary)",
-        padding: "120px 24px 48px 24px" // Premium spacing below fixed navbar
+        backgroundColor: "var(--bg-primary)"
       }}
     >
       <div 
@@ -179,10 +179,24 @@ export default function Hero() {
       </div>
 
       <style jsx global>{`
+        .hero-section {
+          padding: 120px 24px 48px 24px;
+        }
         .carousel-nav-btn:hover {
           background-color: var(--text-primary) !important;
           color: #ffffff !important;
           transform: translateY(-50%) scale(1.08) !important;
+        }
+        @media (max-width: 768px) {
+          .hero-section {
+            padding: 90px 12px 24px 12px !important;
+          }
+          .carousel-nav-btn {
+            display: none !important;
+          }
+          .carousel-container {
+            border-radius: 12px !important;
+          }
         }
       `}</style>
     </section>

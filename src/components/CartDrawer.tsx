@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useCart, CartItem, Product } from "@/context/CartContext";
 import ProductDetailsModal from "./ProductDetailsModal";
 
-const WHATSAPP_BUSINESS_PHONE = "919999999999"; // TODO: Customize this with your actual WhatsApp Business number (including country code)
+const WHATSAPP_BUSINESS_PHONE = "919650045175"; // TODO: Customize this with your actual WhatsApp Business number (including country code)
 
 export default function CartDrawer() {
   const {
