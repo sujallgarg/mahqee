@@ -26,7 +26,7 @@ export default function Home() {
       {/* <CurlerBanner /> */}
 
       {/* 3. Apple-style Scrollytelling Section */}
-      <Scrollytelling />
+      <Scrollytelling onLearnMore={(prod) => setSelectedProduct(prod)} />
 
       {/* 5. Shop by Category Grid (Screenshot 4 matching) */}
       <CategoryGrid />

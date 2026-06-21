@@ -5,6 +5,8 @@ import Image from "next/image";
 import { useCart, CartItem, Product } from "@/context/CartContext";
 import ProductDetailsModal from "./ProductDetailsModal";
 
+const WHATSAPP_BUSINESS_PHONE = "919999999999"; // TODO: Customize this with your actual WhatsApp Business number (including country code)
+
 export default function CartDrawer() {
   const {
     cartItems,
@@ -22,13 +24,27 @@ export default function CartDrawer() {
   const handleCheckout = () => {
     setCheckoutStep("processing");
     
-    // Simulate payment gateway delay
+    // Format cart items details for the WhatsApp message
+    const itemsText = cartItems
+      .map(
+        (item) =>
+          `• ${item.quantity}x ${item.product.name}${
+            item.selectedColor ? ` (Option: ${item.selectedColor.name})` : ""
+          } - ₹${(item.product.price * item.quantity).toLocaleString("en-IN")}.00`
+      )
+      .join("\n");
+
+    const message = `Hello MAHQEE,\n\nI would like to place an order:\n\n*Order Summary:*\n${itemsText}\n\n*Total Amount:* ₹${cartTotal.toLocaleString("en-IN")}.00\n\nThank you!`;
+    const whatsappUrl = `https://wa.me/${WHATSAPP_BUSINESS_PHONE}?text=${encodeURIComponent(message)}`;
+
+    // Simulate routing delay, open WhatsApp, clear cart, and transition to success screen
     setTimeout(() => {
+      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
       const generatedOrder = `MQ-${Math.floor(100000 + Math.random() * 900000)}`;
       setOrderNumber(generatedOrder);
       setCheckoutStep("success");
       clearCart();
-    }, 2000);
+    }, 1500);
   };
 
   const handleClose = () => {
