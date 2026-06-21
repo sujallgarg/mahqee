@@ -25,6 +25,12 @@ export default function ShopPage() {
           else if (cat === "oils") setActiveCategory("Oils");
         }, 0);
       }
+      const search = params.get("search");
+      if (search) {
+        setTimeout(() => {
+          setSearchQuery(search);
+        }, 0);
+      }
     }
   }, []);
 

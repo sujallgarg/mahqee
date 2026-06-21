@@ -1,40 +1,39 @@
 "use client";
 
-import React, { useRef } from "react";
+import React from "react";
 import Link from "next/link";
-import { useScrollProgress } from "@/hooks/useScrollProgress";
 
 export default function BundleBanner() {
-  const bannerRef = useRef<HTMLDivElement>(null);
-  const progress = useScrollProgress(bannerRef);
-
   return (
     <section 
-      ref={bannerRef}
       style={{
-        padding: "120px 0",
-        backgroundColor: "#ffffff"
+        padding: "100px 0",
+        backgroundColor: "var(--bg-primary)"
       }}
     >
       <div className="container">
         {/* Banner Frame */}
         <div style={{
-          background: "linear-gradient(135deg, #f2f1f6 0%, #faf9fc 100%)",
+          backgroundImage: "url('/images/banners/Bundle-background.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
           border: "1px solid var(--border-color)",
           borderRadius: "24px",
-          padding: "72px 90px",
+          padding: "80px 90px",
           display: "grid",
-          gridTemplateColumns: "1fr 1.1fr",
+          gridTemplateColumns: "1fr 1fr",
           alignItems: "center",
-          gap: "64px",
+          gap: "40px",
           position: "relative",
-          overflow: "hidden"
+          overflow: "hidden",
+          minHeight: "400px",
+          opacity:"0.9",
         }} className="bundle-banner-grid">
           
           {/* Left info column */}
-          <div style={{ zIndex: 2 }}>
+          <div style={{ zIndex: 2, maxWidth: "440px" }}>
             <h2 style={{
-              fontSize: "clamp(28px, 4vw, 42px)",
+              fontSize: "clamp(32px, 4vw, 46px)",
               color: "var(--text-primary)",
               lineHeight: "1.1",
               marginBottom: "16px",
@@ -44,87 +43,40 @@ export default function BundleBanner() {
             </h2>
 
             <p style={{
-              fontSize: "14px",
+              fontSize: "15px",
               color: "var(--text-secondary)",
               lineHeight: "1.6",
-              marginBottom: "24px",
-              maxWidth: "380px"
+              marginBottom: "28px",
             }}>
               Get Additional Discount <strong style={{ color: "var(--text-primary)" }}>UPTO 15%</strong> on custom kit + <strong style={{ color: "var(--accent-pink)" }}>5% Cashback</strong> as MAHQEE Cash.
             </p>
 
             <Link href="/shop" className="btn-primary" style={{
               borderRadius: "6px",
-              padding: "12px 28px",
-              fontSize: "14px"
+              padding: "14px 32px",
+              fontSize: "14px",
+              display: "inline-block"
             }}>
               Shop The Bundle
             </Link>
           </div>
 
-          {/* Right graphics column - Absolute-positioned bottles */}
-          <div style={{
-            position: "relative",
-            height: "240px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
-          }} className="bundle-graphics">
-            {/* Visual background element */}
-            <div style={{
-              width: "280px",
-              height: "280px",
-              borderRadius: "50%",
-              backgroundColor: "rgba(38, 209, 240, 0.04)",
-              position: "absolute",
-              zIndex: 0,
-              transform: `translateY(${(progress - 0.5) * -30}px)`,
-              transition: "transform 0.1s ease-out"
-            }} />
-
-            {/* Dropper vial */}
-            <div className="bundle-asset asset-1 floating-element-1" style={{ 
-              transform: `rotate(-10deg) translate(-50px, 10px) translateY(${(progress - 0.5) * -50}px)`,
-              transition: "transform 0.1s ease-out"
-            }}>
-              <div className="mini-serum-dropper-bottle" />
-            </div>
-
-            {/* Cream Pot */}
-            <div className="bundle-asset asset-2 floating-element-2" style={{ 
-              transform: `translate(0px, 20px) translateY(${(progress - 0.5) * 35}px)`,
-              transition: "transform 0.1s ease-out"
-            }}>
-              <div className="mini-cream-tub" />
-            </div>
-
-            {/* Cleanser Jar */}
-            <div className="bundle-asset asset-3 floating-element-1" style={{ 
-              transform: `rotate(15deg) translate(55px, 0px) translateY(${(progress - 0.5) * -65}px)`,
-              transition: "transform 0.1s ease-out"
-            }}>
-              <div className="mini-cleanser-jar" />
-            </div>
-          </div>
+          {/* Right graphics column - Empty to let the background image toolkit show */}
+          <div style={{ minHeight: "240px" }} />
 
         </div>
       </div>
 
       <style jsx global>{`
-        .bundle-asset {
-          position: absolute;
-          z-index: 2;
-          filter: drop-shadow(0 8px 15px rgba(0, 0, 0, 0.05));
-        }
-
         @media (max-width: 768px) {
           .bundle-banner-grid {
             grid-template-columns: 1fr !important;
-            padding: 32px !important;
+            padding: 48px 24px !important;
             text-align: center !important;
+            background-position: 70% center !important;
           }
-          .bundle-graphics {
-            margin-top: 32px;
+          .bundle-banner-grid > div {
+            margin: 0 auto;
           }
           :global(.bundle-banner-grid .btn-primary) {
             margin: 0 auto;

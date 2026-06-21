@@ -2,13 +2,39 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { useCart } from "@/context/CartContext";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useCart, Product } from "@/context/CartContext";
+import ProductDetailsModal from "@/components/ProductDetailsModal";
 
 export default function Navbar() {
-  const { openCart, cartCount } = useCart();
+  const { openCart, cartCount, products } = useCart();
   const [scrolled, setScrolled] = useState(false);
   const [shopHovered, setShopHovered] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Search state variables
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const router = useRouter();
+
+  const filteredProducts = searchQuery.trim()
+    ? products.filter((product) =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.tagline.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.category.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearchOpen(false);
+      setSearchQuery("");
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -43,7 +69,7 @@ export default function Navbar() {
         letterSpacing: "0.05em",
         position: "relative"
       }}>
-        <span>Get 10% OFF + Additional 10% Cashback on App Orders</span>
+        <span>Get 10% OFF + Additional discounts</span>
       </div>
 
       {/* Main Glassmorphic Header */}
@@ -196,6 +222,34 @@ export default function Navbar() {
 
           {/* Right Action Icons & Hamburger Trigger */}
           <div style={{ display: "flex", alignItems: "center" }}>
+            {/* Search Trigger Button */}
+            <button 
+              onClick={() => setIsSearchOpen(true)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                padding: "8px",
+                borderRadius: "50%",
+                transition: "background-color 0.2s",
+                marginRight: "6px"
+              }}
+              aria-label="Search Catalog"
+            >
+              <svg 
+                width="18" 
+                height="18" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="var(--text-primary)" 
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </button>
+
             <button 
               onClick={openCart}
               style={{
@@ -267,6 +321,176 @@ export default function Navbar() {
           </div>
         </div>
       </header>
+
+      {/* Search Overlay */}
+      {isSearchOpen && (
+        <div style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "56px",
+          backgroundColor: "#ffffff",
+          zIndex: 1200,
+          display: "flex",
+          alignItems: "center",
+          borderBottom: "1px solid var(--border-color)",
+          padding: "0 24px"
+        }}>
+          <div className="container" style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "16px",
+            width: "100%"
+          }}>
+            <svg 
+              width="18" 
+              height="18" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="var(--text-primary)" 
+              strokeWidth="1.5"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            
+            <form onSubmit={handleSearchSubmit} style={{ flex: 1, display: "flex" }}>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search for tools, formulations, ingredients..."
+                autoFocus
+                style={{
+                  width: "100%",
+                  border: "none",
+                  outline: "none",
+                  fontSize: "14px",
+                  color: "var(--text-primary)",
+                  backgroundColor: "transparent"
+                }}
+              />
+            </form>
+
+            <button 
+              onClick={() => {
+                setSearchQuery("");
+                setIsSearchOpen(false);
+              }}
+              style={{
+                padding: "8px",
+                display: "flex",
+                alignItems: "center"
+              }}
+              aria-label="Close Search"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="1.5">
+                <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Search Dropdown Results */}
+          {searchQuery.trim().length > 0 && (
+            <div style={{
+              position: "absolute",
+              top: "56px",
+              left: 0,
+              width: "100%",
+              backgroundColor: "#ffffff",
+              borderBottom: "1px solid var(--border-color)",
+              boxShadow: "var(--shadow-md)",
+              zIndex: 1199,
+              maxHeight: "400px",
+              overflowY: "auto"
+            }}>
+              <div className="container" style={{ padding: "20px 24px" }}>
+                {filteredProducts.length > 0 ? (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                    <div style={{ fontSize: "11px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "1px", color: "var(--accent-pink)", marginBottom: "4px" }}>
+                      Products found ({filteredProducts.length})
+                    </div>
+                    {filteredProducts.map((product) => (
+                      <div 
+                        key={product.id}
+                        onClick={() => {
+                          setSelectedProduct(product);
+                          setIsSearchOpen(false);
+                          setSearchQuery("");
+                        }}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "16px",
+                          padding: "10px",
+                          borderRadius: "12px",
+                          cursor: "pointer",
+                          transition: "background-color 0.2s"
+                        }}
+                        className="search-result-item"
+                      >
+                        <div style={{
+                          width: "48px",
+                          height: "48px",
+                          borderRadius: "8px",
+                          backgroundColor: "#f7f7f9",
+                          position: "relative",
+                          overflow: "hidden",
+                          flexShrink: 0
+                        }}>
+                          <Image 
+                            src={product.image} 
+                            alt={product.name} 
+                            fill
+                            sizes="48px"
+                            style={{ objectFit: "cover" }}
+                            unoptimized
+                          />
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <h4 style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)", margin: 0 }}>
+                            {product.name}
+                          </h4>
+                          <p style={{ fontSize: "12px", color: "var(--text-secondary)", margin: "2px 0 0 0" }}>
+                            {product.tagline}
+                          </p>
+                        </div>
+                        <div style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)" }}>
+                          ₹{product.price}
+                        </div>
+                      </div>
+                    ))}
+                    <div style={{ borderTop: "1px solid var(--border-color)", paddingTop: "12px", textAlign: "center" }}>
+                      <Link 
+                        href={`/shop?search=${encodeURIComponent(searchQuery)}`}
+                        onClick={() => {
+                          setIsSearchOpen(false);
+                          setSearchQuery("");
+                        }}
+                        style={{ fontSize: "13px", fontWeight: "600", color: "var(--accent-pink)" }}
+                      >
+                        {`View all results for "${searchQuery}"`}
+                      </Link>
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ textAlign: "center", padding: "20px 0", color: "var(--text-secondary)", fontSize: "14px" }}>
+                    {`No products found matching "${searchQuery}"`}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {selectedProduct && (
+        <ProductDetailsModal
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+        />
+      )}
 
       {/* Mobile Drawer Navigation Panel */}
       {mobileMenuOpen && (
@@ -354,6 +578,10 @@ export default function Navbar() {
           to { opacity: 1; transform: translateY(0); }
         }
         
+        .search-result-item:hover {
+          background-color: #f7f7f9;
+        }
+
         @media (max-width: 900px) {
           .desktop-nav {
             display: none !important;
