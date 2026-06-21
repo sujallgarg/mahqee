@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
+import Image from "next/image";
 import { useScrollProgress } from "@/hooks/useScrollProgress";
 
 interface Step {
@@ -67,7 +68,7 @@ export default function Scrollytelling() {
       ref={containerRef} 
       style={{
         position: "relative",
-        height: "200vh", // Provides space for scroll events (reduced to make scrolling faster)
+        height: "200vh", // Provides space for scroll events
         width: "100%",
         backgroundColor: "var(--bg-primary)"
       }}
@@ -79,126 +80,182 @@ export default function Scrollytelling() {
         alignItems: "center"
       }}>
         <div className="container" style={{
-          display: "grid",
-          gridTemplateColumns: "1.2fr 1fr",
-          alignItems: "center",
+          position: "relative",
+          width: "100%",
           height: "100%",
-          gap: "48px",
-          width: "100%"
+          maxHeight: "550px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
         }}>
-          {/* Left Side: Descriptions that switch based on scroll index */}
-          <div style={{ position: "relative", height: "350px" }}>
-            {steps.map((step, idx) => {
-              const isActive = idx === activeIndex;
-              return (
-                <div
-                  key={idx}
-                  style={{
-                    position: "absolute",
-                    top: "50%",
-                    left: 0,
-                    transform: isActive 
-                      ? "translateY(-50%) scale(1)" 
-                      : `translateY(${idx < activeIndex ? "-120%" : "20%"}) scale(0.95)`,
-                    opacity: isActive ? 1 : 0,
-                    pointerEvents: isActive ? "auto" : "none",
-                    transition: "all 0.6s cubic-bezier(0.25, 1, 0.5, 1)",
-                    width: "100%"
-                  }}
-                >
-                  <span style={{
-                    fontSize: "12px",
-                    fontWeight: "600",
-                    letterSpacing: "0.15em",
-                    color: "var(--accent-pink)",
-                    textTransform: "uppercase",
-                    display: "block",
-                    marginBottom: "12px"
-                  }}>
-                    Active Ingredient {idx + 1}
-                  </span>
-                  
-                  <h2 style={{
-                    fontSize: "clamp(32px, 5vw, 48px)",
-                    lineHeight: "1.1",
-                    color: "var(--text-primary)",
-                    marginBottom: "16px"
-                  }}>
-                    {step.title}
-                  </h2>
-                  
-                  <h3 style={{
-                    fontSize: "18px",
-                    fontWeight: "400",
-                    color: "var(--text-secondary)",
-                    fontFamily: "var(--font-sans)",
-                    marginBottom: "20px"
-                  }}>
-                    {step.subtitle}
-                  </h3>
-                  
-                  <p style={{
-                    fontSize: "15px",
-                    lineHeight: "1.7",
-                    color: "var(--text-secondary)",
-                    maxWidth: "480px"
-                  }}>
-                    {step.description}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Right Side: Visual representation with dynamic properties */}
+          {/* Layout A: Step 0 Full-Width Original Banner */}
           <div style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
             display: "flex",
-            justifyContent: "center",
             alignItems: "center",
-            height: "100%"
+            justifyContent: "center",
+            opacity: activeIndex === 0 ? 1 : 0,
+            pointerEvents: activeIndex === 0 ? "auto" : "none",
+            transform: activeIndex === 0 ? "scale(1)" : "scale(0.95)",
+            transition: "all 0.6s cubic-bezier(0.25, 1, 0.5, 1)",
+            zIndex: activeIndex === 0 ? 2 : 1
           }}>
             <div style={{
               position: "relative",
-              transform: `scale(${bottleScale}) rotate(${bottleRotation}deg)`,
-              transition: "transform 0.15s ease-out, filter 0.5s ease",
-              width: "180px",
-              height: "310px",
-              filter: `drop-shadow(${steps[activeIndex].glow})`
+              width: "100%",
+              aspectRatio: "1024 / 436",
+              borderRadius: "24px",
+              overflow: "hidden",
+              border: "1px solid var(--border-color)",
+              boxShadow: "var(--shadow-md)",
+              backgroundColor: "#ffffff"
+            }} className="scrolly-full-banner">
+              <Image
+                src="/images/orchid-stem-cells.png"
+                alt="MAHQEE Orchid Stem Cells Banner"
+                fill
+                priority
+                style={{ objectFit: "cover" }}
+                unoptimized
+              />
+            </div>
+          </div>
+
+          {/* Layout B: Step 1 & 2 Two-Column Interactive Grid */}
+          <div style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            display: "grid",
+            gridTemplateColumns: "1.2fr 1fr",
+            alignItems: "center",
+            gap: "48px",
+            opacity: activeIndex !== 0 ? 1 : 0,
+            pointerEvents: activeIndex !== 0 ? "auto" : "none",
+            transform: activeIndex !== 0 ? "scale(1)" : "scale(1.05)",
+            transition: "all 0.6s cubic-bezier(0.25, 1, 0.5, 1)",
+            zIndex: activeIndex !== 0 ? 2 : 1
+          }} className="scrolly-split-grid">
+            {/* Left Side: Descriptions that switch based on scroll index */}
+            <div style={{ position: "relative", height: "350px" }}>
+              {steps.map((step, idx) => {
+                if (idx === 0) return null; // Step 0 is fully displayed in Layout A
+                const isActive = idx === activeIndex;
+                return (
+                  <div
+                    key={idx}
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      left: 0,
+                      transform: isActive 
+                        ? "translateY(-50%) scale(1)" 
+                        : `translateY(${idx < activeIndex ? "-120%" : "20%"}) scale(0.95)`,
+                      opacity: isActive ? 1 : 0,
+                      pointerEvents: isActive ? "auto" : "none",
+                      transition: "all 0.6s cubic-bezier(0.25, 1, 0.5, 1)",
+                      width: "100%"
+                    }}
+                  >
+                    <span style={{
+                      fontSize: "12px",
+                      fontWeight: "600",
+                      letterSpacing: "0.15em",
+                      color: "var(--accent-pink)",
+                      textTransform: "uppercase",
+                      display: "block",
+                      marginBottom: "12px"
+                    }}>
+                      Active Ingredient {idx + 1}
+                    </span>
+                    
+                    <h2 style={{
+                      fontSize: "clamp(32px, 5vw, 48px)",
+                      lineHeight: "1.1",
+                      color: "var(--text-primary)",
+                      marginBottom: "16px"
+                    }}>
+                      {step.title}
+                    </h2>
+                    
+                    <h3 style={{
+                      fontSize: "18px",
+                      fontWeight: "400",
+                      color: "var(--text-secondary)",
+                      fontFamily: "var(--font-sans)",
+                      marginBottom: "20px"
+                    }}>
+                      {step.subtitle}
+                    </h3>
+                    
+                    <p style={{
+                      fontSize: "15px",
+                      lineHeight: "1.7",
+                      color: "var(--text-secondary)",
+                      maxWidth: "480px"
+                    }}>
+                      {step.description}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Right Side: Visual representation with dynamic properties */}
+            <div style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%"
             }}>
-              {/* Glass Bottle Showcase */}
-              <div className="glass-bottle-scrolly">
-                <div className="scrolly-dropper" />
-                <div className="scrolly-cap" />
-                
-                {/* Liquid that changes color depending on active phase */}
-                <div 
-                  className="scrolly-liquid" 
-                  style={{
-                    background: steps[activeIndex].color,
-                    transition: "background 0.8s ease"
-                  }}
-                />
-                
-                <div className="scrolly-shine" />
-                
-                {/* Dynamically changing labels */}
-                <div className="scrolly-label">
-                  <span style={{ fontSize: "6px", letterSpacing: "1.5px", fontWeight: "600" }}>MAHQEE</span>
-                  <div style={{ width: "10px", height: "0.5px", backgroundColor: "#000", margin: "3px 0" }} />
-                  <span style={{ 
-                    fontSize: "5px", 
-                    letterSpacing: "0.5px", 
-                    textAlign: "center",
-                    transition: "opacity 0.3s ease",
-                    fontWeight: "600"
-                  }}>
-                    {steps[activeIndex].label}
-                  </span>
+              <div style={{
+                position: "relative",
+                transform: `scale(${bottleScale}) rotate(${bottleRotation}deg)`,
+                transition: "transform 0.15s ease-out, filter 0.5s ease",
+                width: "180px",
+                height: "310px",
+                filter: `drop-shadow(${steps[activeIndex].glow})`
+              }}>
+                <div className="glass-bottle-scrolly">
+                  <div className="scrolly-dropper" />
+                  <div className="scrolly-cap" />
+                  
+                  {/* Liquid that changes color depending on active phase */}
+                  <div 
+                    className="scrolly-liquid" 
+                    style={{
+                      background: steps[activeIndex].color,
+                      transition: "background 0.8s ease"
+                    }}
+                  />
+                  
+                  <div className="scrolly-shine" />
+                  
+                  {/* Dynamically changing labels */}
+                  <div className="scrolly-label">
+                    <span style={{ fontSize: "6px", letterSpacing: "1.5px", fontWeight: "600" }}>MAHQEE</span>
+                    <div style={{ width: "10px", height: "0.5px", backgroundColor: "#000", margin: "3px 0" }} />
+                    <span style={{ 
+                      fontSize: "5px", 
+                      letterSpacing: "0.5px", 
+                      textAlign: "center",
+                      transition: "opacity 0.3s ease",
+                      fontWeight: "600"
+                    }}>
+                      {steps[activeIndex].label}
+                    </span>
+                  </div>
                 </div>
+                
+                {/* Shadow */}
+                <div className="scrolly-shadow" />
               </div>
-              
-              {/* Shadow */}
-              <div className="scrolly-shadow" />
             </div>
           </div>
         </div>
@@ -302,14 +359,24 @@ export default function Scrollytelling() {
         @media (max-width: 900px) {
           .sticky-wrapper {
             padding: 48px 0;
+            height: auto !important;
+            min-height: 100vh;
           }
-          :global(.sticky-wrapper > .container) {
+          .scrolly-split-grid {
             grid-template-columns: 1fr !important;
             gap: 24px !important;
+            position: relative !important;
             height: auto !important;
           }
           .scrolly-shadow {
             display: none;
+          }
+          .sticky-wrapper :global(> .container) {
+            height: auto !important;
+            min-height: 500px;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center;
           }
         }
       `}</style>

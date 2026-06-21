@@ -31,8 +31,8 @@ export default function BestSellersPage() {
           padding: "0 48px"
         }} className="shop-hero-banner">
           <Image 
-            src="/images/shop-banner.png" 
-            alt="MAHQEE Best Sellers Formulation Collection" 
+            src="/images/banners/collection banner.png" 
+            alt="MAHQEE Best Sellers Tools Collection" 
             fill
             sizes="(max-width: 1200px) 100vw, 1200px"
             style={{ objectFit: "cover", objectPosition: "center" }}
@@ -41,7 +41,7 @@ export default function BestSellersPage() {
           <div style={{
             position: "absolute",
             top: 0, right: 0, bottom: 0, left: 0,
-            background: "rgba(16, 34, 77, 0.15)"
+            background: "rgba(16, 34, 77, 0.08)"
           }} />
           
           <div style={{
@@ -65,7 +65,7 @@ export default function BestSellersPage() {
               Best Sellers
             </h1>
             <p style={{ color: "var(--text-secondary)", fontSize: "13.5px", lineHeight: "1.5" }}>
-              These formulations have received thousands of 5-star ratings from verified buyers. Highly recommended by dermatologists for proven results.
+              Our highest-rated, precision-engineered beauty tools and luxury grooming essentials, chosen and loved by our community.
             </p>
           </div>
         </div>

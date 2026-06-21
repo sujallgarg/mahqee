@@ -18,7 +18,7 @@ export default function CategoryGrid() {
 
   const categories: CatBlock[] = [
     { title: "Comb", label: "Comb", image: "/images/floral-comb2.png", route: "/shop?cat=comb" },
-    { title: "Hair Care", label: "Hair", image: "/images/category-haircare.png", route: "/shop?cat=oils" },
+    { title: "Eyelash Curler", label: "Tools", image: "/images/Eyelash-cat.png", route: "/shop?cat=tools" },
     { title: "Body Care", label: "Bath & Body", image: "/images/category-bodycare.png", route: "/shop?cat=creams" },
     { title: "Lip Care", label: "Lip", image: "/images/category-lipcare.png", route: "/shop" }
   ];

@@ -214,8 +214,6 @@ export default function Navbar() {
               )}
             </div>
             <Link href="/best-sellers" className="nav-link">Best Sellers</Link>
-            <Link href="/skininsights" className="nav-link">SkinInsights AI</Link>
-            <Link href="/track-order" className="nav-link">Track Order</Link>
             <Link href="/about" className="nav-link">About Us</Link>
             <Link href="/contact" className="nav-link">Contact Us</Link>
           </nav>
@@ -531,8 +529,6 @@ export default function Navbar() {
             <h3 style={{ fontSize: "11px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "1px", color: "var(--text-secondary)", borderBottom: "1px solid var(--border-color)", paddingBottom: "10px", marginTop: "10px" }}>Discover</h3>
             <div style={{ display: "flex", flexDirection: "column", gap: "12px", paddingLeft: "8px" }}>
               <Link href="/best-sellers" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Best Sellers</Link>
-              <Link href="/skininsights" className="nav-link" onClick={() => setMobileMenuOpen(false)}>SkinInsights AI</Link>
-              <Link href="/track-order" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Track Order</Link>
               <Link href="/about" className="nav-link" onClick={() => setMobileMenuOpen(false)}>About Us</Link>
               <Link href="/contact" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Contact Us</Link>
             </div>

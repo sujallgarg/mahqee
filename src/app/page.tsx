@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Hero from "@/components/Hero";
 import BestSellers from "@/components/BestSellers";
+// import CurlerBanner from "@/components/CurlerBanner";
 import Scrollytelling from "@/components/Scrollytelling";
 import BundleBanner from "@/components/BundleBanner";
 import CategoryGrid from "@/components/CategoryGrid";
@@ -21,14 +22,17 @@ export default function Home() {
       {/* 2. Curated Best Sellers Grid (Screenshot 2 matching) */}
       <BestSellers onLearnMore={(prod) => setSelectedProduct(prod)} />
 
+      {/* 2.5. Eyelash Curler Banner */}
+      {/* <CurlerBanner /> */}
+
       {/* 3. Apple-style Scrollytelling Section */}
       <Scrollytelling />
 
-      {/* 4. Build Your Own Bundle Banner (Screenshot 3 matching) */}
-      <BundleBanner />
-
       {/* 5. Shop by Category Grid (Screenshot 4 matching) */}
       <CategoryGrid />
+
+      {/* 4. Build Your Own Bundle Banner (Screenshot 3 matching) */}
+      <BundleBanner />
 
       {/* 6. Customer Testimonials Slide deck (Screenshot 5 matching) */}
       <Testimonials />
