@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Product, productsData } from "@/context/CartContext";
+import { Product, useCart } from "@/context/CartContext";
 import ProductDetailsModal from "@/components/ProductDetailsModal";
 import ProductCard from "@/components/ProductCard";
 
 export default function ShopPage() {
+  const { products } = useCart();
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -29,7 +30,7 @@ export default function ShopPage() {
 
   const categories = ["All", "Serums", "Creams", "Oils"];
 
-  const filteredProducts = productsData.filter((product) => {
+  const filteredProducts = products.filter((product) => {
     const matchesCategory = activeCategory === "All" || product.category === activeCategory;
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           product.tagline.toLowerCase().includes(searchQuery.toLowerCase());

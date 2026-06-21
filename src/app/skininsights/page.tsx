@@ -2,10 +2,10 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { Product, productsData, useCart } from "@/context/CartContext";
+import { Product, useCart } from "@/context/CartContext";
 
 export default function SkinInsightsPage() {
-  const { addToCart } = useCart();
+  const { addToCart, products } = useCart();
   const [step, setStep] = useState<"form" | "loading" | "result">("form");
   const [skinType, setSkinType] = useState("");
   const [skinConcern, setSkinConcern] = useState("");
@@ -21,19 +21,19 @@ export default function SkinInsightsPage() {
     // Simulate AI synthesis diagnostic delay
     setTimeout(() => {
       // Logic to compute ideal recommendation
-      let recommendedProduct: Product = productsData[0]; // fallback
+      let recommendedProduct: Product = products[0]; // fallback
 
       if (skinConcern === "Acne/Breakouts" || skinConcern === "Aging/Wrinkles") {
-        recommendedProduct = productsData.find(p => p.id === "orchid-serum") || productsData[0];
+        recommendedProduct = products.find(p => p.id === "orchid-serum") || products[0];
       } else if (skinConcern === "Redness/Barrier Repair") {
-        recommendedProduct = productsData.find(p => p.id === "cleansing-balm") || productsData[2];
+        recommendedProduct = products.find(p => p.id === "cleansing-balm") || products[2];
       } else if (skinConcern === "Dehydration/Dullness") {
         if (texturePref === "Restorative Face Oil") {
-          recommendedProduct = productsData.find(p => p.id === "alchemists-oil") || productsData[1];
+          recommendedProduct = products.find(p => p.id === "alchemists-oil") || products[1];
         } else if (texturePref === "Lightweight Serum") {
-          recommendedProduct = productsData.find(p => p.id === "rose-hydrosol") || productsData[3];
+          recommendedProduct = products.find(p => p.id === "rose-hydrosol") || products[3];
         } else {
-          recommendedProduct = productsData.find(p => p.id === "jasmine-cream") || productsData[4];
+          recommendedProduct = products.find(p => p.id === "jasmine-cream") || products[4];
         }
       }
 

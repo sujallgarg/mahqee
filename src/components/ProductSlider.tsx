@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { Product, productsData } from "@/context/CartContext";
+import { Product, useCart } from "@/context/CartContext";
 import ProductCard from "@/components/ProductCard";
 
 interface ProductSliderProps {
@@ -9,12 +9,13 @@ interface ProductSliderProps {
 }
 
 export default function ProductSlider({ onLearnMore }: ProductSliderProps) {
+  const { products } = useCart();
   const [activeCategory, setActiveCategory] = useState("All Elixirs");
   const sliderRef = useRef<HTMLDivElement>(null);
   
   const categories = ["All Elixirs", "Serums", "Creams", "Oils"];
 
-  const filteredProducts = productsData.filter((product) => {
+  const filteredProducts = products.filter((product) => {
     if (activeCategory === "All Elixirs") return true;
     return product.category.toLowerCase() === activeCategory.toLowerCase();
   });

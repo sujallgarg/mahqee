@@ -5,6 +5,7 @@ import { CartProvider } from "@/context/CartContext";
 import Navbar from "@/components/Navbar";
 import CartDrawer from "@/components/CartDrawer";
 import Footer from "@/components/Footer";
+import DevProductAdder from "@/components/DevProductAdder";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -44,6 +45,7 @@ export default function RootLayout({
           <Navbar />
           <CartDrawer />
           {children}
+          {process.env.NODE_ENV !== "production" && <DevProductAdder />}
           <Footer />
         </CartProvider>
       </body>

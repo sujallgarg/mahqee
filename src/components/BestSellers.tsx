@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef } from "react";
-import { Product, productsData } from "@/context/CartContext";
+import { Product, useCart } from "@/context/CartContext";
 import { useScrollProgress } from "@/hooks/useScrollProgress";
 import ProductCard from "@/components/ProductCard";
 
@@ -11,16 +11,18 @@ interface BestSellersProps {
 }
 
 export default function BestSellers({ onLearnMore, isSubpage = false }: BestSellersProps) {
+  const { products } = useCart();
   const sectionRef = useRef<HTMLDivElement>(null);
   const progress = useScrollProgress(sectionRef);
 
-  // Curate products to show (Cleanser, Sunscreen, moisturizer, serum)
+  // Curate products to show (marked as best seller, fallback to original best sellers)
   const bestSellerProducts = [
-    productsData.find(p => p.id === "cleansing-balm") || productsData[2],
-    productsData.find(p => p.id === "rose-hydrosol") || productsData[3],
-    productsData.find(p => p.id === "jasmine-cream") || productsData[4],
-    productsData.find(p => p.id === "orchid-serum") || productsData[0]
-  ];
+    ...products.filter(p => p.isBestSeller),
+    products.find(p => p.id === "cleansing-balm") || products[2],
+    products.find(p => p.id === "rose-hydrosol") || products[3],
+    products.find(p => p.id === "jasmine-cream") || products[4],
+    products.find(p => p.id === "orchid-serum") || products[0]
+  ].filter((prod, index, self) => prod && self.findIndex(p => p?.id === prod.id) === index).slice(0, 4);
 
   return (
     <section 

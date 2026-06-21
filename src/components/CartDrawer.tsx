@@ -212,7 +212,7 @@ export default function CartDrawer() {
                         }}
                         className="cart-item-image-wrapper"
                       >
-                        {item.product.image && item.product.image.startsWith("/images/") ? (
+                        {item.product.image && (item.product.image.startsWith("/images/") || item.product.image.startsWith("data:image/")) ? (
                           <Image 
                             src={item.product.image} 
                             alt={item.product.name} 

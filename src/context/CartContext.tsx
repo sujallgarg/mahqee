@@ -14,6 +14,7 @@ export interface Product {
   colors?: { name: string; hex: string; image: string }[]; // dynamic options (like Apple watch bands/phones)
   ingredients: string[];
   benefits: string[];
+  isBestSeller?: boolean;
 }
 
 export interface CartItem {
@@ -33,6 +34,11 @@ interface CartContextType {
   clearCart: () => void;
   cartCount: number;
   cartTotal: number;
+  products: Product[];
+  addProduct: (product: Product) => void;
+  deleteProduct: (productId: string) => void;
+  updateProduct: (productId: string, updatedProduct: Product) => void;
+  resetProducts: () => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -49,16 +55,32 @@ export const productsData: Product[] = [
     image: "/images/floral-comb2.png",
     images: [
       "/images/floral-comb2.png",
-      "/images/category-haircare.png"
+      "/images/floral-comb.png",
+      "/images/floral-comb3.png",
+      "/images/floral-comb4.png",
+      "/images/floral-comb4.png",
     ],
     ingredients: ["Premium Cellulose Acetate", "Wide-teeth Detangling Layout", "Anti-static coating"],
     benefits: ["Gently detangles thick and curly hair", "Prevents breakage and hair loss", "Distributes natural oils evenly"]
-  }
+  },
 ];
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [products, setProducts] = useState<Product[]>(() => {
+    if (typeof window !== "undefined") {
+      const savedProducts = localStorage.getItem("mahqee_products");
+      if (savedProducts) {
+        try {
+          return JSON.parse(savedProducts);
+        } catch (e) {
+          console.error("Failed to parse products", e);
+        }
+      }
+    }
+    return productsData;
+  });
 
   // Load cart from local storage on mount
   useEffect(() => {
@@ -74,6 +96,29 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     }
   }, []);
+
+  const addProduct = (product: Product) => {
+    const updated = [...products, product];
+    setProducts(updated);
+    localStorage.setItem("mahqee_products", JSON.stringify(updated));
+  };
+
+  const resetProducts = () => {
+    setProducts(productsData);
+    localStorage.removeItem("mahqee_products");
+  };
+
+  const deleteProduct = (productId: string) => {
+    const updated = products.filter(p => p.id !== productId);
+    setProducts(updated);
+    localStorage.setItem("mahqee_products", JSON.stringify(updated));
+  };
+
+  const updateProduct = (productId: string, updatedProduct: Product) => {
+    const updated = products.map(p => p.id === productId ? updatedProduct : p);
+    setProducts(updated);
+    localStorage.setItem("mahqee_products", JSON.stringify(updated));
+  };
 
   // Save cart to local storage
   const saveCart = (items: CartItem[]) => {
@@ -141,7 +186,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updateQuantity,
         clearCart,
         cartCount,
-        cartTotal
+        cartTotal,
+        products,
+        addProduct,
+        deleteProduct,
+        updateProduct,
+        resetProducts
       }}
     >
       {children}

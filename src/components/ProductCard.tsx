@@ -219,7 +219,7 @@ export default function ProductCard({
         }}
       >
         {/* Best Seller Badge */}
-        {showBestSellerBadge && (
+        {(showBestSellerBadge || product.isBestSeller) && (
           <div style={{
             position: "absolute",
             top: "16px",
@@ -271,7 +271,7 @@ export default function ProductCard({
 
         {/* Dynamic Visual Content */}
         <div className="floating-element-1" style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
-          {product.image.startsWith("/images/") ? (
+          {(product.image.startsWith("/images/") || product.image.startsWith("data:image/")) ? (
             <Image 
               src={product.images && product.images[activeVisual % product.images.length] ? product.images[activeVisual % product.images.length] : product.image} 
               alt={product.name} 
@@ -327,8 +327,8 @@ export default function ProductCard({
           gap: "6px",
           zIndex: 5
         }}>
-          {[...Array(product.image.startsWith("/images/") && product.images ? product.images.length : 3)].map((_, idx) => {
-            const isActive = activeVisual % (product.image.startsWith("/images/") && product.images ? product.images.length : 3) === idx;
+          {[...Array((product.image.startsWith("/images/") || product.image.startsWith("data:image/")) && product.images ? product.images.length : 3)].map((_, idx) => {
+            const isActive = activeVisual % ((product.image.startsWith("/images/") || product.image.startsWith("data:image/")) && product.images ? product.images.length : 3) === idx;
             return (
               <button
                 key={idx}

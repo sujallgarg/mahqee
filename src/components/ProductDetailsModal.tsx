@@ -165,7 +165,7 @@ export default function ProductDetailsModal({ product, onClose }: ProductDetails
           <div style={{
             position: "relative",
             width: "100%",
-            height: "280px",
+            height: "500px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -174,7 +174,7 @@ export default function ProductDetailsModal({ product, onClose }: ProductDetails
             backgroundColor: "#eaeae8",
             border: "1px solid rgba(16, 34, 77, 0.04)"
           }}>
-            {product.image.startsWith("/images/") ? (
+            {(product.image.startsWith("/images/") || product.image.startsWith("data:image/")) ? (
               <Image 
                 src={product.images && product.images[activeImageIndex % product.images.length] ? product.images[activeImageIndex % product.images.length] : product.image} 
                 alt={product.name} 
