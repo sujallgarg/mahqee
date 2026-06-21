@@ -115,35 +115,24 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     // Fetch dynamic products from file-based server database API
-    // In production (Vercel), we skip this fetch if we already have local cache,
-    // so client additions/deletions persist without being overwritten by the read-only server.
-    const isProd = process.env.NODE_ENV === "production";
-    const hasCache = !!localStorage.getItem("mahqee_products");
-
-    if (!isProd || !hasCache) {
-      fetch("/api/products", { cache: "no-store" })
-        .then((res) => {
-          if (!res.ok) throw new Error("API failed");
-          return res.json();
-        })
-        .then((data) => {
-          setProducts(data);
-          safeSaveProducts(data);
-        })
-        .catch((err) => {
-          console.warn("Could not load products from Server API, using local storage cache fallback", err);
-        });
-    }
+    fetch("/api/products", { cache: "no-store" })
+      .then((res) => {
+        if (!res.ok) throw new Error("API failed");
+        return res.json();
+      })
+      .then((data) => {
+        setProducts(data);
+        safeSaveProducts(data);
+      })
+      .catch((err) => {
+        console.warn("Could not load products from Server API, using local storage cache fallback", err);
+      });
   }, []);
 
   const addProduct = async (product: Product) => {
     const updated = [...products, product];
     setProducts(updated);
     safeSaveProducts(updated);
-
-    if (process.env.NODE_ENV === "production") {
-      return; // Skip server writes on read-only production environments like Vercel
-    }
 
     try {
       const res = await fetch("/api/products", {
@@ -163,10 +152,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setProducts(productsData);
     localStorage.removeItem("mahqee_products");
 
-    if (process.env.NODE_ENV === "production") {
-      return; // Skip server writes on read-only production environments like Vercel
-    }
-
     try {
       const res = await fetch("/api/products?reset=true", {
         method: "DELETE"
@@ -184,10 +169,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setProducts(updated);
     safeSaveProducts(updated);
 
-    if (process.env.NODE_ENV === "production") {
-      return; // Skip server writes on read-only production environments like Vercel
-    }
-
     try {
       const res = await fetch(`/api/products?id=${productId}`, {
         method: "DELETE"
@@ -204,10 +185,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const updated = products.map(p => p.id === productId ? updatedProduct : p);
     setProducts(updated);
     safeSaveProducts(updated);
-
-    if (process.env.NODE_ENV === "production") {
-      return; // Skip server writes on read-only production environments like Vercel
-    }
 
     try {
       const res = await fetch("/api/products", {
