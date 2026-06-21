@@ -68,21 +68,26 @@ export const productsData: Product[] = [
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [products, setProducts] = useState<Product[]>(() => {
-    if (typeof window !== "undefined") {
-      const savedProducts = localStorage.getItem("mahqee_products");
-      if (savedProducts) {
-        try {
-          return JSON.parse(savedProducts);
-        } catch (e) {
-          console.error("Failed to parse products", e);
-        }
-      }
-    }
-    return productsData;
-  });
+  const [products, setProducts] = useState<Product[]>(productsData);
 
-  // Load cart from local storage on mount
+  // Safe wrapper functions to prevent crashes if Base64 images cause localStorage quota to be exceeded
+  const safeSaveProducts = (data: Product[]) => {
+    try {
+      localStorage.setItem("mahqee_products", JSON.stringify(data));
+    } catch (e) {
+      console.warn("Failed to write products to localStorage cache (quota exceeded)", e);
+    }
+  };
+
+  const safeSaveCart = (items: CartItem[]) => {
+    try {
+      localStorage.setItem("mahqee_cart", JSON.stringify(items));
+    } catch (e) {
+      console.warn("Failed to write cart to localStorage cache (quota exceeded)", e);
+    }
+  };
+
+  // Load cart and fetch products from database API on mount
   useEffect(() => {
     const savedCart = localStorage.getItem("mahqee_cart");
     if (savedCart) {
@@ -95,35 +100,110 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.error("Failed to parse cart", e);
       }
     }
+
+    // Load from localStorage cache immediately on mount to be fast and hydration-safe
+    const savedProducts = localStorage.getItem("mahqee_products");
+    if (savedProducts) {
+      try {
+        const parsedProducts = JSON.parse(savedProducts);
+        setTimeout(() => {
+          setProducts(parsedProducts);
+        }, 0);
+      } catch (e) {
+        console.error("Failed to parse cached products", e);
+      }
+    }
+
+    // Fetch dynamic products from file-based server database API
+    fetch("/api/products", { cache: "no-store" })
+      .then((res) => {
+        if (!res.ok) throw new Error("API failed");
+        return res.json();
+      })
+      .then((data) => {
+        setProducts(data);
+        safeSaveProducts(data);
+      })
+      .catch((err) => {
+        console.warn("Could not load products from Server API, using local storage cache fallback", err);
+      });
   }, []);
 
-  const addProduct = (product: Product) => {
+  const addProduct = async (product: Product) => {
     const updated = [...products, product];
     setProducts(updated);
-    localStorage.setItem("mahqee_products", JSON.stringify(updated));
+    safeSaveProducts(updated);
+
+    try {
+      const res = await fetch("/api/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(product)
+      });
+      if (!res.ok) {
+        throw new Error(`Server returned status ${res.status}`);
+      }
+    } catch (e) {
+      console.error("Failed to persist product add on server", e);
+    }
   };
 
-  const resetProducts = () => {
+  const resetProducts = async () => {
     setProducts(productsData);
     localStorage.removeItem("mahqee_products");
+
+    try {
+      const res = await fetch("/api/products?reset=true", {
+        method: "DELETE"
+      });
+      if (!res.ok) {
+        throw new Error(`Server returned status ${res.status}`);
+      }
+    } catch (e) {
+      console.error("Failed to persist catalog reset on server", e);
+    }
   };
 
-  const deleteProduct = (productId: string) => {
+  const deleteProduct = async (productId: string) => {
     const updated = products.filter(p => p.id !== productId);
     setProducts(updated);
-    localStorage.setItem("mahqee_products", JSON.stringify(updated));
+    safeSaveProducts(updated);
+
+    try {
+      const res = await fetch(`/api/products?id=${productId}`, {
+        method: "DELETE"
+      });
+      if (!res.ok) {
+        throw new Error(`Server returned status ${res.status}`);
+      }
+    } catch (e) {
+      console.error("Failed to persist product deletion on server", e);
+    }
   };
 
-  const updateProduct = (productId: string, updatedProduct: Product) => {
+  const updateProduct = async (productId: string, updatedProduct: Product) => {
     const updated = products.map(p => p.id === productId ? updatedProduct : p);
     setProducts(updated);
-    localStorage.setItem("mahqee_products", JSON.stringify(updated));
+    safeSaveProducts(updated);
+
+    try {
+      const res = await fetch("/api/products", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedProduct)
+      });
+      if (!res.ok) {
+        throw new Error(`Server returned status ${res.status}`);
+      }
+    } catch (e) {
+      console.error("Failed to persist product edits on server", e);
+    }
   };
 
   // Save cart to local storage
   const saveCart = (items: CartItem[]) => {
     setCartItems(items);
-    localStorage.setItem("mahqee_cart", JSON.stringify(items));
+    safeSaveCart(items);
   };
 
   const openCart = () => setIsCartOpen(true);
