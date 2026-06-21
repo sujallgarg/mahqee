@@ -86,60 +86,25 @@ export default function Navbar() {
           alignItems: "center",
           justifyContent: "space-between"
         }}>
-          {/* Brand Logo with SVG Butterfly */}
+          {/* Brand Logo with Custom Image */}
           <Link href="/" style={{
             display: "flex",
             alignItems: "center",
-            gap: "10px",
-            color: "var(--text-primary)",
-            fontWeight: "400",
-            fontFamily: "var(--font-serif)"
+            height: "100%"
           }}>
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ flexShrink: 0 }}>
-              {/* Pink circle aura */}
-              <circle 
-                cx="16" 
-                cy="16" 
-                r="13" 
-                stroke="var(--accent-pink)" 
-                strokeWidth="1.8" 
-                fill="none" 
-                strokeDasharray="42 12 42 12" 
-                transform="rotate(-45 16 16)" 
-                opacity="0.85"
-              />
-              {/* Left Wing (royal blue outline, sky blue fill) */}
-              <path 
-                d="M 16 16 C 13 8, 4 9, 5 14 C 6 18, 14 17, 15.5 16 C 14 20, 9 23, 11 25 C 13 26, 15.5 20, 16 16" 
-                fill="var(--accent-blue)" 
-                stroke="var(--text-primary)" 
-                strokeWidth="1.5" 
-                strokeLinejoin="round" 
-              />
-              {/* Right Wing (symmetrical) */}
-              <path 
-                d="M 16 16 C 19 8, 28 9, 27 14 C 26 18, 18 17, 16.5 16 C 18 20, 23 23, 21 25 C 19 26, 16.5 20, 16 16" 
-                fill="var(--accent-blue)" 
-                stroke="var(--text-primary)" 
-                strokeWidth="1.5" 
-                strokeLinejoin="round" 
-              />
-              {/* Body */}
-              <line x1="16" y1="10" x2="16" y2="22" stroke="var(--text-primary)" strokeWidth="1.5" strokeLinecap="round" />
-              {/* Antennas */}
-              <path d="M 15 10 Q 13 6, 11 7" stroke="var(--text-primary)" strokeWidth="0.8" fill="none" strokeLinecap="round" />
-              <path d="M 17 10 Q 19 6, 21 7" stroke="var(--text-primary)" strokeWidth="0.8" fill="none" strokeLinecap="round" />
-            </svg>
-            <span style={{
-              fontSize: "17px",
-              letterSpacing: "0.15em",
-              textTransform: "uppercase",
-              marginTop: "1px"
-            }}>
-              MAHQEE
-            </span>
+            <Image 
+              src="/images/logo.png" 
+              alt="MAHQEE Logo" 
+              width={150} 
+              height={48}
+              style={{ 
+                height: "48px", 
+                width: "auto",
+                objectFit: "contain" 
+              }}
+              priority
+            />
           </Link>
-
           {/* Desktop Nav Links (updated to match router specifications) */}
           <nav style={{
             display: "flex",

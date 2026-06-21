@@ -62,17 +62,17 @@ export default function Testimonials() {
     }
   ];
 
-  const scrollRight = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: 300, behavior: "smooth" });
-    }
-  };
+  // const scrollRight = () => {
+  //   if (scrollRef.current) {
+  //     scrollRef.current.scrollBy({ left: 300, behavior: "smooth" });
+  //   }
+  // };
 
-  const scrollLeft = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollBy({ left: -300, behavior: "smooth" });
-    }
-  };
+  // const scrollLeft = () => {
+  //   if (scrollRef.current) {
+  //     scrollRef.current.scrollBy({ left: -300, behavior: "smooth" });
+  //   }
+  // };
 
   const renderProductThumbnail = (type: string) => {
     // Mini visual thumbnail representation
