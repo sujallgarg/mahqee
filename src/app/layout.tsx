@@ -30,7 +30,8 @@ export const metadata: Metadata = {
     title: "MAHQEE | Premium Beauty & Styling Accessories",
     description: "Explore MAHQEE's curated collections of premium beauty, styling, and grooming essentials.",
     type: "website",
-  }
+    images: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
