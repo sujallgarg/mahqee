@@ -44,7 +44,6 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const productsData: Product[] = [
-
   {
     id: "floral-comb",
     name: "Floral Comb",
@@ -52,18 +51,56 @@ export const productsData: Product[] = [
     category: "Hair",
     price: 199,
     description: "Designed with a premium floral pattern, the 360 Floral Comb features wide-spaced teeth crafted to gently detangle thick, dense, and curly hair. Prevents hair breakage, distributes natural scalp oils evenly, and adds a luxury aesthetic to your vanity.",
-    image: "/images/floral-comb2.png",
+    image: "/images/floracombmain.png",
     images: [
-      "/images/floral-comb2.png",
+      "/images/floracombmain.png",
       "/images/floral-comb.png",
       "/images/floral-comb3.png",
       "/images/floral-comb4.png",
-      "/images/floral-comb4.png",
+      "/images/floral-comb4.png"
     ],
     ingredients: ["Premium Cellulose Acetate", "Wide-teeth Detangling Layout", "Anti-static coating"],
     benefits: ["Gently detangles thick and curly hair", "Prevents breakage and hair loss", "Distributes natural oils evenly"]
   },
+  {
+    id: "premium-eyelash-curler",
+    name: "Premium Eyelash Curler",
+    tagline: "Miracle of Beauty — Effortless Curl, Perfect Definition.",
+    category: "Makeup",
+    price: 299,
+    description: "\"Achieve beautifully lifted, high-definition curls with the MAHQUEE Premium Eyelash Curler. Designed with an ergonomic grip for steady control, it features a smooth mechanism that applies even pressure without pinching or pulling your lashes. Perfect for all eye shapes to instantly open up and brighten your look before mascara application.\"",
+    image: "/images/eyelash-curler.png",
+    images: [
+      "/images/eyelash-curler.png",
+      "/images/premium-eyelash-curler-gallery-1.png",
+      "/images/premium-eyelash-curler-gallery-2.png"
+    ],
+    ingredients: [],
+    benefits: [],
+    isBestSeller: true
+  },
+  {
+    id: "blackhead-blemish-remover-tool",
+    name: "Blackhead & Blemish Remover Tool",
+    tagline: "Flawless Skin, Effortlessly — India's No.1 Quality Extraction Tool.",
+    category: "Makeup",
+    price: 149,
+    description: "\"Achieve a clearer, blemish-free complexion with the MAHQEE Professional Blackhead Remover. This premium 12 cm stainless steel tool features a dual-sided design tailored for precision: a small spoon end for smooth extraction and an anti-loop tip for targeting stubborn blackheads and whiteheads. Designed with an anti-slip textured handle for maximum grip and steady control, it ensures safe, hygienic skin clearing at home without damaging surrounding tissue.\"",
+    image: "/images/blackhead-blemish-remover-tool-main.png",
+    images: [
+      "/images/blackhead-blemish-remover-tool-gallery-0.png",
+      "/images/blackhead-blemish-remover-tool-gallery-1.png",
+      "/images/blackhead-blemish-remover-tool-gallery-2.jpg",
+      "/images/blackhead-blemish-remover-tool-gallery-3.png",
+      "/images/blackhead-blemish-remover-tool-gallery-4.png",
+      "/images/blackhead-blemish-remover-tool-gallery-5.png"
+    ],
+    ingredients: [],
+    benefits: [],
+    isBestSeller: true
+  }
 ];
+
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);

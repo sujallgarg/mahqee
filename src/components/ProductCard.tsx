@@ -451,7 +451,7 @@ export default function ProductCard({
               transition: "var(--transition-fast)"
             }}
           >
-            {layoutVariant === "best-seller" ? "Select Size" : "Buy Now"}
+            {layoutVariant === "best-seller" ? "Add to Bag" : "Buy Now"}
           </button>
         </div>
       )}
