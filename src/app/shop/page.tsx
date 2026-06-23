@@ -20,9 +20,11 @@ export default function ShopPage() {
       if (cat) {
         setTimeout(() => {
           // Map cat query to clean text
-          if (cat === "serums") setActiveCategory("Serums");
-          else if (cat === "creams") setActiveCategory("Creams");
-          else if (cat === "oils") setActiveCategory("Oils");
+          if (cat === "nail-accessory") setActiveCategory("Nail Accessory");
+          else if (cat === "hair") setActiveCategory("Hair");
+          else if (cat === "foot") setActiveCategory("Foot");
+          else if (cat === "bath") setActiveCategory("Bath");
+          else if (cat === "makeup") setActiveCategory("Makeup");
         }, 0);
       }
       const search = params.get("search");
@@ -34,7 +36,7 @@ export default function ShopPage() {
     }
   }, []);
 
-  const categories = ["All", "Serums", "Creams", "Oils"];
+  const categories = ["All", "Nail Accessory", "Hair", "Foot", "Bath", "Makeup"];
 
   const filteredProducts = products.filter((product) => {
     const matchesCategory = activeCategory === "All" || product.category === activeCategory;

@@ -23,12 +23,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "MAHQEE | Botanical Cellular Skincare",
-  description: "Experience luxury organic skincare formulated with biotechnology. High-performance serums, nourishing oils, and restorative creams designed for cellular rejuvenation.",
-  keywords: ["beauty", "luxury skincare", "botanical elixir", "organic serum", "MAHQEE"],
+  title: "MAHQEE | Premium Beauty & Styling Accessories",
+  description: "Explore MAHQEE's curated collections of premium beauty, styling, nail accessories, hair, foot, and bath essentials designed to elevate your grooming routine.",
+  keywords: ["beauty", "nail accessory", "hair styling", "foot care", "bath body", "makeup blenders", "MAHQEE"],
   openGraph: {
-    title: "MAHQEE | Botanical Cellular Skincare",
-    description: "Experience luxury organic skincare formulated with biotechnology.",
+    title: "MAHQEE | Premium Beauty & Styling Accessories",
+    description: "Explore MAHQEE's curated collections of premium beauty, styling, and grooming essentials.",
     type: "website",
   }
 };

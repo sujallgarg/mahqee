@@ -49,7 +49,7 @@ export const productsData: Product[] = [
     id: "floral-comb",
     name: "Floral Comb",
     tagline: "Extra Width for Dense Hair",
-    category: "Oils",
+    category: "Hair",
     price: 199,
     description: "Designed with a premium floral pattern, the 360 Floral Comb features wide-spaced teeth crafted to gently detangle thick, dense, and curly hair. Prevents hair breakage, distributes natural scalp oils evenly, and adds a luxury aesthetic to your vanity.",
     image: "/images/floral-comb2.png",

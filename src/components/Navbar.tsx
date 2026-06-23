@@ -129,7 +129,7 @@ export default function Navbar() {
                   position: "absolute",
                   top: "100%",
                   left: "-120px",
-                  width: "560px",
+                  width: "420px",
                   backgroundColor: "#ffffff",
                   border: "1px solid var(--border-color)",
                   borderRadius: "16px",
@@ -137,7 +137,7 @@ export default function Navbar() {
                   padding: "24px",
                   zIndex: 2000,
                   display: "grid",
-                  gridTemplateColumns: "1.2fr 1fr 1fr",
+                  gridTemplateColumns: "1.2fr 1fr",
                   gap: "24px",
                   animation: "fadeIn 0.2s ease-out"
                 }}>
@@ -145,31 +145,20 @@ export default function Navbar() {
                   <div>
                     <h4 style={{ fontSize: "11px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "1px", color: "var(--accent-pink)", marginBottom: "12px" }}>Categories</h4>
                     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                      <Link href="/shop?cat=serums" className="dropdown-item">Serums & Elixirs</Link>
-                      <Link href="/shop?cat=creams" className="dropdown-item">Barrier Creams</Link>
-                      <Link href="/shop?cat=oils" className="dropdown-item">Restorative Oils</Link>
-                      <Link href="/shop" className="dropdown-item">Cleansing Balms</Link>
-                      <Link href="/shop" className="dropdown-item">Toners & Hydrosols</Link>
-                      <Link href="/shop" className="dropdown-item">Eye Nectars</Link>
+                      <Link href="/shop?cat=nail-accessory" className="dropdown-item">Nail Accessory</Link>
+                      <Link href="/shop?cat=hair" className="dropdown-item">Hair</Link>
+                      <Link href="/shop?cat=foot" className="dropdown-item">Foot</Link>
+                      <Link href="/shop?cat=bath" className="dropdown-item">Bath</Link>
+                      <Link href="/shop?cat=makeup" className="dropdown-item">Makeup</Link>
+                      <Link href="/shop" className="dropdown-item">All Categories</Link>
                     </div>
                   </div>
                   
-                  {/* Column 2: Concerns */}
-                  <div>
-                    <h4 style={{ fontSize: "11px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "1px", color: "var(--text-secondary)", marginBottom: "12px" }}>Skin Concerns</h4>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                      <Link href="/skininsights" className="dropdown-item">Acne & Breakouts</Link>
-                      <Link href="/skininsights" className="dropdown-item">Aging & Wrinkles</Link>
-                      <Link href="/skininsights" className="dropdown-item">Redness & Irritation</Link>
-                      <Link href="/skininsights" className="dropdown-item">Dullness & Hydration</Link>
-                    </div>
-                  </div>
-                  
-                  {/* Column 3: Brand Info */}
+                  {/* Column 2: Brand Info */}
                   <div>
                     <h4 style={{ fontSize: "11px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "1px", color: "var(--text-secondary)", marginBottom: "12px" }}>MAHQEE Universe</h4>
                     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                      <Link href="/about" className="dropdown-item">About Our BioTech</Link>
+                      <Link href="/about" className="dropdown-item">About Us</Link>
                       <Link href="/contact" className="dropdown-item">Connect With Us</Link>
                       <Link href="/best-sellers" className="dropdown-item">Award Winners</Link>
                       <Link href="/track-order" className="dropdown-item">Track Delivery</Link>
@@ -487,10 +476,12 @@ export default function Navbar() {
           }} onClick={(e) => e.stopPropagation()}>
             <h3 style={{ fontSize: "11px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "1px", color: "var(--accent-pink)", borderBottom: "1px solid var(--border-color)", paddingBottom: "10px" }}>Shop Categories</h3>
             <div style={{ display: "flex", flexDirection: "column", gap: "12px", paddingLeft: "8px" }}>
-              <Link href="/shop?cat=serums" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Serums & Elixirs</Link>
-              <Link href="/shop?cat=creams" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Barrier Creams</Link>
-              <Link href="/shop?cat=oils" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Restorative Oils</Link>
-              <Link href="/shop" className="nav-link" onClick={() => setMobileMenuOpen(false)}>All Formulations</Link>
+              <Link href="/shop?cat=nail-accessory" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Nail Accessory</Link>
+              <Link href="/shop?cat=hair" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Hair</Link>
+              <Link href="/shop?cat=foot" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Foot</Link>
+              <Link href="/shop?cat=bath" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Bath</Link>
+              <Link href="/shop?cat=makeup" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Makeup</Link>
+              <Link href="/shop" className="nav-link" onClick={() => setMobileMenuOpen(false)}>All Categories</Link>
             </div>
 
             <h3 style={{ fontSize: "11px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "1px", color: "var(--text-secondary)", borderBottom: "1px solid var(--border-color)", paddingBottom: "10px", marginTop: "10px" }}>Discover</h3>

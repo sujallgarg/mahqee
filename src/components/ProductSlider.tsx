@@ -10,13 +10,13 @@ interface ProductSliderProps {
 
 export default function ProductSlider({ onLearnMore }: ProductSliderProps) {
   const { products } = useCart();
-  const [activeCategory, setActiveCategory] = useState("All Elixirs");
+  const [activeCategory, setActiveCategory] = useState("All Products");
   const sliderRef = useRef<HTMLDivElement>(null);
   
-  const categories = ["All Elixirs", "Serums", "Creams", "Oils"];
+  const categories = ["All Products", "Nail Accessory", "Hair", "Foot", "Bath", "Makeup"];
 
   const filteredProducts = products.filter((product) => {
-    if (activeCategory === "All Elixirs") return true;
+    if (activeCategory === "All Products") return true;
     return product.category.toLowerCase() === activeCategory.toLowerCase();
   });
 

@@ -31,7 +31,7 @@ export default function AdminPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [tagline, setTagline] = useState("");
-  const [category, setCategory] = useState("Serums");
+  const [category, setCategory] = useState("Nail Accessory");
   const [price, setPrice] = useState("299");
   const [description, setDescription] = useState("");
   
@@ -238,7 +238,7 @@ export default function AdminPage() {
     setEditingId(null);
     setName("");
     setTagline("");
-    setCategory("Serums");
+    setCategory("Nail Accessory");
     setPrice("299");
     setDescription("");
     setImages([]);
@@ -473,9 +473,11 @@ export default function AdminPage() {
                     onChange={(e) => setCategory(e.target.value)}
                     style={inputStyle}
                   >
-                    <option value="Serums">Serums</option>
-                    <option value="Creams">Creams</option>
-                    <option value="Oils">Oils</option>
+                    <option value="Nail Accessory">Nail Accessory</option>
+                    <option value="Hair">Hair</option>
+                    <option value="Foot">Foot</option>
+                    <option value="Bath">Bath</option>
+                    <option value="Makeup">Makeup</option>
                   </select>
                 </div>
                 <div>

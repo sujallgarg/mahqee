@@ -77,11 +77,11 @@ export default function ProductDetailsModal({ product, onClose }: ProductDetails
     }
   };
 
-  // Mock clinical trial numbers to enhance premium science feel
+  // Mock consumer study numbers to enhance premium branding feel
   const mockClinicalData = [
-    { pct: "96%", metric: "Experienced instant hydration and plumper skin" },
-    { pct: "91%", metric: "Reported visible reduction in fine expression lines" },
-    { pct: "95%", metric: "Observed dynamic improvement in skin tone clarity" }
+    { pct: "98%", metric: "Experienced gentle, crease-free styling and detangling" },
+    { pct: "95%", metric: "Reported seamless, streak-free cosmetic application" },
+    { pct: "97%", metric: "Confirmed excellent durability and premium vanity feel" }
   ];
 
   return (
@@ -297,7 +297,7 @@ export default function ProductDetailsModal({ product, onClose }: ProductDetails
           {/* Clinical Results Section */}
           <div style={{ marginBottom: "32px" }}>
             <h4 style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)", marginBottom: "16px" }}>
-              Clinical Study Results
+              Consumer Study Results
             </h4>
             <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
               {mockClinicalData.map((d, i) => (
@@ -312,7 +312,7 @@ export default function ProductDetailsModal({ product, onClose }: ProductDetails
           {/* Active Ingredients list */}
           <div style={{ marginBottom: "32px" }}>
             <h4 style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)", marginBottom: "12px" }}>
-              Key Formulation Bio-actives
+              Key Product Specifications
             </h4>
             <ul style={{ paddingLeft: "18px", color: "var(--text-secondary)", fontSize: "13.5px", lineHeight: "1.6", display: "flex", flexDirection: "column", gap: "6px" }}>
               {product.ingredients.map((ing) => (

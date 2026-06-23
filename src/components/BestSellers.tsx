@@ -18,10 +18,10 @@ export default function BestSellers({ onLearnMore, isSubpage = false }: BestSell
   // Curate products to show (marked as best seller, fallback to original best sellers)
   const bestSellerProducts = [
     ...products.filter(p => p.isBestSeller),
-    products.find(p => p.id === "cleansing-balm") || products[2],
-    products.find(p => p.id === "rose-hydrosol") || products[3],
-    products.find(p => p.id === "jasmine-cream") || products[4],
-    products.find(p => p.id === "orchid-serum") || products[0]
+    products.find(p => p.id === "makeup-wedges") || products[1],
+    products.find(p => p.id === "pink-scrunchie") || products[2],
+    products.find(p => p.id === "face-roller") || products[3],
+    products.find(p => p.id === "floral-comb") || products[0]
   ].filter((prod, index, self) => prod && self.findIndex(p => p?.id === prod.id) === index).slice(0, 4);
 
   return (

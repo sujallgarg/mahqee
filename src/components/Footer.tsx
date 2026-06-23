@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -19,14 +20,13 @@ export default function Footer() {
           marginBottom: "48px"
         }}>
           <div>
-            <h4 style={{ color: "var(--text-primary)", fontWeight: "500", marginBottom: "16px", fontSize: "12px" }}>Explore Lineup</h4>
+            <h4 style={{ color: "var(--text-primary)", fontWeight: "500", marginBottom: "16px", fontSize: "12px" }}>Explore Categories</h4>
             <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "10px" }}>
-              <li><a href="#" className="footer-link">Orchid Youth Serum</a></li>
-              <li><a href="#" className="footer-link">The Alchemist&apos;s Oil</a></li>
-              <li><a href="#" className="footer-link">Alabaster Cleansing Balm</a></li>
-              <li><a href="#" className="footer-link">Rose Water Hydrosol</a></li>
-              <li><a href="#" className="footer-link">Jasmine Velvet Cream</a></li>
-              <li><a href="#" className="footer-link">Luminous Eye Nectar</a></li>
+              <li><Link href="/shop?cat=nail-accessory" className="footer-link">Nail Accessory</Link></li>
+              <li><Link href="/shop?cat=hair" className="footer-link">Hair</Link></li>
+              <li><Link href="/shop?cat=foot" className="footer-link">Foot</Link></li>
+              <li><Link href="/shop?cat=bath" className="footer-link">Bath</Link></li>
+              <li><Link href="/shop?cat=makeup" className="footer-link">Makeup</Link></li>
             </ul>
           </div>
           <div>
