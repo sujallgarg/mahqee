@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 
 interface TrackingEvent {
@@ -19,22 +19,136 @@ export default function TrackOrderPage() {
     events: TrackingEvent[];
   } | null>(null);
 
+  // Poll server database for latest status of the searched order code
+  useEffect(() => {
+    if (!searchedCode) return;
+
+    const trackPoll = () => {
+      fetch("/api/orders", { cache: "no-store" })
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to fetch orders from server");
+          return res.json();
+        })
+        .then((ordersList: any[]) => {
+          const foundOrder = ordersList.find(
+            (o: any) => o.orderNumber.trim().toLowerCase() === searchedCode.trim().toLowerCase()
+          );
+          if (foundOrder) {
+            const status = foundOrder.paymentStatus || "processing";
+            if (status === "verified") {
+              setTrackingInfo({
+                status: "shipped",
+                carrier: "MAHQEE Express Logistics (DHL Partner)",
+                estDelivery: "2-3 Business Days",
+                events: [
+                  { time: "Today, 10:45 AM", location: "Mumbai Hub, India", status: "Package sorted & loaded onto express container" },
+                  { time: "Yesterday, 02:30 PM", location: "Warehouse Facility, New Delhi", status: "Package packed, sealed, and handed to dispatch team" },
+                  { time: "Yesterday, 09:12 AM", location: "Digital Operations", status: "Paytm payment verified by WhatsApp agent, invoice generated, order confirmed" }
+                ]
+              });
+            } else if (status === "failed") {
+              setTrackingInfo({
+                status: "placed",
+                carrier: "MAHQEE Express Logistics (DHL Partner)",
+                estDelivery: "On Hold (Payment Unverified)",
+                events: [
+                  { time: "Today, 11:30 AM", location: "Digital Operations", status: "Verification Failed: Our support agent could not verify your Paytm payment." },
+                  { time: "Yesterday, 09:12 AM", location: "Digital Operations", status: "Order registered on server. Awaiting payment receipt verification." }
+                ]
+              });
+            } else {
+              setTrackingInfo({
+                status: "processing",
+                carrier: "MAHQEE Express Logistics (DHL Partner)",
+                estDelivery: "Awaiting Verification",
+                events: [
+                  { time: "Today, 09:15 AM", location: "Digital Operations", status: "Awaiting Paytm payment receipt verification by our WhatsApp agent." },
+                  { time: "Yesterday, 09:12 AM", location: "Digital Operations", status: "Order details registered. Awaiting receipt upload on WhatsApp." }
+                ]
+              });
+            }
+          }
+        })
+        .catch(err => {
+          console.warn("Could not sync tracking info from server database", err);
+        });
+    };
+
+    trackPoll();
+    const interval = setInterval(trackPoll, 5000);
+    return () => clearInterval(interval);
+  }, [searchedCode]);
+
   const handleTrack = (e: React.FormEvent) => {
     e.preventDefault();
     if (!orderCode.trim()) return;
 
-    // Simulate looking up tracking details
     setSearchedCode(orderCode);
-    setTrackingInfo({
-      status: "shipped", // mock status
-      carrier: "MAHQEE Express Logistics (DHL Partner)",
-      estDelivery: "2-3 Business Days",
-      events: [
-        { time: "Today, 10:45 AM", location: "Mumbai Hub, India", status: "Package sorted & loaded onto express container" },
-        { time: "Yesterday, 02:30 PM", location: "Warehouse Facility, New Delhi", status: "Package packed, sealed, and handed to dispatch team" },
-        { time: "Yesterday, 09:12 AM", location: "Digital Operations", status: "Payment verified, invoice generated, order confirmed" }
-      ]
-    });
+
+    // Look up the order in localStorage
+    let foundOrder = null;
+    if (typeof window !== "undefined") {
+      const storedOrders = localStorage.getItem("mahqee_orders");
+      if (storedOrders) {
+        try {
+          const orders = JSON.parse(storedOrders);
+          foundOrder = orders.find(
+            (o: any) => o.orderNumber.trim().toLowerCase() === orderCode.trim().toLowerCase()
+          );
+        } catch (err) {
+          console.error("Failed to parse orders list in track-order page", err);
+        }
+      }
+    }
+
+    if (foundOrder) {
+      const status = foundOrder.paymentStatus || "processing";
+      if (status === "verified") {
+        setTrackingInfo({
+          status: "shipped",
+          carrier: "MAHQEE Express Logistics (DHL Partner)",
+          estDelivery: "2-3 Business Days",
+          events: [
+            { time: "Today, 10:45 AM", location: "Mumbai Hub, India", status: "Package sorted & loaded onto express container" },
+            { time: "Yesterday, 02:30 PM", location: "Warehouse Facility, New Delhi", status: "Package packed, sealed, and handed to dispatch team" },
+            { time: "Yesterday, 09:12 AM", location: "Digital Operations", status: "Paytm payment verified by WhatsApp agent, invoice generated, order confirmed" }
+          ]
+        });
+      } else if (status === "failed") {
+        setTrackingInfo({
+          status: "placed",
+          carrier: "MAHQEE Express Logistics (DHL Partner)",
+          estDelivery: "On Hold (Payment Unverified)",
+          events: [
+            { time: "Today, 11:30 AM", location: "Digital Operations", status: "Verification Failed: Our support agent could not verify your Paytm payment." },
+            { time: "Yesterday, 09:12 AM", location: "Digital Operations", status: "Order registered on server. Awaiting payment receipt verification." }
+          ]
+        });
+      } else {
+        // processing
+        setTrackingInfo({
+          status: "processing",
+          carrier: "MAHQEE Express Logistics (DHL Partner)",
+          estDelivery: "Awaiting Verification",
+          events: [
+            { time: "Today, 09:15 AM", location: "Digital Operations", status: "Awaiting Paytm payment receipt verification by our WhatsApp agent." },
+            { time: "Yesterday, 09:12 AM", location: "Digital Operations", status: "Order details registered. Awaiting receipt upload on WhatsApp." }
+          ]
+        });
+      }
+    } else {
+      // Fallback: Simulate looking up tracking details for other codes (mock fallback)
+      setTrackingInfo({
+        status: "shipped", // mock status
+        carrier: "MAHQEE Express Logistics (DHL Partner)",
+        estDelivery: "2-3 Business Days",
+        events: [
+          { time: "Today, 10:45 AM", location: "Mumbai Hub, India", status: "Package sorted & loaded onto express container" },
+          { time: "Yesterday, 02:30 PM", location: "Warehouse Facility, New Delhi", status: "Package packed, sealed, and handed to dispatch team" },
+          { time: "Yesterday, 09:12 AM", location: "Digital Operations", status: "Payment verified, invoice generated, order confirmed" }
+        ]
+      });
+    }
   };
 
   const getStepClass = (stepName: string) => {

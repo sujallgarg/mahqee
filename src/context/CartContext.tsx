@@ -73,7 +73,16 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Safe wrapper functions to prevent crashes if Base64 images cause localStorage quota to be exceeded
   const safeSaveProducts = (data: Product[]) => {
     try {
-      localStorage.setItem("mahqee_products", JSON.stringify(data));
+      const optimizedData = data.map(product => {
+        const hasBase64 = product.image && product.image.startsWith("data:image/");
+        const optimizedImages = product.images?.map(img => img.startsWith("data:image/") ? "" : img) || [];
+        return {
+          ...product,
+          image: hasBase64 ? "" : product.image,
+          images: optimizedImages
+        };
+      });
+      localStorage.setItem("mahqee_products", JSON.stringify(optimizedData));
     } catch (e) {
       console.warn("Failed to write products to localStorage cache (quota exceeded)", e);
     }
@@ -81,7 +90,19 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const safeSaveCart = (items: CartItem[]) => {
     try {
-      localStorage.setItem("mahqee_cart", JSON.stringify(items));
+      const optimizedItems = items.map(item => {
+        const hasBase64 = item.product.image && item.product.image.startsWith("data:image/");
+        const optimizedImages = item.product.images?.map(img => img.startsWith("data:image/") ? "" : img) || [];
+        return {
+          ...item,
+          product: {
+            ...item.product,
+            image: hasBase64 ? "" : item.product.image,
+            images: optimizedImages
+          }
+        };
+      });
+      localStorage.setItem("mahqee_cart", JSON.stringify(optimizedItems));
     } catch (e) {
       console.warn("Failed to write cart to localStorage cache (quota exceeded)", e);
     }
@@ -115,18 +136,25 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     // Fetch dynamic products from file-based server database API
-    fetch("/api/products", { cache: "no-store" })
-      .then((res) => {
-        if (!res.ok) throw new Error("API failed");
-        return res.json();
-      })
-      .then((data) => {
-        setProducts(data);
-        safeSaveProducts(data);
-      })
-      .catch((err) => {
-        console.warn("Could not load products from Server API, using local storage cache fallback", err);
-      });
+    const fetchProducts = () => {
+      fetch("/api/products", { cache: "no-store" })
+        .then((res) => {
+          if (!res.ok) throw new Error("API failed");
+          return res.json();
+        })
+        .then((data) => {
+          setProducts(data);
+          safeSaveProducts(data);
+        })
+        .catch((err) => {
+          console.warn("Could not load products from Server API, using local storage cache fallback", err);
+        });
+    };
+
+    fetchProducts();
+
+    const interval = setInterval(fetchProducts, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   const addProduct = async (product: Product) => {

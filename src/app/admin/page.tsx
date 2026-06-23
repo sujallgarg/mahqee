@@ -17,15 +17,89 @@ export default function AdminPage() {
   const [isMounted, setIsMounted] = useState(false);
   const [passcodeError, setPasscodeError] = useState("");
 
+  // Orders dashboard states
+  const [activeTab, setActiveTab] = useState<"catalog" | "orders">("catalog");
+  const [orders, setOrders] = useState<any[]>([]);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsMounted(true);
       if (typeof window !== "undefined") {
         setIsAuthorized(sessionStorage.getItem("mahqee_admin_authorized") === "true");
+        
+        const storedOrders = localStorage.getItem("mahqee_orders");
+        if (storedOrders) {
+          try {
+            setOrders(JSON.parse(storedOrders));
+          } catch (e) {
+            console.error("Failed to parse orders list in admin", e);
+          }
+        }
       }
     }, 0);
     return () => clearTimeout(timer);
   }, []);
+
+  // Poll orders queue from server
+  useEffect(() => {
+    if (!isAuthorized) return;
+
+    const fetchOrdersQueue = () => {
+      fetch("/api/orders", { cache: "no-store" })
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to fetch orders");
+          return res.json();
+        })
+        .then((data) => {
+          setOrders(data);
+          localStorage.setItem("mahqee_orders", JSON.stringify(data));
+        })
+        .catch(err => {
+          console.warn("Could not sync orders from server API inside admin", err);
+        });
+    };
+
+    fetchOrdersQueue();
+    const interval = setInterval(fetchOrdersQueue, 5000);
+    return () => clearInterval(interval);
+  }, [isAuthorized]);
+
+  const handleUpdateOrderStatus = (orderNumber: string, newStatus: "processing" | "verified" | "failed") => {
+    const updatedOrders = orders.map((o) => {
+      if (o.orderNumber === orderNumber) {
+        return { ...o, paymentStatus: newStatus };
+      }
+      return o;
+    });
+    setOrders(updatedOrders);
+    localStorage.setItem("mahqee_orders", JSON.stringify(updatedOrders));
+
+    const storedLastOrder = localStorage.getItem("mahqee_last_order");
+    if (storedLastOrder) {
+      try {
+        const lastOrder = JSON.parse(storedLastOrder);
+        if (lastOrder.orderNumber === orderNumber) {
+          lastOrder.paymentStatus = newStatus;
+          localStorage.setItem("mahqee_last_order", JSON.stringify(lastOrder));
+        }
+      } catch (e) {
+        console.error("Failed to update last order status in admin", e);
+      }
+    }
+
+    // Persist change on shared server database
+    fetch("/api/orders", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        orderNumber,
+        paymentStatus: newStatus
+      })
+    })
+    .catch(err => {
+      console.error("Failed to persist order verification status on server", err);
+    });
+  };
 
   // Admin form states
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -347,63 +421,123 @@ export default function AdminPage() {
             <span style={{ fontSize: "11px", fontWeight: "600", color: "var(--accent-pink)", letterSpacing: "1.5px", textTransform: "uppercase" }}>
               MAHQEE Control Center
             </span>
-            <h1 style={{ fontSize: "36px", color: "var(--text-primary)", fontFamily: "var(--font-serif)", marginTop: "4px" }}>
-              Catalog Dashboard
-            </h1>
+            <div style={{ display: "flex", gap: "24px", marginTop: "12px", alignItems: "center" }}>
+              <button 
+                onClick={() => setActiveTab("catalog")}
+                style={{
+                  background: "none",
+                  border: "none",
+                  padding: "0 0 8px 0",
+                  cursor: "pointer",
+                  fontSize: "28px",
+                  fontFamily: "var(--font-serif)",
+                  color: activeTab === "catalog" ? "var(--text-primary)" : "var(--text-secondary)",
+                  borderBottom: activeTab === "catalog" ? "2px solid var(--accent-pink)" : "2px solid transparent",
+                  transition: "all 0.2s"
+                }}
+              >
+                Catalog Dashboard
+              </button>
+              <button 
+                onClick={() => setActiveTab("orders")}
+                style={{
+                  background: "none",
+                  border: "none",
+                  padding: "0 0 8px 0",
+                  cursor: "pointer",
+                  fontSize: "28px",
+                  fontFamily: "var(--font-serif)",
+                  color: activeTab === "orders" ? "var(--text-primary)" : "var(--text-secondary)",
+                  borderBottom: activeTab === "orders" ? "2px solid var(--accent-pink)" : "2px solid transparent",
+                  transition: "all 0.2s"
+                }}
+              >
+                Orders Management
+              </button>
+            </div>
           </div>
-          <button
-            onClick={() => {
-              if (confirm("Are you sure you want to reset all products back to default hardcoded entries?")) {
-                resetProducts();
-                handleCancelEdit();
-                alert("Catalog database reset to defaults.");
-              }
-            }}
-            style={{
-              padding: "10px 20px",
-              borderRadius: "8px",
-              fontSize: "12.5px",
-              backgroundColor: "#fee2e2",
-              color: "#991b1b",
-              border: "1px solid #fca5a5",
-              cursor: "pointer",
-              fontWeight: "600",
-              transition: "var(--transition-fast)"
-            }}
-            className="dev-reset-btn"
-          >
-            Reset Database
-          </button>
+          {activeTab === "catalog" ? (
+            <button
+              onClick={() => {
+                if (confirm("Are you sure you want to reset all products back to default hardcoded entries?")) {
+                  resetProducts();
+                  handleCancelEdit();
+                  alert("Catalog database reset to defaults.");
+                }
+              }}
+              style={{
+                padding: "10px 20px",
+                borderRadius: "8px",
+                fontSize: "12.5px",
+                backgroundColor: "#fee2e2",
+                color: "#991b1b",
+                border: "1px solid #fca5a5",
+                cursor: "pointer",
+                fontWeight: "600",
+                transition: "var(--transition-fast)"
+              }}
+              className="dev-reset-btn"
+            >
+              Reset Database
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                if (confirm("Are you sure you want to clear the entire order history database?")) {
+                  localStorage.removeItem("mahqee_orders");
+                  localStorage.removeItem("mahqee_last_order");
+                  setOrders([]);
+                  alert("Orders database cleared.");
+                }
+              }}
+              style={{
+                padding: "10px 20px",
+                borderRadius: "8px",
+                fontSize: "12.5px",
+                backgroundColor: "#fee2e2",
+                color: "#991b1b",
+                border: "1px solid #fca5a5",
+                cursor: "pointer",
+                fontWeight: "600",
+                transition: "var(--transition-fast)"
+              }}
+              className="dev-reset-btn"
+            >
+              Clear Orders Database
+            </button>
+          )}
         </div>
 
-        {/* Summary Stats Grid */}
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-          gap: "24px",
-          marginBottom: "48px"
-        }}>
-          <div style={statCardStyle}>
-            <span style={statLabelStyle}>Total Formulations</span>
-            <span style={statNumberStyle}>{totalProducts}</span>
-          </div>
-          <div style={statCardStyle}>
-            <span style={statLabelStyle}>Curated Best Sellers</span>
-            <span style={statNumberStyle}>{bestSellersCount}</span>
-          </div>
-          <div style={statCardStyle}>
-            <span style={statLabelStyle}>Active Categories</span>
-            <span style={statNumberStyle}>{uniqueCategories}</span>
-          </div>
-        </div>
+        {activeTab === "catalog" && (
+          <>
+            {/* Summary Stats Grid */}
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+              gap: "24px",
+              marginBottom: "48px"
+            }}>
+              <div style={statCardStyle}>
+                <span style={statLabelStyle}>Total Formulations</span>
+                <span style={statNumberStyle}>{totalProducts}</span>
+              </div>
+              <div style={statCardStyle}>
+                <span style={statLabelStyle}>Curated Best Sellers</span>
+                <span style={statNumberStyle}>{bestSellersCount}</span>
+              </div>
+              <div style={statCardStyle}>
+                <span style={statLabelStyle}>Active Categories</span>
+                <span style={statNumberStyle}>{uniqueCategories}</span>
+              </div>
+            </div>
 
-        {/* Dashboard Panels */}
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "1fr",
-          gap: "48px",
-          alignItems: "start"
-        }} className="admin-panels-grid">
+            {/* Dashboard Panels */}
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "1fr",
+              gap: "48px",
+              alignItems: "start"
+            }} className="admin-panels-grid">
           
           {/* 1. Form Panel */}
           <div style={{
@@ -945,6 +1079,204 @@ export default function AdminPage() {
             )}
           </div>
         </div>
+          </>
+        )}
+
+        {/* Orders Dashboard */}
+        {activeTab === "orders" && (
+          <>
+            {/* Orders Summary Stats Grid */}
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+              gap: "24px",
+              marginBottom: "48px"
+            }}>
+              <div style={statCardStyle}>
+                <span style={statLabelStyle}>Total Orders</span>
+                <span style={statNumberStyle}>{orders.length}</span>
+              </div>
+              <div style={{ ...statCardStyle, borderLeft: "4px solid #d97706" }}>
+                <span style={statLabelStyle}>Awaiting Verification</span>
+                <span style={{ ...statNumberStyle, color: "#d97706" }}>
+                  {orders.filter(o => !o.paymentStatus || o.paymentStatus === 'processing').length}
+                </span>
+              </div>
+              <div style={{ ...statCardStyle, borderLeft: "4px solid #16a34a" }}>
+                <span style={statLabelStyle}>Verified Successful</span>
+                <span style={{ ...statNumberStyle, color: "#16a34a" }}>
+                  {orders.filter(o => o.paymentStatus === 'verified').length}
+                </span>
+              </div>
+              <div style={{ ...statCardStyle, borderLeft: "4px solid #dc2626" }}>
+                <span style={statLabelStyle}>Failed / Hold</span>
+                <span style={{ ...statNumberStyle, color: "#dc2626" }}>
+                  {orders.filter(o => o.paymentStatus === 'failed').length}
+                </span>
+              </div>
+            </div>
+
+            {/* Orders Panel */}
+            <div style={{
+              backgroundColor: "#ffffff",
+              borderRadius: "24px",
+              border: "1px solid var(--border-color)",
+              padding: "36px",
+              boxShadow: "var(--shadow-sm)",
+              overflow: "hidden"
+            }}>
+              <h2 style={{
+                fontSize: "20px",
+                color: "var(--text-primary)",
+                marginBottom: "24px",
+                fontFamily: "var(--font-serif)",
+                borderBottom: "1px solid rgba(16, 34, 77, 0.05)",
+                paddingBottom: "12px"
+              }}>
+                Paytm Payments Verification Queue ({orders.length})
+              </h2>
+
+              {orders.length === 0 ? (
+                <div style={{ textAlign: "center", padding: "60px 0" }}>
+                  <span style={{ fontSize: "14px", color: "var(--text-secondary)", fontStyle: "italic" }}>
+                    No orders registered on the system yet.
+                  </span>
+                </div>
+              ) : (
+                <div style={{ overflowX: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+                    <thead>
+                      <tr style={{ borderBottom: "1.5px solid var(--border-color)", color: "var(--text-secondary)", fontSize: "12px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                        <th style={{ padding: "12px 16px" }}>Order Info</th>
+                        <th style={{ padding: "12px 16px" }}>Customer Details</th>
+                        <th style={{ padding: "12px 16px" }}>Order Items</th>
+                        <th style={{ padding: "12px 16px" }}>Total Amount</th>
+                        <th style={{ padding: "12px 16px" }}>Paytm Status</th>
+                        <th style={{ padding: "12px 16px", textAlign: "right" }}>Agent Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {orders.map((ord) => {
+                        const status = ord.paymentStatus || "processing";
+                        return (
+                          <tr key={ord.orderNumber} style={{ borderBottom: "1px solid rgba(16, 34, 77, 0.06)", fontSize: "13.5px", verticalAlign: "top" }} className="admin-table-row">
+                            {/* Order Info */}
+                            <td style={{ padding: "16px" }}>
+                              <div style={{ fontWeight: "700", color: "var(--text-primary)" }}>{ord.orderNumber}</div>
+                              <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "4px" }}>
+                                {new Date(ord.date).toLocaleDateString("en-IN", {
+                                  day: "numeric",
+                                  month: "short",
+                                  year: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit"
+                                })}
+                              </div>
+                            </td>
+                            {/* Customer Details */}
+                            <td style={{ padding: "16px", maxWidth: "220px" }}>
+                              <div style={{ fontWeight: "600" }}>{ord.customer?.name}</div>
+                              <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "2px" }}>{ord.customer?.phone}</div>
+                              <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "4px", lineHeight: "1.3" }}>{ord.customer?.address}, {ord.customer?.pincode}</div>
+                            </td>
+                            {/* Order Items */}
+                            <td style={{ padding: "16px", fontSize: "12px" }}>
+                              <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                                {ord.items?.map((it: any, i: number) => (
+                                  <div key={i}>
+                                    • {it.quantity}x {it.name} {it.color ? `(${it.color})` : ""}
+                                  </div>
+                                ))}
+                              </div>
+                            </td>
+                            {/* Total */}
+                            <td style={{ padding: "16px", fontWeight: "700", color: "var(--text-primary)" }}>
+                              ₹{ord.grandTotal?.toLocaleString("en-IN")}.00
+                            </td>
+                            {/* Status */}
+                            <td style={{ padding: "16px" }}>
+                              {status === "verified" && (
+                                <span style={{ fontSize: "11px", color: "#16a34a", backgroundColor: "rgba(22, 163, 74, 0.1)", padding: "4px 10px", borderRadius: "99px", textTransform: "uppercase", fontWeight: "600" }}>
+                                  ✓ Verified
+                                </span>
+                              )}
+                              {status === "failed" && (
+                                <span style={{ fontSize: "11px", color: "#dc2626", backgroundColor: "rgba(220, 38, 38, 0.1)", padding: "4px 10px", borderRadius: "99px", textTransform: "uppercase", fontWeight: "600" }}>
+                                  ❌ Failed
+                                </span>
+                              )}
+                              {status === "processing" && (
+                                <span style={{ fontSize: "11px", color: "#d97706", backgroundColor: "rgba(217, 119, 6, 0.1)", padding: "4px 10px", borderRadius: "99px", textTransform: "uppercase", fontWeight: "600" }}>
+                                  ⏳ Processing
+                                </span>
+                              )}
+                            </td>
+                            {/* Action Buttons */}
+                            <td style={{ padding: "16px", textAlign: "right" }}>
+                              <div style={{ display: "flex", gap: "6px", justifyContent: "flex-end", flexWrap: "wrap" }}>
+                                <button
+                                  onClick={() => handleUpdateOrderStatus(ord.orderNumber, "verified")}
+                                  disabled={status === "verified"}
+                                  style={{
+                                    padding: "6px 10px",
+                                    borderRadius: "6px",
+                                    border: "none",
+                                    backgroundColor: status === "verified" ? "#e5e7eb" : "#2e7d32",
+                                    color: status === "verified" ? "#9ca3af" : "#ffffff",
+                                    fontSize: "11px",
+                                    cursor: status === "verified" ? "not-allowed" : "pointer",
+                                    fontWeight: "600",
+                                    transition: "opacity 0.2s"
+                                  }}
+                                >
+                                  Verify
+                                </button>
+                                <button
+                                  onClick={() => handleUpdateOrderStatus(ord.orderNumber, "failed")}
+                                  disabled={status === "failed"}
+                                  style={{
+                                    padding: "6px 10px",
+                                    borderRadius: "6px",
+                                    border: "none",
+                                    backgroundColor: status === "failed" ? "#e5e7eb" : "#dc2626",
+                                    color: status === "failed" ? "#9ca3af" : "#ffffff",
+                                    fontSize: "11px",
+                                    cursor: status === "failed" ? "not-allowed" : "pointer",
+                                    fontWeight: "600",
+                                    transition: "opacity 0.2s"
+                                  }}
+                                >
+                                  Reject
+                                </button>
+                                {status !== "processing" && (
+                                  <button
+                                    onClick={() => handleUpdateOrderStatus(ord.orderNumber, "processing")}
+                                    style={{
+                                      padding: "6px 10px",
+                                      borderRadius: "6px",
+                                      border: "1px solid var(--border-color)",
+                                      backgroundColor: "#ffffff",
+                                      color: "var(--text-primary)",
+                                      fontSize: "11px",
+                                      cursor: "pointer",
+                                      fontWeight: "600"
+                                    }}
+                                  >
+                                    Reset
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </>
+        )}
 
       </div>
 

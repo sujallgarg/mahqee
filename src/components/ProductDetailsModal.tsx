@@ -13,6 +13,7 @@ export default function ProductDetailsModal({ product, onClose }: ProductDetails
   const { addToCart } = useCart();
   const [selectedColor, setSelectedColor] = useState<{ name: string; hex: string } | undefined>(undefined);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isZoomed, setIsZoomed] = useState(false);
 
   if (!product) return null;
 
@@ -77,12 +78,7 @@ export default function ProductDetailsModal({ product, onClose }: ProductDetails
     }
   };
 
-  // Mock consumer study numbers to enhance premium branding feel
-  const mockClinicalData = [
-    { pct: "98%", metric: "Experienced gentle, crease-free styling and detangling" },
-    { pct: "95%", metric: "Reported seamless, streak-free cosmetic application" },
-    { pct: "97%", metric: "Confirmed excellent durability and premium vanity feel" }
-  ];
+
 
   return (
     <div style={{
@@ -162,25 +158,29 @@ export default function ProductDetailsModal({ product, onClose }: ProductDetails
           minHeight: "450px"
         }}>
           {/* Main Visual */}
-          <div style={{
-            position: "relative",
-            width: "100%",
-            height: "500px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            borderRadius: "16px",
-            overflow: "hidden",
-            backgroundColor: "#eaeae8",
-            border: "1px solid rgba(16, 34, 77, 0.04)"
-          }}>
+          <div 
+            onClick={() => setIsZoomed(true)}
+            style={{
+              position: "relative",
+              width: "100%",
+              height: "500px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "16px",
+              overflow: "hidden",
+              backgroundColor: "white",
+              border: "1px solid rgba(16, 34, 77, 0.04)",
+              cursor: "zoom-in"
+            }}
+          >
             {(product.image.startsWith("/images/") || product.image.startsWith("data:image/")) ? (
               <Image 
                 src={product.images && product.images[activeImageIndex % product.images.length] ? product.images[activeImageIndex % product.images.length] : product.image} 
                 alt={product.name} 
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
-                style={{ objectFit: "cover" }} 
+                style={{ objectFit: "contain" }} 
                 priority
               />
             ) : (
@@ -229,7 +229,7 @@ export default function ProductDetailsModal({ product, onClose }: ProductDetails
             color: "var(--text-secondary)",
             marginTop: "12px"
           }}>
-            Rendered in 100% Recyclable Luxury Frosted Glass
+            {/* Rendered in 100% Recyclable Luxury Frosted Glass */}
           </div>
         </div>
 
@@ -294,20 +294,7 @@ export default function ProductDetailsModal({ product, onClose }: ProductDetails
             </div>
           )}
 
-          {/* Clinical Results Section */}
-          <div style={{ marginBottom: "32px" }}>
-            <h4 style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)", marginBottom: "16px" }}>
-              Consumer Study Results
-            </h4>
-            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-              {mockClinicalData.map((d, i) => (
-                <div key={i} style={{ display: "flex", gap: "16px", alignItems: "center" }}>
-                  <span style={{ fontSize: "24px", color: "var(--accent-pink)", fontWeight: "600", minWidth: "60px" }}>{d.pct}</span>
-                  <span style={{ fontSize: "13px", color: "var(--text-secondary)" }}>{d.metric}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+
 
           {/* Active Ingredients list */}
           <div style={{ marginBottom: "32px" }}>
@@ -332,7 +319,79 @@ export default function ProductDetailsModal({ product, onClose }: ProductDetails
         </div>
       </div>
 
+      {isZoomed && (
+        <div 
+          onClick={() => setIsZoomed(false)}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            backdropFilter: "blur(12px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 3000,
+            cursor: "zoom-out",
+            animation: "zoomFadeIn 0.3s ease"
+          }}
+        >
+          {/* Close button in top-right */}
+          <button
+            onClick={() => setIsZoomed(false)}
+            style={{
+              position: "absolute",
+              top: "24px",
+              right: "24px",
+              background: "rgba(255, 255, 255, 0.2)",
+              border: "none",
+              color: "#ffffff",
+              padding: "12px",
+              borderRadius: "50%",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 3001,
+              transition: "background-color 0.2s"
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.3)"}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.2)"}
+          >
+            <svg width="20" height="20" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M1 1L13 13M1 13L13 1" />
+            </svg>
+          </button>
+          
+          <div style={{
+            position: "relative",
+            width: "90vw",
+            height: "90vh",
+            animation: "zoomPopIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)"
+          }}>
+            <Image
+              src={product.images && product.images[activeImageIndex % product.images.length] ? product.images[activeImageIndex % product.images.length] : product.image}
+              alt={product.name}
+              fill
+              sizes="90vw"
+              style={{ objectFit: "contain" }}
+              priority
+            />
+          </div>
+        </div>
+      )}
+
       <style jsx global>{`
+        @keyframes zoomFadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes zoomPopIn {
+          from { transform: scale(0.95); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
+        }
         @keyframes modalFadeIn {
           from { opacity: 0; }
           to { opacity: 1; }

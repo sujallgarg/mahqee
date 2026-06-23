@@ -156,19 +156,37 @@ export default function CartDrawer() {
           address: shippingAddress.trim(),
           pincode: pincode.trim()
         },
-        date: new Date().toISOString()
+        date: new Date().toISOString(),
+        paymentStatus: "processing"
       };
 
       // Save order details to localStorage
+      const optimizedOrderData = {
+        ...orderData,
+        items: orderData.items.map(it => ({
+          ...it,
+          image: it.image && it.image.startsWith("data:image/") ? "" : it.image
+        }))
+      };
       try {
-        localStorage.setItem("mahqee_last_order", JSON.stringify(orderData));
+        localStorage.setItem("mahqee_last_order", JSON.stringify(optimizedOrderData));
         const existingOrdersStr = localStorage.getItem("mahqee_orders");
         const existingOrders = existingOrdersStr ? JSON.parse(existingOrdersStr) : [];
-        existingOrders.unshift(orderData);
+        existingOrders.unshift(optimizedOrderData);
         localStorage.setItem("mahqee_orders", JSON.stringify(existingOrders));
       } catch (e) {
         console.error("Failed to save order to local storage database", e);
       }
+
+      // Save order details to shared server-side database
+      fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderData)
+      })
+      .catch(err => {
+        console.error("Failed to persist order to shared database", err);
+      });
 
       window.open(whatsappUrl, "_blank", "noopener,noreferrer");
       
@@ -279,7 +297,8 @@ export default function CartDrawer() {
         flexDirection: "column",
         padding: "36px 30px",
         animation: "slideInDrawer 0.35s cubic-bezier(0.25, 1, 0.5, 1)",
-        zIndex: 1001
+        zIndex: 1001,
+        overflow: "hidden"
       }}>
         {/* Header */}
         <div style={{
@@ -334,6 +353,7 @@ export default function CartDrawer() {
                 {/* Cart Items List */}
                 <div style={{
                   flex: "1",
+                  minHeight: 0,
                   overflowY: "auto",
                   display: "flex",
                   flexDirection: "column",
@@ -540,7 +560,7 @@ export default function CartDrawer() {
             justifyContent: "space-between",
             height: "calc(100% - 60px)"
           }} className="shipping-step-container">
-            <div style={{ overflowY: "auto", flex: "1", paddingRight: "6px", marginBottom: "20px" }} className="shipping-form-scroll">
+            <div style={{ overflowY: "auto", flex: "1", minHeight: 0, paddingRight: "6px", marginBottom: "20px" }} className="shipping-form-scroll">
               <h3 style={{ fontSize: "15px", fontWeight: "600", color: "var(--text-primary)", marginBottom: "16px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
                 Delivery Information
               </h3>

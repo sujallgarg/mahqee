@@ -28,6 +28,7 @@ interface Order {
     pincode: string;
   };
   date: string;
+  paymentStatus?: "processing" | "verified" | "failed";
 }
 
 export default function PaymentDonePage() {
@@ -36,11 +37,52 @@ export default function PaymentDonePage() {
   const [isMounted, setIsMounted] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
 
+  const getWhatsappUrl = (order: Order | null) => {
+    if (!order) return "#";
+    const WHATSAPP_BUSINESS_PHONE = "919650045175";
+    const itemsText = order.items
+      .map(
+        (item) =>
+          `• ${item.quantity}x ${item.name}${
+            item.color ? ` (Option: ${item.color})` : ""
+          } - ₹${(item.price * item.quantity).toLocaleString("en-IN")}.00`
+      )
+      .join("\n");
+    const pricing = `*Subtotal:* ₹${order.subtotal.toLocaleString("en-IN")}.00\n*Discount:* -₹${order.discount.toLocaleString("en-IN")}.00\n*Shipping:* ${order.shippingFee > 0 ? `₹${order.shippingFee}.00` : "FREE"}\n*Grand Total:* ₹${order.grandTotal.toLocaleString("en-IN")}.00`;
+    const shipping = `*Name:* ${order.customer.name}\n*Mobile:* ${order.customer.phone}\n*Address:* ${order.customer.address}\n*Pincode:* ${order.customer.pincode}`;
+    const message = `Hello MAHQEE,\n\nI would like to place an order:\n\n*Order Summary:*\n${itemsText}\n\n*Pricing Summary:*\n${pricing}\n\n*Delivery Information:*\n${shipping}\n\nThank you!`;
+    return `https://wa.me/${WHATSAPP_BUSINESS_PHONE}?text=${encodeURIComponent(message)}`;
+  };
+
+  const handleSimulateStatus = (newStatus: "processing" | "verified" | "failed") => {
+    if (!lastOrder) return;
+    const updatedOrder = { ...lastOrder, paymentStatus: newStatus };
+    setLastOrder(updatedOrder);
+    localStorage.setItem("mahqee_last_order", JSON.stringify(updatedOrder));
+    
+    const updatedOrders = allOrders.map(o => o.orderNumber === lastOrder.orderNumber ? updatedOrder : o);
+    setAllOrders(updatedOrders);
+    localStorage.setItem("mahqee_orders", JSON.stringify(updatedOrders));
+
+    // Persist this change on the server
+    fetch("/api/orders", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        orderNumber: lastOrder.orderNumber,
+        paymentStatus: newStatus
+      })
+    })
+    .catch(err => {
+      console.error("Failed to update status on server", err);
+    });
+  };
+
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
     
-    // Retrieve last order details
+    // Retrieve last order details from localStorage immediately
     const storedLastOrder = localStorage.getItem("mahqee_last_order");
     if (storedLastOrder) {
       try {
@@ -50,7 +92,7 @@ export default function PaymentDonePage() {
       }
     }
 
-    // Retrieve historical orders list
+    // Retrieve historical orders list from localStorage immediately
     const storedOrders = localStorage.getItem("mahqee_orders");
     if (storedOrders) {
       try {
@@ -59,6 +101,42 @@ export default function PaymentDonePage() {
         console.error("Failed to parse orders list", e);
       }
     }
+
+    // Poll server for latest orders status sync
+    const fetchLatestOrders = () => {
+      fetch("/api/orders", { cache: "no-store" })
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to fetch orders");
+          return res.json();
+        })
+        .then((ordersList: Order[]) => {
+          setAllOrders(ordersList);
+          localStorage.setItem("mahqee_orders", JSON.stringify(ordersList));
+          
+          // Sync current lastOrder status from database
+          const latestLastOrder = localStorage.getItem("mahqee_last_order");
+          if (latestLastOrder) {
+            try {
+              const parsedLast = JSON.parse(latestLastOrder);
+              const found = ordersList.find(o => o.orderNumber === parsedLast.orderNumber);
+              if (found) {
+                setLastOrder(found);
+                localStorage.setItem("mahqee_last_order", JSON.stringify(found));
+              }
+            } catch (e) {
+              console.error(e);
+            }
+          }
+        })
+        .catch(err => {
+          console.warn("Could not sync orders from server API", err);
+        });
+    };
+
+    fetchLatestOrders();
+
+    const interval = setInterval(fetchLatestOrders, 3000);
+    return () => clearInterval(interval);
   }, []);
 
   if (!isMounted) {
@@ -75,46 +153,143 @@ export default function PaymentDonePage() {
     }}>
       <div className="container" style={{ maxWidth: "680px" }}>
         
-        {/* SUCCESS ICON HEADER */}
-        <div style={{ textAlign: "center", marginBottom: "40px" }}>
-          <div style={{
-            width: "72px",
-            height: "72px",
-            borderRadius: "50%",
-            backgroundColor: "rgba(46, 125, 50, 0.1)",
-            border: "2px solid #2e7d32",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            margin: "0 auto 20px auto"
-          }}>
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" strokeWidth="3">
-              <path d="M20 6L9 17L4 12" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </div>
-          <span style={{
-            fontSize: "12px",
-            fontWeight: "600",
-            letterSpacing: "0.15em",
-            color: "var(--accent-pink)",
-            textTransform: "uppercase",
-            display: "block",
-            marginBottom: "8px"
-          }}>
-            Transaction Successful
-          </span>
-          <h1 style={{
-            fontSize: "36px",
-            color: "var(--text-primary)",
-            fontFamily: "var(--font-serif)",
-            marginBottom: "8px"
-          }}>
-            Order Confirmed!
-          </h1>
-          <p style={{ color: "var(--text-secondary)", fontSize: "14px", lineHeight: "1.5", maxWidth: "480px", margin: "0 auto" }}>
-            Your order details have been registered on the MAHQEE server, and your purchase receipt has been successfully sent to our WhatsApp support team.
-          </p>
-        </div>
+        {/* DYNAMIC SUCCESS ICON HEADER */}
+        {(() => {
+          const status = lastOrder?.paymentStatus || "processing";
+          if (status === "verified") {
+            return (
+              <div style={{ textAlign: "center", marginBottom: "40px" }}>
+                <div style={{
+                  width: "72px",
+                  height: "72px",
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(46, 125, 50, 0.1)",
+                  border: "2px solid #2e7d32",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  margin: "0 auto 20px auto"
+                }}>
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" strokeWidth="3">
+                    <path d="M20 6L9 17L4 12" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+                <span style={{
+                  fontSize: "12px",
+                  fontWeight: "600",
+                  letterSpacing: "0.15em",
+                  color: "#2e7d32",
+                  textTransform: "uppercase",
+                  display: "block",
+                  marginBottom: "8px"
+                }}>
+                  Transaction Successful
+                </span>
+                <h1 style={{
+                  fontSize: "36px",
+                  color: "var(--text-primary)",
+                  fontFamily: "var(--font-serif)",
+                  marginBottom: "8px"
+                }}>
+                  Order Confirmed!
+                </h1>
+                <p style={{ color: "var(--text-secondary)", fontSize: "14px", lineHeight: "1.5", maxWidth: "480px", margin: "0 auto" }}>
+                  Your Paytm payment has been successfully verified by our WhatsApp agent! Your order is now confirmed and scheduled for express delivery.
+                </p>
+              </div>
+            );
+          } else if (status === "failed") {
+            return (
+              <div style={{ textAlign: "center", marginBottom: "40px" }}>
+                <div style={{
+                  width: "72px",
+                  height: "72px",
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(220, 38, 38, 0.1)",
+                  border: "2px solid #dc2626",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  margin: "0 auto 20px auto"
+                }}>
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="3">
+                    <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+                <span style={{
+                  fontSize: "12px",
+                  fontWeight: "600",
+                  letterSpacing: "0.15em",
+                  color: "#dc2626",
+                  textTransform: "uppercase",
+                  display: "block",
+                  marginBottom: "8px"
+                }}>
+                  Verification Failed
+                </span>
+                <h1 style={{
+                  fontSize: "36px",
+                  color: "var(--text-primary)",
+                  fontFamily: "var(--font-serif)",
+                  marginBottom: "8px"
+                }}>
+                  Payment Unverified
+                </h1>
+                <p style={{ color: "var(--text-secondary)", fontSize: "14px", lineHeight: "1.5", maxWidth: "480px", margin: "0 auto", marginBottom: "16px" }}>
+                  Our WhatsApp support agent could not verify your Paytm payment. Please check your receipt details or resend it to verify again.
+                </p>
+                <a href={getWhatsappUrl(lastOrder)} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ display: "inline-flex", textDecoration: "none", padding: "10px 24px", fontSize: "13px", borderRadius: "8px" }}>
+                  Resend Paytm Receipt
+                </a>
+              </div>
+            );
+          } else {
+            return (
+              <div style={{ textAlign: "center", marginBottom: "40px" }}>
+                <div style={{
+                  width: "72px",
+                  height: "72px",
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(217, 119, 6, 0.1)",
+                  border: "2px solid #d97706",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  margin: "0 auto 20px auto"
+                }}>
+                  <svg className="animate-spin-custom" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="3">
+                    <circle cx="12" cy="12" r="10" strokeDasharray="32" strokeLinecap="round" />
+                  </svg>
+                </div>
+                <span style={{
+                  fontSize: "12px",
+                  fontWeight: "600",
+                  letterSpacing: "0.15em",
+                  color: "#d97706",
+                  textTransform: "uppercase",
+                  display: "block",
+                  marginBottom: "8px"
+                }}>
+                  Awaiting Verification
+                </span>
+                <h1 style={{
+                  fontSize: "36px",
+                  color: "var(--text-primary)",
+                  fontFamily: "var(--font-serif)",
+                  marginBottom: "8px"
+                }}>
+                  Order Registered
+                </h1>
+                <p style={{ color: "var(--text-secondary)", fontSize: "14px", lineHeight: "1.5", maxWidth: "480px", margin: "0 auto", marginBottom: "16px" }}>
+                  Your order is registered. Our WhatsApp agent is currently verifying your Paytm payment. Please make sure you have sent the receipt on WhatsApp.
+                </p>
+                <a href={getWhatsappUrl(lastOrder)} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ display: "inline-flex", textDecoration: "none", padding: "10px 24px", fontSize: "13px", borderRadius: "8px" }}>
+                  Send Paytm Receipt (WhatsApp)
+                </a>
+              </div>
+            );
+          }
+        })()}
 
         {/* ORDER DETAILS RECEIPT INVOICE */}
         {lastOrder ? (
@@ -323,7 +498,28 @@ export default function PaymentDonePage() {
                     </div>
 
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "13px", fontWeight: "600", color: "var(--text-primary)" }}>
-                      <span style={{ fontSize: "11px", color: "#2e7d32", textTransform: "uppercase" }}>✓ WhatsApp Submitted</span>
+                      {(() => {
+                        const status = ord.paymentStatus || "processing";
+                        if (status === "verified") {
+                          return (
+                            <span style={{ fontSize: "11px", color: "#16a34a", backgroundColor: "rgba(22, 163, 74, 0.1)", padding: "4px 8px", borderRadius: "99px", textTransform: "uppercase", fontWeight: "600" }}>
+                              ✓ Paid & Verified
+                            </span>
+                          );
+                        } else if (status === "failed") {
+                          return (
+                            <span style={{ fontSize: "11px", color: "#dc2626", backgroundColor: "rgba(220, 38, 38, 0.1)", padding: "4px 8px", borderRadius: "99px", textTransform: "uppercase", fontWeight: "600" }}>
+                              ✗ Verification Failed
+                            </span>
+                          );
+                        } else {
+                          return (
+                            <span style={{ fontSize: "11px", color: "#d97706", backgroundColor: "rgba(217, 119, 6, 0.1)", padding: "4px 8px", borderRadius: "99px", textTransform: "uppercase", fontWeight: "600" }}>
+                              ⏳ Awaiting Agent
+                            </span>
+                          );
+                        }
+                      })()}
                       <span>Total: ₹{ord.grandTotal.toLocaleString("en-IN")}.00</span>
                     </div>
                   </div>
@@ -333,7 +529,105 @@ export default function PaymentDonePage() {
           </div>
         )}
 
+        {/* SIMULATION CONTROL PORTAL */}
+        {lastOrder && (
+          <div style={{
+            marginTop: "48px",
+            backgroundColor: "rgba(16, 34, 77, 0.03)",
+            border: "1.5px dashed var(--border-color)",
+            borderRadius: "20px",
+            padding: "24px",
+            textAlign: "center"
+          }}>
+            <span style={{
+              fontSize: "11px",
+              fontWeight: "600",
+              color: "var(--text-secondary)",
+              letterSpacing: "1.5px",
+              textTransform: "uppercase",
+              display: "block",
+              marginBottom: "12px"
+            }}>
+              🧪 WhatsApp Agent Simulator
+            </span>
+            <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "16px" }}>
+              Simulate the WhatsApp agent checking Paytm status for Order <strong>{lastOrder.orderNumber}</strong>:
+            </p>
+            <div style={{
+              display: "flex",
+              justifyContent: "center",
+              gap: "12px",
+              flexWrap: "wrap"
+            }}>
+              <button
+                onClick={() => handleSimulateStatus("verified")}
+                style={{
+                  padding: "8px 16px",
+                  borderRadius: "8px",
+                  fontSize: "12px",
+                  fontWeight: "600",
+                  border: "none",
+                  cursor: "pointer",
+                  backgroundColor: "#2e7d32",
+                  color: "#ffffff",
+                  transition: "opacity 0.2s"
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.opacity = "0.9"}
+                onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
+              >
+                ✓ Verify Paytm (Successful)
+              </button>
+              <button
+                onClick={() => handleSimulateStatus("failed")}
+                style={{
+                  padding: "8px 16px",
+                  borderRadius: "8px",
+                  fontSize: "12px",
+                  fontWeight: "600",
+                  border: "none",
+                  cursor: "pointer",
+                  backgroundColor: "#dc2626",
+                  color: "#ffffff",
+                  transition: "opacity 0.2s"
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.opacity = "0.9"}
+                onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
+              >
+                ✗ Fail Paytm (Unsuccessful)
+              </button>
+              <button
+                onClick={() => handleSimulateStatus("processing")}
+                style={{
+                  padding: "8px 16px",
+                  borderRadius: "8px",
+                  fontSize: "12px",
+                  fontWeight: "600",
+                  border: "1px solid var(--border-color)",
+                  cursor: "pointer",
+                  backgroundColor: "#ffffff",
+                  color: "var(--text-primary)",
+                  transition: "background-color 0.2s"
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "var(--bg-secondary)"}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#ffffff"}
+              >
+                ⏳ Reset to Processing
+              </button>
+            </div>
+          </div>
+        )}
+
       </div>
+      <style dangerouslySetInnerHTML={{ __html: `
+        .animate-spin-custom {
+          animation: spin-custom-keyframe 1.5s linear infinite;
+          transform-origin: center;
+        }
+        @keyframes spin-custom-keyframe {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}} />
     </main>
   );
 }
