@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useCart, CartItem, Product } from "@/context/CartContext";
 import ProductDetailsModal from "./ProductDetailsModal";
 
-const WHATSAPP_BUSINESS_PHONE = "919650045175"; // TODO: Customize this with your actual WhatsApp Business number (including country code)
+const WHATSAPP_BUSINESS_PHONE = "919671655023"; // TODO: Customize this with your actual WhatsApp Business number (including country code)
 
 export default function CartDrawer() {
   const {
@@ -17,9 +17,88 @@ export default function CartDrawer() {
     clearCart
   } = useCart();
 
-  const [checkoutStep, setCheckoutStep] = useState<"cart" | "processing" | "success">("cart");
+  const [checkoutStep, setCheckoutStep] = useState<"cart" | "shipping" | "processing" | "success">("cart");
   const [orderNumber, setOrderNumber] = useState("");
   const [selectedCartProduct, setSelectedCartProduct] = useState<Product | null>(null);
+
+  // Coupon states
+  const [couponInput, setCouponInput] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; percent: number } | null>(null);
+  const [couponError, setCouponError] = useState("");
+
+  // Shipping & Address details states
+  const [customerName, setCustomerName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [shippingAddress, setShippingAddress] = useState("");
+  const [pincode, setPincode] = useState("");
+  const [formErrors, setFormErrors] = useState<{ name?: string; phone?: string; address?: string; pincode?: string }>({});
+
+  // Computed values for coupons and shipping
+  const discountAmount = appliedCoupon ? Math.round((cartTotal * appliedCoupon.percent) / 100) : 0;
+  const shippingFee = (cartTotal - discountAmount) < 299 ? 50 : 0;
+  const grandTotal = cartTotal - discountAmount + shippingFee;
+
+  const handleApplyCoupon = (e: React.FormEvent) => {
+    e.preventDefault();
+    setCouponError("");
+    const code = couponInput.trim().toUpperCase();
+
+    if (!code) {
+      setCouponError("Please enter a coupon code");
+      return;
+    }
+
+    if (code === "NEW10") {
+      setAppliedCoupon({ code: "NEW10", percent: 10 });
+    } else {
+      setCouponError("Invalid coupon code");
+      setAppliedCoupon(null);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponInput("");
+    setCouponError("");
+  };
+
+  const validateAndSubmitCheckout = () => {
+    const errors: { name?: string; phone?: string; address?: string; pincode?: string } = {};
+
+    if (!customerName.trim()) {
+      errors.name = "Full name is required";
+    }
+
+    if (!customerPhone.trim()) {
+      errors.phone = "Mobile number is required";
+    } else if (!/^\d{10}$/.test(customerPhone.trim())) {
+      errors.phone = "Enter a valid 10-digit mobile number";
+    }
+
+    const addr = shippingAddress.trim();
+    if (!addr) {
+      errors.address = "Delivery address is required";
+    } else if (addr.length < 15) {
+      errors.address = "Address is too short. Please include house no., street, city, state (min 15 characters)";
+    } else if (!/[a-zA-Z]/.test(addr)) {
+      errors.address = "Address must contain letters";
+    }
+
+    const pin = pincode.trim();
+    if (!pin) {
+      errors.pincode = "Pincode is required";
+    } else if (!/^[1-9][0-9]{5}$/.test(pin)) {
+      errors.pincode = "Enter a valid 6-digit Pincode (cannot start with 0)";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
+    setFormErrors({});
+    handleCheckout();
+  };
 
   const handleCheckout = () => {
     setCheckoutStep("processing");
@@ -34,7 +113,19 @@ export default function CartDrawer() {
       )
       .join("\n");
 
-    const message = `Hello MAHQEE,\n\nI would like to place an order:\n\n*Order Summary:*\n${itemsText}\n\n*Total Amount:* ₹${cartTotal.toLocaleString("en-IN")}.00\n\nThank you!`;
+    // Format pricing summary for message
+    let pricingDetailsText = `*Subtotal:* ₹${cartTotal.toLocaleString("en-IN")}.00\n`;
+    if (appliedCoupon) {
+      pricingDetailsText += `*Discount (Promo ${appliedCoupon.code}):* -₹${discountAmount.toLocaleString("en-IN")}.00\n`;
+    }
+    pricingDetailsText += `*Shipping:* ${shippingFee > 0 ? `₹${shippingFee}.00` : "FREE (Express)"}\n*Grand Total:* ₹${grandTotal.toLocaleString("en-IN")}.00`;
+
+    // Format shipping details
+    const shippingDetailsText = `*Name:* ${customerName.trim()}\n*Mobile:* ${customerPhone.trim()}\n*Address:* ${shippingAddress.trim()}\n*Pincode:* ${pincode.trim()}`;
+
+    // Assemble final message
+    const message = `Hello MAHQEE,\n\nI would like to place an order:\n\n*Order Summary:*\n${itemsText}\n\n*Pricing Summary:*\n${pricingDetailsText}\n\n*Delivery Information:*\n${shippingDetailsText}\n\nThank you!`;
+    
     const whatsappUrl = `https://wa.me/${WHATSAPP_BUSINESS_PHONE}?text=${encodeURIComponent(message)}`;
 
     // Simulate routing delay, open WhatsApp, clear cart, and transition to success screen
@@ -44,6 +135,14 @@ export default function CartDrawer() {
       setOrderNumber(generatedOrder);
       setCheckoutStep("success");
       clearCart();
+      
+      // Reset form fields
+      setCustomerName("");
+      setCustomerPhone("");
+      setShippingAddress("");
+      setPincode("");
+      setAppliedCoupon(null);
+      setCouponInput("");
     }, 1500);
   };
 
@@ -125,7 +224,9 @@ export default function CartDrawer() {
       />
 
       {/* Slide-over Drawer */}
-      <div style={{
+      <div 
+        className="cart-drawer-panel"
+        style={{
         position: "relative",
         width: "100%",
         maxWidth: "440px",
@@ -304,27 +405,261 @@ export default function CartDrawer() {
                 {/* Subtotal & Summary Area */}
                 <div style={{
                   borderTop: "1px solid var(--border-color)",
-                  paddingTop: "24px"
+                  paddingTop: "20px"
                 }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px", fontSize: "13px", color: "var(--text-secondary)" }}>
-                    <span>Shipping</span>
-                    <span>FREE (Express)</span>
+                  {/* Coupon Code Section */}
+                  <div style={{ marginBottom: "16px" }}>
+                    <form onSubmit={handleApplyCoupon} style={{ display: "flex", gap: "8px" }}>
+                      <input 
+                        type="text" 
+                        placeholder="Promo Code (e.g. NEW10)" 
+                        value={couponInput}
+                        onChange={(e) => setCouponInput(e.target.value)}
+                        disabled={!!appliedCoupon}
+                        style={{
+                          flex: "1",
+                          padding: "10px 14px",
+                          borderRadius: "8px",
+                          border: "1px solid var(--border-color)",
+                          backgroundColor: "#ffffff",
+                          fontSize: "13px",
+                          color: "var(--text-primary)",
+                          outline: "none"
+                        }}
+                      />
+                      {appliedCoupon ? (
+                        <button 
+                          type="button" 
+                          onClick={handleRemoveCoupon}
+                          className="btn-secondary"
+                          style={{ padding: "10px 16px", borderRadius: "8px", fontSize: "13px", height: "40px" }}
+                        >
+                          Remove
+                        </button>
+                      ) : (
+                        <button 
+                          type="submit" 
+                          className="btn-primary"
+                          style={{ padding: "10px 20px", borderRadius: "8px", fontSize: "13px", height: "40px" }}
+                        >
+                          Apply
+                        </button>
+                      )}
+                    </form>
+                    {couponError && (
+                      <div style={{ color: "var(--accent-pink)", fontSize: "11px", marginTop: "6px", marginLeft: "4px" }}>
+                        {couponError}
+                      </div>
+                    )}
+                    {appliedCoupon && (
+                      <div style={{ color: "#2e7d32", fontSize: "11px", marginTop: "6px", marginLeft: "4px", fontWeight: "500" }}>
+                        ✓ Coupon &quot;{appliedCoupon.code}&quot; applied! ({appliedCoupon.percent}% off)
+                      </div>
+                    )}
                   </div>
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "24px", fontSize: "18px", fontWeight: "500", color: "var(--text-primary)" }}>
+
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", fontSize: "13px", color: "var(--text-secondary)" }}>
+                    <span>Subtotal</span>
+                    <span>₹{cartTotal.toLocaleString("en-IN")}.00</span>
+                  </div>
+                  {appliedCoupon && (
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", fontSize: "13px", color: "#2e7d32" }}>
+                      <span>Discount ({appliedCoupon.code})</span>
+                      <span>-₹{discountAmount.toLocaleString("en-IN")}.00</span>
+                    </div>
+                  )}
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", fontSize: "13px", color: "var(--text-secondary)" }}>
+                    <span>Shipping <span style={{color: "var(--text-primary)", fontWeight: "500"}}>(for orders below ₹399)</span></span>
+                    <span>{shippingFee > 0 ? `₹${shippingFee}.00` : "FREE (Express)"}</span>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px", fontSize: "18px", fontWeight: "500", color: "var(--text-primary)" }}>
                     <span>Total</span>
-                    <span>₹{cartTotal}.00</span>
+                    <span>₹{grandTotal.toLocaleString("en-IN")}.00</span>
                   </div>
                   <button 
-                    onClick={handleCheckout} 
+                    onClick={() => setCheckoutStep("shipping")} 
                     className="btn-primary"
                     style={{ width: "100%", justifyContent: "center", padding: "14px" }}
                   >
-                    Check Out
+                    Proceed to Shipping
                   </button>
                 </div>
               </>
             )}
           </>
+        )}
+
+        {/* STEP 1.5: SHIPPING DETAILS VIEW */}
+        {checkoutStep === "shipping" && (
+          <div style={{
+            display: "flex",
+            flexDirection: "column",
+            flex: "1",
+            justifyContent: "space-between",
+            height: "calc(100% - 60px)"
+          }} className="shipping-step-container">
+            <div style={{ overflowY: "auto", flex: "1", paddingRight: "6px", marginBottom: "20px" }} className="shipping-form-scroll">
+              <h3 style={{ fontSize: "15px", fontWeight: "600", color: "var(--text-primary)", marginBottom: "16px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                Delivery Information
+              </h3>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                {/* Full Name */}
+                <div>
+                  <label style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-secondary)", display: "block", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                    Full Name *
+                  </label>
+                  <input 
+                    type="text" 
+                    placeholder="Enter your name" 
+                    value={customerName}
+                    onChange={(e) => {
+                      setCustomerName(e.target.value);
+                      if (formErrors.name) setFormErrors({ ...formErrors, name: undefined });
+                    }}
+                    style={{
+                      width: "100%",
+                      padding: "10px 14px",
+                      borderRadius: "8px",
+                      border: formErrors.name ? "1px solid var(--accent-pink)" : "1px solid var(--border-color)",
+                      backgroundColor: "#ffffff",
+                      fontSize: "13px",
+                      color: "var(--text-primary)",
+                      outline: "none"
+                    }}
+                  />
+                  {formErrors.name && (
+                    <span style={{ color: "var(--accent-pink)", fontSize: "11px", marginTop: "4px", display: "block" }}>
+                      {formErrors.name}
+                    </span>
+                  )}
+                </div>
+
+                {/* Mobile Number */}
+                <div>
+                  <label style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-secondary)", display: "block", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                    Mobile Number *
+                  </label>
+                  <input 
+                    type="tel" 
+                    placeholder="10-digit number" 
+                    maxLength={10}
+                    value={customerPhone}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, "");
+                      setCustomerPhone(val);
+                      if (formErrors.phone) setFormErrors({ ...formErrors, phone: undefined });
+                    }}
+                    style={{
+                      width: "100%",
+                      padding: "10px 14px",
+                      borderRadius: "8px",
+                      border: formErrors.phone ? "1px solid var(--accent-pink)" : "1px solid var(--border-color)",
+                      backgroundColor: "#ffffff",
+                      fontSize: "13px",
+                      color: "var(--text-primary)",
+                      outline: "none"
+                    }}
+                  />
+                  {formErrors.phone && (
+                    <span style={{ color: "var(--accent-pink)", fontSize: "11px", marginTop: "4px", display: "block" }}>
+                      {formErrors.phone}
+                    </span>
+                  )}
+                </div>
+
+                {/* Address */}
+                <div>
+                  <label style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-secondary)", display: "block", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                    Delivery Address *
+                  </label>
+                  <textarea 
+                    placeholder="House/Flat No., Building, Street Address, Town/City, State" 
+                    value={shippingAddress}
+                    onChange={(e) => {
+                      setShippingAddress(e.target.value);
+                      if (formErrors.address) setFormErrors({ ...formErrors, address: undefined });
+                    }}
+                    rows={3}
+                    style={{
+                      width: "100%",
+                      padding: "10px 14px",
+                      borderRadius: "8px",
+                      border: formErrors.address ? "1px solid var(--accent-pink)" : "1px solid var(--border-color)",
+                      backgroundColor: "#ffffff",
+                      fontSize: "13px",
+                      color: "var(--text-primary)",
+                      outline: "none",
+                      resize: "none"
+                    }}
+                  />
+                  {formErrors.address && (
+                    <span style={{ color: "var(--accent-pink)", fontSize: "11px", marginTop: "4px", display: "block" }}>
+                      {formErrors.address}
+                    </span>
+                  )}
+                </div>
+
+                {/* Pincode */}
+                <div>
+                  <label style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-secondary)", display: "block", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                    Pincode *
+                  </label>
+                  <input 
+                    type="text" 
+                    placeholder="6-digit pincode" 
+                    maxLength={6}
+                    value={pincode}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, "");
+                      setPincode(val);
+                      if (formErrors.pincode) setFormErrors({ ...formErrors, pincode: undefined });
+                    }}
+                    style={{
+                      width: "100%",
+                      padding: "10px 14px",
+                      borderRadius: "8px",
+                      border: formErrors.pincode ? "1px solid var(--accent-pink)" : "1px solid var(--border-color)",
+                      backgroundColor: "#ffffff",
+                      fontSize: "13px",
+                      color: "var(--text-primary)",
+                      outline: "none"
+                    }}
+                  />
+                  {formErrors.pincode && (
+                    <span style={{ color: "var(--accent-pink)", fontSize: "11px", marginTop: "4px", display: "block" }}>
+                      {formErrors.pincode}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom summary and action buttons */}
+            <div style={{ borderTop: "1px solid var(--border-color)", paddingTop: "16px" }} className="shipping-summary-actions">
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "16px", fontSize: "15px", fontWeight: "600", color: "var(--text-primary)" }}>
+                <span>Grand Total</span>
+                <span>₹{grandTotal.toLocaleString("en-IN")}.00</span>
+              </div>
+
+              <div style={{ display: "flex", gap: "12px" }}>
+                <button 
+                  onClick={() => setCheckoutStep("cart")}
+                  className="btn-secondary"
+                  style={{ flex: "0 0 90px", justifyContent: "center", padding: "12px", borderRadius: "8px", fontSize: "13px" }}
+                >
+                  Back
+                </button>
+                <button 
+                  onClick={validateAndSubmitCheckout}
+                  className="btn-primary"
+                  style={{ flex: "1", justifyContent: "center", padding: "12px", borderRadius: "8px", fontSize: "13px" }}
+                >
+                  Place Order (WhatsApp)
+                </button>
+              </div>
+            </div>
+          </div>
         )}
 
         {/* STEP 2: PROCESSING SECURE CHECKOUT */}
@@ -385,6 +720,22 @@ export default function CartDrawer() {
 
       {/* Local keyframe animations & spinner styles */}
       <style jsx global>{`
+        .cart-drawer-panel {
+          width: 100% !important;
+          max-width: 440px !important;
+          height: 100% !important;
+        }
+        @media (max-width: 480px) {
+          .cart-drawer-panel {
+            padding: 24px 20px !important;
+          }
+          .shipping-step-container {
+            height: calc(100% - 40px) !important;
+          }
+          .shipping-form-scroll {
+            margin-bottom: 12px !important;
+          }
+        }
         .cart-item-title-link:hover {
           color: var(--accent-pink) !important;
           text-decoration: underline;
