@@ -16,6 +16,13 @@ export default function ContactPage() {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) return;
     
+    const messageText = `Hello MAHQEE,\n\nI would like to submit an inquiry:\n\n*Name:* ${formData.name.trim()}\n*Email:* ${formData.email.trim()}\n*Subject:* ${formData.subject.trim() || "N/A"}\n\n*Message:*\n${formData.message.trim()}`;
+    const WHATSAPP_BUSINESS_PHONE = "919650045175";
+    const whatsappUrl = `https://wa.me/${WHATSAPP_BUSINESS_PHONE}?text=${encodeURIComponent(messageText)}`;
+
+    // Open WhatsApp in a new tab
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+
     // Simulate API request delay
     setTimeout(() => {
       setSubmitted(true);

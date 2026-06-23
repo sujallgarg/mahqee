@@ -3,9 +3,10 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { useCart, CartItem, Product } from "@/context/CartContext";
+import { useRouter } from "next/navigation";
 import ProductDetailsModal from "./ProductDetailsModal";
 
-const WHATSAPP_BUSINESS_PHONE = "919671655023"; // TODO: Customize this with your actual WhatsApp Business number (including country code)
+const WHATSAPP_BUSINESS_PHONE = "919650045175"; // TODO: Customize this with your actual WhatsApp Business number (including country code)
 
 export default function CartDrawer() {
   const {
@@ -17,6 +18,7 @@ export default function CartDrawer() {
     clearCart
   } = useCart();
 
+  const router = useRouter();
   const [checkoutStep, setCheckoutStep] = useState<"cart" | "shipping" | "processing" | "success">("cart");
   const [orderNumber, setOrderNumber] = useState("");
   const [selectedCartProduct, setSelectedCartProduct] = useState<Product | null>(null);
@@ -128,13 +130,47 @@ export default function CartDrawer() {
     
     const whatsappUrl = `https://wa.me/${WHATSAPP_BUSINESS_PHONE}?text=${encodeURIComponent(message)}`;
 
-    // Simulate routing delay, open WhatsApp, clear cart, and transition to success screen
+    // Simulate routing delay, open WhatsApp, clear cart, and redirect to payment-done page
     setTimeout(() => {
-      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
       const generatedOrder = `MQ-${Math.floor(100000 + Math.random() * 900000)}`;
       setOrderNumber(generatedOrder);
-      setCheckoutStep("success");
-      clearCart();
+      
+      const orderData = {
+        orderNumber: generatedOrder,
+        items: cartItems.map(item => ({
+          id: item.product.id,
+          name: item.product.name,
+          price: item.product.price,
+          quantity: item.quantity,
+          color: item.selectedColor?.name || null,
+          image: item.product.image
+        })),
+        subtotal: cartTotal,
+        discount: discountAmount,
+        couponCode: appliedCoupon?.code || null,
+        shippingFee: shippingFee,
+        grandTotal: grandTotal,
+        customer: {
+          name: customerName.trim(),
+          phone: customerPhone.trim(),
+          address: shippingAddress.trim(),
+          pincode: pincode.trim()
+        },
+        date: new Date().toISOString()
+      };
+
+      // Save order details to localStorage
+      try {
+        localStorage.setItem("mahqee_last_order", JSON.stringify(orderData));
+        const existingOrdersStr = localStorage.getItem("mahqee_orders");
+        const existingOrders = existingOrdersStr ? JSON.parse(existingOrdersStr) : [];
+        existingOrders.unshift(orderData);
+        localStorage.setItem("mahqee_orders", JSON.stringify(existingOrders));
+      } catch (e) {
+        console.error("Failed to save order to local storage database", e);
+      }
+
+      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
       
       // Reset form fields
       setCustomerName("");
@@ -143,6 +179,12 @@ export default function CartDrawer() {
       setPincode("");
       setAppliedCoupon(null);
       setCouponInput("");
+
+      // Transition client state and navigate to success page
+      clearCart();
+      closeCart();
+      setCheckoutStep("cart"); // Reset drawer step for next open
+      router.push("/payment-done");
     }, 1500);
   };
 
@@ -469,7 +511,7 @@ export default function CartDrawer() {
                     </div>
                   )}
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", fontSize: "13px", color: "var(--text-secondary)" }}>
-                    <span>Shipping <span style={{color: "var(--text-primary)", fontWeight: "500"}}>(for orders below ₹399)</span></span>
+                    <span>Shipping <span style={{color: "var(--text-primary)", fontWeight: "500"}}>(for orders below ₹299)</span></span>
                     <span>{shippingFee > 0 ? `₹${shippingFee}.00` : "FREE (Express)"}</span>
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px", fontSize: "18px", fontWeight: "500", color: "var(--text-primary)" }}>

@@ -446,3 +446,48 @@ a, button, [role="button"], input[type="submit"], input[type="button"], select, 
     gap: 8px !important;
   }
 }
+
+/* Payment Done Confirmation Styles */
+.payment-done-card {
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 36px 30px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.payment-done-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 48px;
+}
+
+.payment-done-btn {
+  border-radius: 8px !important;
+  padding: 12px 28px !important;
+  font-size: 13.5px !important;
+  justify-content: center;
+}
+
+@media (max-width: 600px) {
+  .payment-done-card {
+    padding: 24px 16px !important;
+    border-radius: 16px !important;
+    gap: 18px !important;
+  }
+  .payment-done-buttons {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    padding: 0 16px !important;
+  }
+  .payment-done-btn {
+    width: 100% !important;
+  }
+}
+

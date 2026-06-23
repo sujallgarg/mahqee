@@ -173,6 +173,7 @@ export default function Navbar() {
                       <Link href="/contact" className="dropdown-item">Connect With Us</Link>
                       <Link href="/best-sellers" className="dropdown-item">Award Winners</Link>
                       <Link href="/track-order" className="dropdown-item">Track Delivery</Link>
+                      <Link href="/payment-done" className="dropdown-item">My Orders</Link>
                     </div>
                   </div>
                 </div>
@@ -181,6 +182,7 @@ export default function Navbar() {
             <Link href="/best-sellers" className="nav-link">Best Sellers</Link>
             <Link href="/about" className="nav-link">About Us</Link>
             <Link href="/contact" className="nav-link">Contact Us</Link>
+            <Link href="/payment-done" className="nav-link">My Orders</Link>
           </nav>
 
           {/* Right Action Icons & Hamburger Trigger */}
@@ -496,6 +498,7 @@ export default function Navbar() {
               <Link href="/best-sellers" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Best Sellers</Link>
               <Link href="/about" className="nav-link" onClick={() => setMobileMenuOpen(false)}>About Us</Link>
               <Link href="/contact" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Contact Us</Link>
+              <Link href="/payment-done" className="nav-link" onClick={() => setMobileMenuOpen(false)}>My Orders</Link>
             </div>
           </div>
         </div>
