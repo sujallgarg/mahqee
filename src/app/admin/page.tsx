@@ -51,8 +51,35 @@ export default function AdminPage() {
           return res.json();
         })
         .then((data) => {
-          setOrders(data);
-          localStorage.setItem("mahqee_admin_orders", JSON.stringify(data));
+          if (Array.isArray(data)) {
+            setOrders((prevOrders) => {
+              const orderMap = new Map(prevOrders.map((o) => [o.orderNumber, o]));
+              let changed = false;
+
+              data.forEach((serverOrder) => {
+                const existing = orderMap.get(serverOrder.orderNumber);
+                if (!existing) {
+                  orderMap.set(serverOrder.orderNumber, serverOrder);
+                  changed = true;
+                } else {
+                  const merged = { ...existing, ...serverOrder };
+                  if (JSON.stringify(existing) !== JSON.stringify(merged)) {
+                    orderMap.set(serverOrder.orderNumber, merged);
+                    changed = true;
+                  }
+                }
+              });
+
+              if (changed || prevOrders.length !== orderMap.size) {
+                const mergedList = Array.from(orderMap.values());
+                // Sort by date descending (newest first)
+                mergedList.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+                localStorage.setItem("mahqee_admin_orders", JSON.stringify(mergedList));
+                return mergedList;
+              }
+              return prevOrders;
+            });
+          }
         })
         .catch(err => {
           console.warn("Could not sync orders from server API inside admin", err);
@@ -538,7 +565,9 @@ export default function AdminPage() {
                     localStorage.removeItem("mahqee_admin_orders");
                     localStorage.removeItem("mahqee_last_order");
                     setOrders([]);
-                    alert("Orders database cleared.");
+                    fetch("/api/orders?clear=true", { method: "DELETE" })
+                      .then(() => alert("Orders database cleared."))
+                      .catch(err => console.error("Failed to clear orders database on server", err));
                   }
                 }}
                 style={{
