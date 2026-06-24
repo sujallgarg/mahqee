@@ -1,9 +1,14 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import os from "os";
 import { Product } from "@/context/CartContext";
 
-const getFilePath = () => path.join(process.cwd(), "src/data/products.json");
+// Flag to switch to /tmp storage if local directory is read-only (e.g. on Vercel)
+let useTmpStorage = false;
+
+const getLocalPath = () => path.join(process.cwd(), "src/data/products.json");
+const getTmpPath = () => path.join(os.tmpdir(), "mahqee_products.json");
 
 const defaultProducts: Product[] = [
   {
@@ -214,22 +219,78 @@ const defaultProducts: Product[] = [
 
 
 const readProducts = (): Product[] => {
-  const filePath = getFilePath();
-  if (!fs.existsSync(filePath)) {
-    const dir = path.dirname(filePath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
+  const localPath = getLocalPath();
+  const tmpPath = getTmpPath();
+
+  if (useTmpStorage) {
+    if (fs.existsSync(tmpPath)) {
+      try {
+        const data = fs.readFileSync(tmpPath, "utf-8");
+        return JSON.parse(data);
+      } catch (e) {
+        console.error("Failed to read from tmp products storage", e);
+      }
     }
-    fs.writeFileSync(filePath, JSON.stringify(defaultProducts, null, 2), "utf-8");
+    // Seed from local if it exists
+    if (fs.existsSync(localPath)) {
+      try {
+        const data = fs.readFileSync(localPath, "utf-8");
+        fs.writeFileSync(tmpPath, data, "utf-8");
+        return JSON.parse(data);
+      } catch (e) {
+        console.error("Failed to seed tmp products storage from local bundle", e);
+      }
+    }
     return defaultProducts;
   }
-  const data = fs.readFileSync(filePath, "utf-8");
-  return JSON.parse(data);
+
+  try {
+    if (!fs.existsSync(localPath)) {
+      const dir = path.dirname(localPath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      fs.writeFileSync(localPath, JSON.stringify(defaultProducts, null, 2), "utf-8");
+      return defaultProducts;
+    }
+    const data = fs.readFileSync(localPath, "utf-8");
+    return JSON.parse(data);
+  } catch (e: any) {
+    // If it's a read-only filesystem or permissions error, switch to tmp storage
+    if (e.code === "EROFS" || e.code === "EACCES" || e.code === "EPERM") {
+      useTmpStorage = true;
+      console.warn("Detected read-only filesystem for products storage. Falling back to /tmp/mahqee_products.json.");
+      return readProducts(); // retry recursively with useTmpStorage = true
+    }
+    console.error("Failed to read products file database, returning defaults", e);
+    return defaultProducts;
+  }
 };
 
 const writeProducts = (products: Product[]) => {
-  const filePath = getFilePath();
-  fs.writeFileSync(filePath, JSON.stringify(products, null, 2), "utf-8");
+  const localPath = getLocalPath();
+  const tmpPath = getTmpPath();
+
+  if (useTmpStorage) {
+    try {
+      fs.writeFileSync(tmpPath, JSON.stringify(products, null, 2), "utf-8");
+    } catch (e) {
+      console.error("Failed to write to tmp products storage", e);
+    }
+    return;
+  }
+
+  try {
+    fs.writeFileSync(localPath, JSON.stringify(products, null, 2), "utf-8");
+  } catch (e: any) {
+    if (e.code === "EROFS" || e.code === "EACCES" || e.code === "EPERM") {
+      useTmpStorage = true;
+      console.warn("Detected read-only filesystem for writing products. Falling back to /tmp/mahqee_products.json.");
+      writeProducts(products); // retry writing to tmp storage
+    } else {
+      console.error("Failed to write products file database", e);
+    }
+  }
 };
 
 export const dynamic = "force-dynamic";

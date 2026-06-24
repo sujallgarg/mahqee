@@ -101,6 +101,43 @@ export default function AdminPage() {
     });
   };
 
+  const handleUpdateDeliveryStatus = (orderNumber: string, newDeliveryStatus: string) => {
+    const updatedOrders = orders.map((o) => {
+      if (o.orderNumber === orderNumber) {
+        return { ...o, deliveryStatus: newDeliveryStatus };
+      }
+      return o;
+    });
+    setOrders(updatedOrders);
+    localStorage.setItem("mahqee_admin_orders", JSON.stringify(updatedOrders));
+
+    const storedLastOrder = localStorage.getItem("mahqee_last_order");
+    if (storedLastOrder) {
+      try {
+        const lastOrder = JSON.parse(storedLastOrder);
+        if (lastOrder.orderNumber === orderNumber) {
+          lastOrder.deliveryStatus = newDeliveryStatus;
+          localStorage.setItem("mahqee_last_order", JSON.stringify(lastOrder));
+        }
+      } catch (e) {
+        console.error("Failed to update last order status in admin", e);
+      }
+    }
+
+    // Persist change on shared server database
+    fetch("/api/orders", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        orderNumber,
+        deliveryStatus: newDeliveryStatus
+      })
+    })
+    .catch(err => {
+      console.error("Failed to persist delivery status on server", err);
+    });
+  };
+
   // Admin form states
   const [editingId, setEditingId] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -1218,6 +1255,7 @@ export default function AdminPage() {
                         <th style={{ padding: "12px 16px" }}>Order Items</th>
                         <th style={{ padding: "12px 16px" }}>Total Amount</th>
                         <th style={{ padding: "12px 16px" }}>Paytm Status</th>
+                        <th style={{ padding: "12px 16px" }}>Delivery Status</th>
                         <th style={{ padding: "12px 16px", textAlign: "right" }}>Agent Actions</th>
                       </tr>
                     </thead>
@@ -1276,6 +1314,29 @@ export default function AdminPage() {
                                   ⏳ Processing
                                 </span>
                               )}
+                            </td>
+                            {/* Delivery Status Select dropdown */}
+                            <td style={{ padding: "16px" }}>
+                              <select
+                                value={ord.deliveryStatus || "placed"}
+                                onChange={(e) => handleUpdateDeliveryStatus(ord.orderNumber, e.target.value)}
+                                style={{
+                                  padding: "6px 8px",
+                                  borderRadius: "6px",
+                                  border: "1px solid var(--border-color)",
+                                  backgroundColor: "#ffffff",
+                                  fontSize: "12px",
+                                  color: "var(--text-primary)",
+                                  outline: "none",
+                                  cursor: "pointer"
+                                }}
+                              >
+                                <option value="placed">Placed</option>
+                                <option value="processing">Processing</option>
+                                <option value="shipped">Shipped</option>
+                                <option value="transit">In Transit</option>
+                                <option value="delivered">Delivered</option>
+                              </select>
                             </td>
                             {/* Action Buttons */}
                             <td style={{ padding: "16px", textAlign: "right" }}>

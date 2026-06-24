@@ -1,31 +1,87 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import os from "os";
 
-const getFilePath = () => path.join(process.cwd(), "src/data/orders.json");
+// Flag to switch to /tmp storage if local directory is read-only (e.g. on Vercel)
+let useTmpStorage = false;
+
+const getLocalPath = () => path.join(process.cwd(), "src/data/orders.json");
+const getTmpPath = () => path.join(os.tmpdir(), "mahqee_orders.json");
 
 const readOrders = (): any[] => {
-  const filePath = getFilePath();
-  if (!fs.existsSync(filePath)) {
-    const dir = path.dirname(filePath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
+  const localPath = getLocalPath();
+  const tmpPath = getTmpPath();
+
+  if (useTmpStorage) {
+    if (fs.existsSync(tmpPath)) {
+      try {
+        const data = fs.readFileSync(tmpPath, "utf-8");
+        return JSON.parse(data);
+      } catch (e) {
+        console.error("Failed to read from tmp orders storage", e);
+      }
     }
-    fs.writeFileSync(filePath, JSON.stringify([], null, 2), "utf-8");
+    // Seed from local if it exists
+    if (fs.existsSync(localPath)) {
+      try {
+        const data = fs.readFileSync(localPath, "utf-8");
+        fs.writeFileSync(tmpPath, data, "utf-8");
+        return JSON.parse(data);
+      } catch (e) {
+        console.error("Failed to seed tmp orders storage from local bundle", e);
+      }
+    }
     return [];
   }
+
   try {
-    const data = fs.readFileSync(filePath, "utf-8");
+    if (!fs.existsSync(localPath)) {
+      const dir = path.dirname(localPath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      fs.writeFileSync(localPath, JSON.stringify([], null, 2), "utf-8");
+      return [];
+    }
+    const data = fs.readFileSync(localPath, "utf-8");
     return JSON.parse(data);
-  } catch (e) {
+  } catch (e: any) {
+    // If it's a read-only filesystem or permissions error, switch to tmp storage
+    if (e.code === "EROFS" || e.code === "EACCES" || e.code === "EPERM") {
+      useTmpStorage = true;
+      console.warn("Detected read-only filesystem for orders storage. Falling back to /tmp/mahqee_orders.json.");
+      return readOrders(); // retry recursively with useTmpStorage = true
+    }
     console.error("Failed to read orders file database, returning empty list", e);
     return [];
   }
 };
 
 const writeOrders = (orders: any[]) => {
-  const filePath = getFilePath();
-  fs.writeFileSync(filePath, JSON.stringify(orders, null, 2), "utf-8");
+  const localPath = getLocalPath();
+  const tmpPath = getTmpPath();
+
+  if (useTmpStorage) {
+    try {
+      fs.writeFileSync(tmpPath, JSON.stringify(orders, null, 2), "utf-8");
+    } catch (e) {
+      console.error("Failed to write to tmp orders storage", e);
+    }
+    return;
+  }
+
+  try {
+    fs.writeFileSync(localPath, JSON.stringify(orders, null, 2), "utf-8");
+  } catch (e: any) {
+    if (e.code === "EROFS" || e.code === "EACCES" || e.code === "EPERM") {
+      useTmpStorage = true;
+      console.warn("Detected read-only filesystem for writing orders. Falling back to /tmp/mahqee_orders.json.");
+      writeOrders(orders); // retry writing to tmp storage
+    } else {
+      console.error("Failed to write orders file database", e);
+    }
+  }
 };
 
 export const dynamic = "force-dynamic";
@@ -96,9 +152,10 @@ export async function POST(req: Request) {
 
 export async function PUT(req: Request) {
   try {
-    const { orderNumber, paymentStatus } = await req.json();
-    if (!orderNumber || !paymentStatus) {
-      return NextResponse.json({ error: "Missing orderNumber or paymentStatus" }, { status: 400 });
+    const body = await req.json();
+    const { orderNumber, paymentStatus, deliveryStatus } = body;
+    if (!orderNumber) {
+      return NextResponse.json({ error: "Missing orderNumber" }, { status: 400 });
     }
 
     const orders = readOrders();
@@ -106,7 +163,11 @@ export async function PUT(req: Request) {
 
     const updatedOrders = orders.map((o: any) => {
       if (o.orderNumber === orderNumber) {
-        updatedOrder = { ...o, paymentStatus };
+        updatedOrder = { 
+          ...o, 
+          paymentStatus: paymentStatus !== undefined ? paymentStatus : o.paymentStatus,
+          deliveryStatus: deliveryStatus !== undefined ? deliveryStatus : o.deliveryStatus
+        };
         return updatedOrder;
       }
       return o;

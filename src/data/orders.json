@@ -23,7 +23,8 @@
       "pincode": "223333"
     },
     "date": "2026-06-24T14:17:32.196Z",
-    "paymentStatus": "processing"
+    "paymentStatus": "verified",
+    "deliveryStatus": "delivered"
   },
   {
     "orderNumber": "MQ-391994",
@@ -65,6 +66,7 @@
       "pincode": "444444"
     },
     "date": "2026-06-24T13:58:58.147Z",
-    "paymentStatus": "processing"
+    "paymentStatus": "verified",
+    "deliveryStatus": "delivered"
   }
 ]
