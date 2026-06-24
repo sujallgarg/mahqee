@@ -30,16 +30,36 @@ const writeOrders = (orders: any[]) => {
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { searchParams } = new URL(req.url);
+    const adminPasscode = searchParams.get("admin_passcode");
+    const numbersParam = searchParams.get("numbers");
+    
     const orders = readOrders();
-    return NextResponse.json(orders, {
-      headers: {
-        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-        "Pragma": "no-cache",
-        "Expires": "0",
-      },
-    });
+
+    // 1. Admin Request with correct passcode
+    if (adminPasscode === "mahqee2026") {
+      return NextResponse.json(orders, {
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+          "Pragma": "no-cache",
+          "Expires": "0",
+        },
+      });
+    }
+
+    // 2. Specific user order status check request
+    if (numbersParam) {
+      const numbersList = numbersParam.split(",").map(n => n.trim().toLowerCase());
+      const filteredOrders = orders.filter((o: any) => 
+        o.orderNumber && numbersList.includes(o.orderNumber.trim().toLowerCase())
+      );
+      return NextResponse.json(filteredOrders);
+    }
+
+    // 3. Prevent unauthorized listing of all user orders
+    return NextResponse.json([]);
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({ error: msg }, { status: 500 });

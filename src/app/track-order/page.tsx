@@ -24,7 +24,7 @@ export default function TrackOrderPage() {
     if (!searchedCode) return;
 
     const trackPoll = () => {
-      fetch("/api/orders", { cache: "no-store" })
+      fetch(`/api/orders?numbers=${searchedCode.trim()}`, { cache: "no-store" })
         .then((res) => {
           if (!res.ok) throw new Error("Failed to fetch orders from server");
           return res.json();

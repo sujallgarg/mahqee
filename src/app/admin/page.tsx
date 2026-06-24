@@ -27,7 +27,7 @@ export default function AdminPage() {
       if (typeof window !== "undefined") {
         setIsAuthorized(sessionStorage.getItem("mahqee_admin_authorized") === "true");
         
-        const storedOrders = localStorage.getItem("mahqee_orders");
+        const storedOrders = localStorage.getItem("mahqee_admin_orders");
         if (storedOrders) {
           try {
             setOrders(JSON.parse(storedOrders));
@@ -45,14 +45,14 @@ export default function AdminPage() {
     if (!isAuthorized) return;
 
     const fetchOrdersQueue = () => {
-      fetch("/api/orders", { cache: "no-store" })
+      fetch("/api/orders?admin_passcode=mahqee2026", { cache: "no-store" })
         .then((res) => {
           if (!res.ok) throw new Error("Failed to fetch orders");
           return res.json();
         })
         .then((data) => {
           setOrders(data);
-          localStorage.setItem("mahqee_orders", JSON.stringify(data));
+          localStorage.setItem("mahqee_admin_orders", JSON.stringify(data));
         })
         .catch(err => {
           console.warn("Could not sync orders from server API inside admin", err);
@@ -72,7 +72,7 @@ export default function AdminPage() {
       return o;
     });
     setOrders(updatedOrders);
-    localStorage.setItem("mahqee_orders", JSON.stringify(updatedOrders));
+    localStorage.setItem("mahqee_admin_orders", JSON.stringify(updatedOrders));
 
     const storedLastOrder = localStorage.getItem("mahqee_last_order");
     if (storedLastOrder) {
@@ -498,7 +498,7 @@ export default function AdminPage() {
               <button
                 onClick={() => {
                   if (confirm("Are you sure you want to clear the entire order history database?")) {
-                    localStorage.removeItem("mahqee_orders");
+                    localStorage.removeItem("mahqee_admin_orders");
                     localStorage.removeItem("mahqee_last_order");
                     setOrders([]);
                     alert("Orders database cleared.");

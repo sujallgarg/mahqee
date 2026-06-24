@@ -102,26 +102,62 @@ export default function PaymentDonePage() {
       }
     }
 
-    // Poll server for latest orders status sync
+    // Poll server for latest orders status sync (only for this client's order numbers to preserve privacy)
     const fetchLatestOrders = () => {
-      fetch("/api/orders", { cache: "no-store" })
+      const storedLast = localStorage.getItem("mahqee_last_order");
+      const storedAll = localStorage.getItem("mahqee_orders");
+      
+      const numbers: string[] = [];
+      if (storedLast) {
+        try {
+          numbers.push(JSON.parse(storedLast).orderNumber);
+        } catch {}
+      }
+      if (storedAll) {
+        try {
+          JSON.parse(storedAll).forEach((o: any) => {
+            if (o.orderNumber && !numbers.includes(o.orderNumber)) {
+              numbers.push(o.orderNumber);
+            }
+          });
+        } catch {}
+      }
+
+      if (numbers.length === 0) return;
+
+      fetch(`/api/orders?numbers=${numbers.join(",")}`, { cache: "no-store" })
         .then((res) => {
           if (!res.ok) throw new Error("Failed to fetch orders");
           return res.json();
         })
         .then((ordersList: Order[]) => {
-          setAllOrders(ordersList);
-          localStorage.setItem("mahqee_orders", JSON.stringify(ordersList));
+          const storedOrders = localStorage.getItem("mahqee_orders");
+          let currentLocalList: Order[] = [];
+          if (storedOrders) {
+            try { currentLocalList = JSON.parse(storedOrders); } catch {}
+          }
+          
+          const updatedLocalList = currentLocalList.map(localOrd => {
+            const foundServer = ordersList.find(s => s.orderNumber === localOrd.orderNumber);
+            if (foundServer) {
+              return { ...localOrd, paymentStatus: foundServer.paymentStatus };
+            }
+            return localOrd;
+          });
+          
+          setAllOrders(updatedLocalList);
+          localStorage.setItem("mahqee_orders", JSON.stringify(updatedLocalList));
           
           // Sync current lastOrder status from database
           const latestLastOrder = localStorage.getItem("mahqee_last_order");
           if (latestLastOrder) {
             try {
               const parsedLast = JSON.parse(latestLastOrder);
-              const found = ordersList.find(o => o.orderNumber === parsedLast.orderNumber);
-              if (found) {
-                setLastOrder(found);
-                localStorage.setItem("mahqee_last_order", JSON.stringify(found));
+              const foundServer = ordersList.find(s => s.orderNumber === parsedLast.orderNumber);
+              if (foundServer) {
+                const updatedLast = { ...parsedLast, paymentStatus: foundServer.paymentStatus };
+                setLastOrder(updatedLast);
+                localStorage.setItem("mahqee_last_order", JSON.stringify(updatedLast));
               }
             } catch (e) {
               console.error(e);
