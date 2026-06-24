@@ -32,8 +32,25 @@ export default function CartDrawer() {
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [shippingAddress, setShippingAddress] = useState("");
+  
+  // Split Address Details States
+  const [houseNo, setHouseNo] = useState("");
+  const [area, setArea] = useState("");
+  const [landmark, setLandmark] = useState("");
+  const [city, setCity] = useState("");
+  const [stateName, setStateName] = useState("");
+  
   const [pincode, setPincode] = useState("");
-  const [formErrors, setFormErrors] = useState<{ name?: string; phone?: string; address?: string; pincode?: string }>({});
+  const [formErrors, setFormErrors] = useState<{
+    name?: string;
+    phone?: string;
+    address?: string;
+    pincode?: string;
+    houseNo?: string;
+    area?: string;
+    city?: string;
+    stateName?: string;
+  }>({});
 
   // Computed values for coupons and shipping
   const discountAmount = appliedCoupon ? Math.round((cartTotal * appliedCoupon.percent) / 100) : 0;
@@ -65,7 +82,15 @@ export default function CartDrawer() {
   };
 
   const validateAndSubmitCheckout = () => {
-    const errors: { name?: string; phone?: string; address?: string; pincode?: string } = {};
+    const errors: {
+      name?: string;
+      phone?: string;
+      pincode?: string;
+      houseNo?: string;
+      area?: string;
+      city?: string;
+      stateName?: string;
+    } = {};
 
     if (!customerName.trim()) {
       errors.name = "Full name is required";
@@ -77,13 +102,20 @@ export default function CartDrawer() {
       errors.phone = "Enter a valid 10-digit mobile number";
     }
 
-    const addr = shippingAddress.trim();
-    if (!addr) {
-      errors.address = "Delivery address is required";
-    } else if (addr.length < 15) {
-      errors.address = "Address is too short. Please include house no., street, city, state (min 15 characters)";
-    } else if (!/[a-zA-Z]/.test(addr)) {
-      errors.address = "Address must contain letters";
+    if (!houseNo.trim()) {
+      errors.houseNo = "Flat/House No./Building is required";
+    }
+
+    if (!area.trim()) {
+      errors.area = "Area/Colony/Street is required";
+    }
+
+    if (!city.trim()) {
+      errors.city = "City/Town is required";
+    }
+
+    if (!stateName.trim()) {
+      errors.stateName = "State is required";
     }
 
     const pin = pincode.trim();
@@ -99,10 +131,14 @@ export default function CartDrawer() {
     }
 
     setFormErrors({});
-    handleCheckout();
+
+    // Combine split address fields into formatted address string
+    const combinedAddress = `${houseNo.trim()}, ${area.trim()}${landmark.trim() ? `, Landmark: ${landmark.trim()}` : ""}, ${city.trim()}, ${stateName.trim()}`;
+    setShippingAddress(combinedAddress);
+    handleCheckout(combinedAddress);
   };
 
-  const handleCheckout = () => {
+  const handleCheckout = (addressStr: string) => {
     setCheckoutStep("processing");
     
     // Format cart items details for the WhatsApp message
@@ -123,7 +159,7 @@ export default function CartDrawer() {
     pricingDetailsText += `*Shipping:* ${shippingFee > 0 ? `₹${shippingFee}.00` : "FREE (Express)"}\n*Grand Total:* ₹${grandTotal.toLocaleString("en-IN")}.00`;
 
     // Format shipping details
-    const shippingDetailsText = `*Name:* ${customerName.trim()}\n*Mobile:* ${customerPhone.trim()}\n*Address:* ${shippingAddress.trim()}\n*Pincode:* ${pincode.trim()}`;
+    const shippingDetailsText = `*Name:* ${customerName.trim()}\n*Mobile:* ${customerPhone.trim()}\n*Address:* ${addressStr.trim()}\n*Pincode:* ${pincode.trim()}`;
 
     // Assemble final message
     const message = `Hello MAHQEE,\n\nI would like to place an order:\n\n*Order Summary:*\n${itemsText}\n\n*Pricing Summary:*\n${pricingDetailsText}\n\n*Delivery Information:*\n${shippingDetailsText}\n\nThank you!`;
@@ -153,7 +189,7 @@ export default function CartDrawer() {
         customer: {
           name: customerName.trim(),
           phone: customerPhone.trim(),
-          address: shippingAddress.trim(),
+          address: addressStr.trim(),
           pincode: pincode.trim()
         },
         date: new Date().toISOString(),
@@ -194,6 +230,11 @@ export default function CartDrawer() {
       setCustomerName("");
       setCustomerPhone("");
       setShippingAddress("");
+      setHouseNo("");
+      setArea("");
+      setLandmark("");
+      setCity("");
+      setStateName("");
       setPincode("");
       setAppliedCoupon(null);
       setCouponInput("");
@@ -630,36 +671,152 @@ export default function CartDrawer() {
                   )}
                 </div>
 
-                {/* Address */}
+                {/* Flat / House No. */}
                 <div>
                   <label style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-secondary)", display: "block", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                    Delivery Address *
+                    Flat / House No. / Building *
                   </label>
-                  <textarea 
-                    placeholder="House/Flat No., Building, Street Address, Town/City, State" 
-                    value={shippingAddress}
+                  <input 
+                    type="text" 
+                    placeholder="e.g. Flat 101, Block A" 
+                    value={houseNo}
                     onChange={(e) => {
-                      setShippingAddress(e.target.value);
-                      if (formErrors.address) setFormErrors({ ...formErrors, address: undefined });
+                      setHouseNo(e.target.value);
+                      if (formErrors.houseNo) setFormErrors({ ...formErrors, houseNo: undefined });
                     }}
-                    rows={3}
                     style={{
                       width: "100%",
                       padding: "10px 14px",
                       borderRadius: "8px",
-                      border: formErrors.address ? "1px solid var(--accent-pink)" : "1px solid var(--border-color)",
+                      border: formErrors.houseNo ? "1px solid var(--accent-pink)" : "1px solid var(--border-color)",
                       backgroundColor: "#ffffff",
                       fontSize: "13px",
                       color: "var(--text-primary)",
-                      outline: "none",
-                      resize: "none"
+                      outline: "none"
                     }}
                   />
-                  {formErrors.address && (
+                  {formErrors.houseNo && (
                     <span style={{ color: "var(--accent-pink)", fontSize: "11px", marginTop: "4px", display: "block" }}>
-                      {formErrors.address}
+                      {formErrors.houseNo}
                     </span>
                   )}
+                </div>
+
+                {/* Area / Colony / Street */}
+                <div>
+                  <label style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-secondary)", display: "block", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                    Area / Colony / Street *
+                  </label>
+                  <input 
+                    type="text" 
+                    placeholder="e.g. Sector 45, Green Avenue" 
+                    value={area}
+                    onChange={(e) => {
+                      setArea(e.target.value);
+                      if (formErrors.area) setFormErrors({ ...formErrors, area: undefined });
+                    }}
+                    style={{
+                      width: "100%",
+                      padding: "10px 14px",
+                      borderRadius: "8px",
+                      border: formErrors.area ? "1px solid var(--accent-pink)" : "1px solid var(--border-color)",
+                      backgroundColor: "#ffffff",
+                      fontSize: "13px",
+                      color: "var(--text-primary)",
+                      outline: "none"
+                    }}
+                  />
+                  {formErrors.area && (
+                    <span style={{ color: "var(--accent-pink)", fontSize: "11px", marginTop: "4px", display: "block" }}>
+                      {formErrors.area}
+                    </span>
+                  )}
+                </div>
+
+                {/* Landmark */}
+                <div>
+                  <label style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-secondary)", display: "block", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                    Landmark (Optional)
+                  </label>
+                  <input 
+                    type="text" 
+                    placeholder="e.g. Near Rose Garden" 
+                    value={landmark}
+                    onChange={(e) => setLandmark(e.target.value)}
+                    style={{
+                      width: "100%",
+                      padding: "10px 14px",
+                      borderRadius: "8px",
+                      border: "1px solid var(--border-color)",
+                      backgroundColor: "#ffffff",
+                      fontSize: "13px",
+                      color: "var(--text-primary)",
+                      outline: "none"
+                    }}
+                  />
+                </div>
+
+                {/* Town/City and State side-by-side */}
+                <div style={{ display: "flex", gap: "12px" }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-secondary)", display: "block", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                      Town / City *
+                    </label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. New Delhi" 
+                      value={city}
+                      onChange={(e) => {
+                        setCity(e.target.value);
+                        if (formErrors.city) setFormErrors({ ...formErrors, city: undefined });
+                      }}
+                      style={{
+                        width: "100%",
+                        padding: "10px 14px",
+                        borderRadius: "8px",
+                        border: formErrors.city ? "1px solid var(--accent-pink)" : "1px solid var(--border-color)",
+                        backgroundColor: "#ffffff",
+                        fontSize: "13px",
+                        color: "var(--text-primary)",
+                        outline: "none"
+                      }}
+                    />
+                    {formErrors.city && (
+                      <span style={{ color: "var(--accent-pink)", fontSize: "11px", marginTop: "4px", display: "block" }}>
+                        {formErrors.city}
+                      </span>
+                    )}
+                  </div>
+
+                  <div style={{ flex: 1 }}>
+                    <label style={{ fontSize: "11px", fontWeight: "600", color: "var(--text-secondary)", display: "block", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                      State *
+                    </label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. Delhi" 
+                      value={stateName}
+                      onChange={(e) => {
+                        setStateName(e.target.value);
+                        if (formErrors.stateName) setFormErrors({ ...formErrors, stateName: undefined });
+                      }}
+                      style={{
+                        width: "100%",
+                        padding: "10px 14px",
+                        borderRadius: "8px",
+                        border: formErrors.stateName ? "1px solid var(--accent-pink)" : "1px solid var(--border-color)",
+                        backgroundColor: "#ffffff",
+                        fontSize: "13px",
+                        color: "var(--text-primary)",
+                        outline: "none"
+                      }}
+                    />
+                    {formErrors.stateName && (
+                      <span style={{ color: "var(--accent-pink)", fontSize: "11px", marginTop: "4px", display: "block" }}>
+                        {formErrors.stateName}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 {/* Pincode */}

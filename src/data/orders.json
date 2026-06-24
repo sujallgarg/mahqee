@@ -1,1 +1,70 @@
-[]
+[
+  {
+    "orderNumber": "MQ-760281",
+    "items": [
+      {
+        "id": "premium-eyelash-curler",
+        "name": "Premium Eyelash Curler",
+        "price": 299,
+        "quantity": 1,
+        "color": null,
+        "image": "/images/eyelash-curler.png"
+      }
+    ],
+    "subtotal": 299,
+    "discount": 0,
+    "couponCode": null,
+    "shippingFee": 0,
+    "grandTotal": 299,
+    "customer": {
+      "name": "Sujal Garg",
+      "phone": "4433333333",
+      "address": "flat 12, sector 4 rohini, delhi, delhi",
+      "pincode": "223333"
+    },
+    "date": "2026-06-24T14:17:32.196Z",
+    "paymentStatus": "processing"
+  },
+  {
+    "orderNumber": "MQ-391994",
+    "items": [
+      {
+        "id": "hair-rollers",
+        "name": "Hair Roller Medium",
+        "price": 182,
+        "quantity": 1,
+        "color": null,
+        "image": "/images/hair-rollers.png"
+      },
+      {
+        "id": "ice-globes",
+        "name": "Facial Ice Globes",
+        "price": 839,
+        "quantity": 1,
+        "color": null,
+        "image": "/images/ice-globes-slider.png"
+      },
+      {
+        "id": "floral-comb",
+        "name": "Floral Comb",
+        "price": 199,
+        "quantity": 1,
+        "color": null,
+        "image": "/images/floracombmain.png"
+      }
+    ],
+    "subtotal": 1220,
+    "discount": 0,
+    "couponCode": null,
+    "shippingFee": 0,
+    "grandTotal": 1220,
+    "customer": {
+      "name": "Sujal Garg",
+      "phone": "8989989898",
+      "address": "street no.12 delhi",
+      "pincode": "444444"
+    },
+    "date": "2026-06-24T13:58:58.147Z",
+    "paymentStatus": "processing"
+  }
+]

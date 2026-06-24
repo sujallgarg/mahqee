@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useCart, Product } from "@/context/CartContext";
 
@@ -10,50 +10,14 @@ interface ScrollytellingProps {
 
 const fallbackProducts: Product[] = [
   {
-    id: "makeup-wedges",
-    name: "MAKEUP WEDGES",
-    tagline: "Streak-Free Application",
-    category: "Tools",
-    price: 199,
-    description: "Premium cosmetic wedges designed for smooth, streak-free liquid and cream foundation application.",
-    image: "/images/makeup-wedges.png",
-    images: ["/images/makeup-wedges.png"],
-    ingredients: ["Latex-free premium polymer", "Soft-touch blending surface"],
-    benefits: ["Precise and even cosmetic blending", "Minimal product absorption and waste"]
-  },
-  {
-    id: "pink-scrunchie",
-    name: "Light Pink Satin Scrunchie",
-    tagline: "Gentle Crease-Free Hold",
-    category: "Tools",
-    price: 128,
-    description: "Luxury light pink satin scrunchie designed to hold hair comfortably without causing pulling, snagging, or creasing.",
-    image: "/images/pink-scrunchie.png",
-    images: ["/images/pink-scrunchie.png"],
-    ingredients: ["100% Premium satin silk wrapper", "High-elastic inner core band"],
-    benefits: ["Frizz-free and crease-free styling", "Prevents hair breakage and pulling split ends"]
-  },
-  {
-    id: "face-roller",
-    name: "Rose Quartz Face Roller",
-    tagline: "Lymphatic Drainage & Contouring",
-    category: "Tools",
-    price: 1870,
-    description: "Authentic rose quartz facial roller designed to reduce morning puffiness, stimulate lymphatic drainage, and assist product absorption.",
-    image: "/images/face-roller.png",
-    images: ["/images/face-roller.png"],
-    ingredients: ["100% Natural certified rose quartz stone", "Noise-free smooth silicone inserts"],
-    benefits: ["Reduces inflammation and morning puffiness", "Improves blood circulation and skin elasticity"]
-  },
-  {
     id: "hair-rollers",
     name: "Hair Roller Medium",
     tagline: "Heatless Blowout Volume",
-    category: "Tools",
+    category: "Hair",
     price: 182,
     description: "Medium-sized self-grip velcro rollers to create bouncy blowouts and root lift without thermal damage.",
-    image: "/images/hair-rollers.png",
-    images: ["/images/hair-rollers.png"],
+    image: "/images/hair-rollers-slider.png",
+    images: ["/images/hair-rollers-slider.png", "/images/hair-rollers-thumb.png"],
     ingredients: ["Premium self-grip velcro material", "Lightweight hollow inner core"],
     benefits: ["Adds dramatic root lift and volume", "Gentle heatless styling for daily curls"]
   },
@@ -61,35 +25,128 @@ const fallbackProducts: Product[] = [
     id: "makeup-bag",
     name: "Makeup Organiser Bag Brown",
     tagline: "Luxury Vegan Leather Organizer",
-    category: "Tools",
+    category: "Makeup",
     price: 697,
     description: "Sleek, double-compartment vanity travel organizer bag crafted from premium brown textured vegan leather.",
-    image: "/images/makeup-bag.png",
-    images: ["/images/makeup-bag.png"],
+    image: "/images/makeup-bag-slider.png",
+    images: ["/images/makeup-bag-slider.png", "/images/makeup-bag-thumb.png"],
     ingredients: ["Waterproof saffiano vegan leather", "Premium gold metallic zip hardware"],
     benefits: ["Double zipper compartments for layout organization", "Spacious layout with compact exterior shape"]
+  },
+  {
+    id: "paddle-brush",
+    name: "Tropical Bloom Paddle Hair Brush",
+    tagline: "Detangle and Style in Style",
+    category: "Hair",
+    price: 244,
+    description: "Gently detangles and styles hair, featuring high-quality flexible bristles and a premium tropical bloom pattern.",
+    image: "/images/paddle-brush-slider.png",
+    images: ["/images/paddle-brush-slider.png", "/images/paddle-brush-thumb.png"],
+    ingredients: ["Anti-static ionic bristles", "Comfortable pneumatic cushion base"],
+    benefits: ["Seamlessly detangles wet or dry hair", "Gentle on sensitive scalps", "Frizz-free finish"]
+  },
+  {
+    id: "ice-globes",
+    name: "Facial Ice Globes",
+    tagline: "Calm and Cool Facial Massage",
+    category: "Makeup",
+    price: 839,
+    description: "Premium glass facial ice globes to soothe skin, reduce puffiness, stimulate blood circulation, and enhance your daily skincare routine.",
+    image: "/images/ice-globes-slider.png",
+    images: ["/images/ice-globes-slider.png", "/images/ice-globes-thumb.png"],
+    ingredients: ["High-borosilicate glass globes", "Non-freezing cosmetic fluid inside"],
+    benefits: ["Soothes redness and calms skin", "Reduces morning under-eye puffiness", "Improves serum absorption"]
+  },
+  {
+    id: "vanity-pouch",
+    name: "Marshmallow Vanity Pouch",
+    tagline: "Soft and Cute Storage Pouch",
+    category: "Makeup",
+    price: 665,
+    description: "A soft, puffy marshmallow-style vanity storage pouch designed with a wide opening and travel-friendly handle.",
+    image: "/images/vanity-pouch-slider.png",
+    images: ["/images/vanity-pouch-slider.png", "/images/vanity-pouch-thumb.png"],
+    ingredients: ["Premium soft quilted cotton outer", "Water-resistant interior lining"],
+    benefits: ["Wide opening design for quick access", "Convenient carry handle", "Compact yet spacious"]
   }
 ];
 
 const productBgColors: Record<string, string> = {
-  "makeup-wedges": "#ebdccb",
-  "pink-scrunchie": "#f7dbdb",
-  "face-roller": "#ebebeb",
   "hair-rollers": "#ffffff",
-  "makeup-bag": "#faf5eb"
+  "makeup-bag": "#faf5eb",
+  "paddle-brush": "#fceef0",
+  "ice-globes": "#ebf5fb",
+  "vanity-pouch": "#fcf0f2"
 };
 
 export default function Scrollytelling({ onLearnMore }: ScrollytellingProps) {
   const { products } = useCart();
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-
+  
   // Find display products from active catalog, otherwise fall back to fallback data
-  const displayIds = ["makeup-wedges", "pink-scrunchie", "face-roller", "hair-rollers", "makeup-bag"];
-  const displayProducts = displayIds.map(id => {
-    const found = products.find(p => p.id === id);
-    if (found) return found;
-    return fallbackProducts.find(p => p.id === id) || fallbackProducts[0];
-  });
+  const lovedProducts = products.filter(p => p.isLovedByMahqee);
+  const displayProducts = lovedProducts.length > 0 ? lovedProducts : fallbackProducts;
+
+  const [activeIndex, setActiveIndex] = useState(() => Math.max(0, Math.min(2, Math.floor(displayProducts.length / 2))));
+  const [isAutoplay, setIsAutoplay] = useState(true);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Safe clamp activeIndex if products list changes size dynamically
+  useEffect(() => {
+    if (activeIndex >= displayProducts.length) {
+      setActiveIndex(Math.max(0, Math.floor(displayProducts.length / 2)));
+    }
+  }, [displayProducts.length, activeIndex]);
+
+  // Set up autoplay timer
+  useEffect(() => {
+    if (!isAutoplay || displayProducts.length === 0) return;
+    const interval = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % displayProducts.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [isAutoplay, displayProducts.length]);
+
+  const isLongCarousel = displayProducts.length > 4;
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  // Setup Intersection Observer to only scroll active elements when in viewport (prevents initial page jump)
+  useEffect(() => {
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
+      setIsIntersecting(true); // Fallback if IntersectionObserver is not supported
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsIntersecting(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+    const currentContainer = containerRef.current;
+    if (currentContainer) {
+      observer.observe(currentContainer);
+    }
+    return () => {
+      if (currentContainer) {
+        observer.unobserve(currentContainer);
+      }
+    };
+  }, []);
+
+  // Scroll active item into view horizontally without scrolling the parent page scroll window
+  useEffect(() => {
+    const isMobile = typeof window !== "undefined" && window.innerWidth <= 900;
+    if ((isMobile || isLongCarousel) && isIntersecting) {
+      const card = cardRefs.current[activeIndex];
+      const container = card?.parentElement;
+      if (card && container) {
+        container.scrollTo({
+          left: card.offsetLeft - container.offsetWidth / 2 + card.offsetWidth / 2,
+          behavior: "smooth"
+        });
+      }
+    }
+  }, [activeIndex, isLongCarousel, isIntersecting]);
 
   return (
     <section 
@@ -121,38 +178,47 @@ export default function Scrollytelling({ onLearnMore }: ScrollytellingProps) {
           </h2>
 
           {/* Columns container */}
-          <div style={{
-            display: "flex",
-            flexDirection: "row",
-            width: "100%",
-            gap: "16px",
-            justifyContent: "space-between",
-            alignItems: "stretch",
-            minHeight: "360px"
-          }} className="showcase-columns-row">
+          <div 
+            ref={containerRef}
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              width: "100%",
+              gap: "16px",
+              justifyContent: isLongCarousel ? "flex-start" : "space-between",
+              alignItems: "center",
+              minHeight: "420px",
+              position: "relative",
+              overflowX: isLongCarousel ? "auto" : "visible",
+              padding: isLongCarousel ? "12px 10px" : "0px",
+              msOverflowStyle: "none",
+              scrollbarWidth: "none"
+            }} 
+            className="showcase-columns-row"
+          >
             {displayProducts.map((prod, idx) => {
-              const isHovered = hoveredIndex === idx;
-              const isAnyHovered = hoveredIndex !== null;
-              
-              // Calculate dynamic flex basis
-              let flexVal = 1;
-              if (isAnyHovered) {
-                flexVal = isHovered ? 1.6 : 0.85;
-              }
+              const isActive = activeIndex === idx;
+              const thumbPath = prod.images && prod.images[1] ? prod.images[1] : prod.image;
 
               return (
                 <div
                   key={prod.id}
-                  onMouseEnter={() => setHoveredIndex(idx)}
-                  onMouseLeave={() => setHoveredIndex(null)}
+                  ref={el => { cardRefs.current[idx] = el; }}
+                  onMouseEnter={() => {
+                    setActiveIndex(idx);
+                    setIsAutoplay(false);
+                  }}
+                  onMouseLeave={() => {
+                    setIsAutoplay(true);
+                  }}
                   onClick={() => onLearnMore?.(prod)}
                   style={{
-                    flex: flexVal,
+                    flex: isLongCarousel ? (isActive ? "0 0 280px" : "0 0 240px") : (isActive ? "1.15" : "0.95"),
                     display: "flex",
                     flexDirection: "column",
                     cursor: "pointer",
-                    transition: "all 0.4s cubic-bezier(0.25, 1, 0.5, 1)",
-                    transform: isHovered ? "translateY(-12px)" : "translateY(0px)",
+                    transition: "all 0.5s cubic-bezier(0.25, 1, 0.5, 1)",
+                    transform: isActive ? "translateY(-8px)" : "translateY(0px)",
                     position: "relative"
                   }}
                   className="showcase-card"
@@ -160,15 +226,14 @@ export default function Scrollytelling({ onLearnMore }: ScrollytellingProps) {
                   {/* Image card wrapper */}
                   <div style={{
                     width: "100%",
-                    flex: 1,
-                    borderRadius: "16px",
+                    height: isActive ? "330px" : "250px",
+                    borderRadius: "12px",
                     overflow: "hidden",
                     backgroundColor: productBgColors[prod.id] || "#ffffff",
                     position: "relative",
-                    border: "1px solid var(--border-color)",
-                    boxShadow: isHovered ? "0 10px 20px rgba(16, 34, 77, 0.12)" : "0 2px 8px rgba(0,0,0,0.02)",
-                    transition: "all 0.4s cubic-bezier(0.25, 1, 0.5, 1)",
-                    aspectRatio: "1 / 1"
+                    border: "1px solid rgba(0,0,0,0.06)",
+                    boxShadow: isActive ? "0 12px 24px rgba(16, 34, 77, 0.14)" : "0 2px 8px rgba(0,0,0,0.02)",
+                    transition: "all 0.5s cubic-bezier(0.25, 1, 0.5, 1)",
                   }}>
                     <Image
                       src={prod.image}
@@ -177,8 +242,8 @@ export default function Scrollytelling({ onLearnMore }: ScrollytellingProps) {
                       sizes="(max-width: 900px) 100vw, 20vw"
                       style={{
                         objectFit: "cover",
-                        transform: isHovered ? "scale(1.08)" : "scale(1)",
-                        transition: "transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)"
+                        transform: isActive ? "scale(1.04)" : "scale(1)",
+                        transition: "transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)"
                       }}
                       unoptimized
                     />
@@ -188,14 +253,14 @@ export default function Scrollytelling({ onLearnMore }: ScrollytellingProps) {
                   <div style={{
                     marginTop: "12px",
                     backgroundColor: "#ffffff",
-                    border: isHovered ? "1px solid #10224d" : "1px solid var(--border-color)",
-                    borderRadius: "8px",
-                    padding: "8px 10px",
+                    border: isActive ? "1px solid #10224d" : "1px solid var(--border-color)",
+                    borderRadius: "6px",
+                    padding: "8px 12px",
                     display: "flex",
                     alignItems: "center",
                     gap: "8px",
-                    boxShadow: isHovered ? "0 4px 12px rgba(16, 34, 77, 0.08)" : "none",
-                    transition: "all 0.3s ease"
+                    boxShadow: isActive ? "0 4px 12px rgba(16, 34, 77, 0.08)" : "none",
+                    transition: "all 0.4s ease"
                   }} className="showcase-info-box">
                     {/* Tiny Thumbnail */}
                     <div style={{
@@ -209,7 +274,7 @@ export default function Scrollytelling({ onLearnMore }: ScrollytellingProps) {
                       border: "1px solid var(--border-color)"
                     }}>
                       <Image
-                        src={prod.image}
+                        src={thumbPath}
                         alt={prod.name}
                         fill
                         sizes="36px"
@@ -226,10 +291,9 @@ export default function Scrollytelling({ onLearnMore }: ScrollytellingProps) {
                       overflow: "hidden"
                     }}>
                       <span style={{
-                        fontSize: "10px",
+                        fontSize: "11px",
                         fontWeight: "600",
                         color: "#10224d",
-                        textTransform: "uppercase",
                         letterSpacing: "0.2px",
                         whiteSpace: "nowrap",
                         overflow: "hidden",
@@ -238,7 +302,7 @@ export default function Scrollytelling({ onLearnMore }: ScrollytellingProps) {
                         {prod.name}
                       </span>
                       <span style={{
-                        fontSize: "11px",
+                        fontSize: "12px",
                         fontWeight: "700",
                         color: "#10224d",
                         marginTop: "1px"
@@ -257,7 +321,7 @@ export default function Scrollytelling({ onLearnMore }: ScrollytellingProps) {
                       strokeWidth="1.5"
                       style={{
                         flexShrink: 0,
-                        transform: isHovered ? "translateY(2px)" : "translateY(0px)",
+                        transform: isActive ? "translateY(2px)" : "translateY(0px)",
                         transition: "transform 0.3s ease"
                       }}
                     >
@@ -299,6 +363,13 @@ export default function Scrollytelling({ onLearnMore }: ScrollytellingProps) {
       </div>
 
       <style jsx>{`
+        .showcase-columns-row::-webkit-scrollbar {
+          display: none;
+        }
+        .showcase-columns-row {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
         .showcase-cta-btn:hover {
           background-color: var(--accent-pink) !important;
           transform: translateY(-2px);
@@ -306,20 +377,29 @@ export default function Scrollytelling({ onLearnMore }: ScrollytellingProps) {
 
         @media (max-width: 900px) {
           .showcase-columns-row {
-            flex-direction: column !important;
-            gap: 12px !important;
+            flex-direction: row !important;
+            overflow-x: auto !important;
+            scroll-snap-type: x mandatory !important;
+            padding: 16px 8px !important;
+            gap: 16px !important;
             min-height: auto !important;
+            align-items: center !important;
+            -webkit-overflow-scrolling: touch;
+          }
+          .showcase-columns-row::-webkit-scrollbar {
+            display: none;
           }
           .showcase-card {
-            flex: none !important;
-            width: 100% !important;
+            flex: 0 0 75% !important;
+            max-width: 280px !important;
+            scroll-snap-align: center !important;
             transform: none !important;
           }
           .showcase-card :global(.showcase-info-box) {
             margin-top: 8px !important;
           }
           .showcase-card > div:first-child {
-            height: 180px !important;
+            height: 250px !important;
             aspect-ratio: auto !important;
           }
           .showcase-cta-btn {

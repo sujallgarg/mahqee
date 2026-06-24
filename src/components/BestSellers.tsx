@@ -16,7 +16,7 @@ export default function BestSellers({ onLearnMore, isSubpage = false }: BestSell
   const progress = useScrollProgress(sectionRef);
 
   // Curate products to show (marked as best seller)
-  const bestSellerProducts = products.filter(p => p.isBestSeller).slice(0, 4);
+  const bestSellerProducts = products.filter(p => p.isBestSeller);
 
   return (
     <section 

@@ -114,6 +114,7 @@ export default function AdminPage() {
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [benefits, setBenefits] = useState<string[]>([]);
   const [isBestSeller, setIsBestSeller] = useState(false);
+  const [isLovedByMahqee, setIsLovedByMahqee] = useState(false);
 
   // UI inputs helper states
   const [newIngredient, setNewIngredient] = useState("");
@@ -303,6 +304,7 @@ export default function AdminPage() {
     setIngredients(product.ingredients || []);
     setBenefits(product.benefits || []);
     setIsBestSeller(!!product.isBestSeller);
+    setIsLovedByMahqee(!!product.isLovedByMahqee);
     
     // Smooth scroll to form
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -319,6 +321,7 @@ export default function AdminPage() {
     setIngredients([]);
     setBenefits([]);
     setIsBestSeller(false);
+    setIsLovedByMahqee(false);
   };
 
   const handleDeleteClick = (productId: string, productName: string) => {
@@ -339,6 +342,14 @@ export default function AdminPage() {
 
     const priceNum = parseFloat(price) || 0;
     
+    if (isLovedByMahqee) {
+      const currentLovedCount = products.filter(p => p.isLovedByMahqee && p.id !== editingId).length;
+      if (currentLovedCount >= 6) {
+        alert("You can select a maximum of 6 products for the 'Loved by the MAHQEE'S' section. Please uncheck another product first.");
+        return;
+      }
+    }
+    
     if (editingId) {
       // Editing existing product
       const updatedProduct: Product = {
@@ -352,7 +363,8 @@ export default function AdminPage() {
         images: images,
         ingredients,
         benefits,
-        isBestSeller
+        isBestSeller,
+        isLovedByMahqee
       };
       
       updateProduct(editingId, updatedProduct);
@@ -381,7 +393,8 @@ export default function AdminPage() {
         images: images,
         ingredients,
         benefits,
-        isBestSeller
+        isBestSeller,
+        isLovedByMahqee
       };
 
       addProduct(newProduct);
@@ -456,55 +469,57 @@ export default function AdminPage() {
               </button>
             </div>
           </div>
-          {activeTab === "catalog" ? (
-            <button
-              onClick={() => {
-                if (confirm("Are you sure you want to reset all products back to default hardcoded entries?")) {
-                  resetProducts();
-                  handleCancelEdit();
-                  alert("Catalog database reset to defaults.");
-                }
-              }}
-              style={{
-                padding: "10px 20px",
-                borderRadius: "8px",
-                fontSize: "12.5px",
-                backgroundColor: "#fee2e2",
-                color: "#991b1b",
-                border: "1px solid #fca5a5",
-                cursor: "pointer",
-                fontWeight: "600",
-                transition: "var(--transition-fast)"
-              }}
-              className="dev-reset-btn"
-            >
-              Reset Database
-            </button>
-          ) : (
-            <button
-              onClick={() => {
-                if (confirm("Are you sure you want to clear the entire order history database?")) {
-                  localStorage.removeItem("mahqee_orders");
-                  localStorage.removeItem("mahqee_last_order");
-                  setOrders([]);
-                  alert("Orders database cleared.");
-                }
-              }}
-              style={{
-                padding: "10px 20px",
-                borderRadius: "8px",
-                fontSize: "12.5px",
-                backgroundColor: "#fee2e2",
-                color: "#991b1b",
-                border: "1px solid #fca5a5",
-                cursor: "pointer",
-                fontWeight: "600",
-                transition: "var(--transition-fast)"
-              }}
-              className="dev-reset-btn"
-            >
-              Clear Orders Database
-            </button>
+          {process.env.NODE_ENV !== "production" && (
+            activeTab === "catalog" ? (
+              <button
+                onClick={() => {
+                  if (confirm("Are you sure you want to reset all products back to default hardcoded entries?")) {
+                    resetProducts();
+                    handleCancelEdit();
+                    alert("Catalog database reset to defaults.");
+                  }
+                }}
+                style={{
+                  padding: "10px 20px",
+                  borderRadius: "8px",
+                  fontSize: "12.5px",
+                  backgroundColor: "#fee2e2",
+                  color: "#991b1b",
+                  border: "1px solid #fca5a5",
+                  cursor: "pointer",
+                  fontWeight: "600",
+                  transition: "var(--transition-fast)"
+                }}
+                className="dev-reset-btn"
+              >
+                Reset Database
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  if (confirm("Are you sure you want to clear the entire order history database?")) {
+                    localStorage.removeItem("mahqee_orders");
+                    localStorage.removeItem("mahqee_last_order");
+                    setOrders([]);
+                    alert("Orders database cleared.");
+                  }
+                }}
+                style={{
+                  padding: "10px 20px",
+                  borderRadius: "8px",
+                  fontSize: "12.5px",
+                  backgroundColor: "#fee2e2",
+                  color: "#991b1b",
+                  border: "1px solid #fca5a5",
+                  cursor: "pointer",
+                  fontWeight: "600",
+                  transition: "var(--transition-fast)"
+                }}
+                className="dev-reset-btn"
+              >
+                Clear Orders Database
+              </button>
+            )
           )}
         </div>
 
@@ -863,24 +878,57 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* Best Seller Checkbox */}
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <input
-                  type="checkbox"
-                  id="adminBestSeller"
-                  checked={isBestSeller}
-                  onChange={(e) => setIsBestSeller(e.target.checked)}
-                  style={{ width: "18px", height: "18px", cursor: "pointer" }}
-                />
-                <label htmlFor="adminBestSeller" style={{
-                  fontSize: "14px",
-                  fontWeight: "600",
-                  color: "var(--text-primary)",
-                  cursor: "pointer",
-                  userSelect: "none"
-                }}>
-                  Mark formulation as a curated Best Seller
-                </label>
+              {/* Checkboxes Row */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                {/* Best Seller Checkbox */}
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <input
+                    type="checkbox"
+                    id="adminBestSeller"
+                    checked={isBestSeller}
+                    onChange={(e) => setIsBestSeller(e.target.checked)}
+                    style={{ width: "18px", height: "18px", cursor: "pointer" }}
+                  />
+                  <label htmlFor="adminBestSeller" style={{
+                    fontSize: "14px",
+                    fontWeight: "600",
+                    color: "var(--text-primary)",
+                    cursor: "pointer",
+                    userSelect: "none"
+                  }}>
+                    Mark formulation as a curated Best Seller
+                  </label>
+                </div>
+
+                {/* Loved by MAHQEE Checkbox */}
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <input
+                    type="checkbox"
+                    id="adminLovedByMahqee"
+                    checked={isLovedByMahqee}
+                    onChange={(e) => {
+                      const checked = e.target.checked;
+                      if (checked) {
+                        const currentLovedCount = products.filter(p => p.isLovedByMahqee && p.id !== editingId).length;
+                        if (currentLovedCount >= 6) {
+                          alert("You can select a maximum of 6 products for the 'Loved by the MAHQEE'S' section. Please uncheck another product first.");
+                          return;
+                        }
+                      }
+                      setIsLovedByMahqee(checked);
+                    }}
+                    style={{ width: "18px", height: "18px", cursor: "pointer" }}
+                  />
+                  <label htmlFor="adminLovedByMahqee" style={{
+                    fontSize: "14px",
+                    fontWeight: "600",
+                    color: "var(--text-primary)",
+                    cursor: "pointer",
+                    userSelect: "none"
+                  }}>
+                    Add to &quot;Loved by the MAHQEE&apos;S&quot; Section
+                  </label>
+                </div>
               </div>
 
               {/* Form Action Buttons */}
@@ -966,6 +1014,7 @@ export default function AdminPage() {
                       <th style={{ padding: "12px 16px" }}>Category</th>
                       <th style={{ padding: "12px 16px" }}>Price</th>
                       <th style={{ padding: "12px 16px" }}>Best Seller</th>
+                      <th style={{ padding: "12px 16px" }}>Loved By MAHQEE</th>
                       <th style={{ padding: "12px 16px", textAlign: "right" }}>Actions</th>
                     </tr>
                   </thead>
@@ -1025,6 +1074,23 @@ export default function AdminPage() {
                               fontWeight: "600",
                               backgroundColor: "rgba(237, 116, 178, 0.12)",
                               color: "var(--accent-pink)",
+                              textTransform: "uppercase"
+                            }}>
+                              Yes
+                            </span>
+                          ) : (
+                            <span style={{ color: "var(--text-secondary)", fontSize: "12px" }}>-</span>
+                          )}
+                        </td>
+                        <td style={{ padding: "16px" }}>
+                          {prod.isLovedByMahqee ? (
+                            <span style={{
+                              padding: "4px 10px",
+                              borderRadius: "99px",
+                              fontSize: "10px",
+                              fontWeight: "600",
+                              backgroundColor: "rgba(16, 34, 77, 0.12)",
+                              color: "var(--text-primary)",
                               textTransform: "uppercase"
                             }}>
                               Yes
