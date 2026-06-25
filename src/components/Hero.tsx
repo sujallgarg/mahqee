@@ -12,11 +12,11 @@ export default function Hero() {
   const progress = useScrollProgress(sectionRef);
 
   const banners = [
-    { src: "/images/banners/banner1.jpg", alt: "MAHQEE All-in-one Beauty Tool Kit" },
-    { src: "/images/banners/banner 5.png", alt: "MAHQEE Detangle Smooth Shine Comb" },
-    { src: "/images/banners/banner2.jpg", alt: "Your Beauty Our Care" },
-    { src: "/images/banners/banner3.jpg", alt: "Clear Skin Confident You" },
-    { src: "/images/banners/banner4.jpg", alt: "Perfect Hair Every Day" }
+    { src: "/banners/banner1.jpg", alt: "MAHQEE All-in-one Beauty Tool Kit" },
+    { src: "/banners/banner 5.png", alt: "MAHQEE Detangle Smooth Shine Comb" },
+    { src: "/banners/banner2.jpg", alt: "Your Beauty Our Care" },
+    { src: "/banners/banner3.jpg", alt: "Clear Skin Confident You" },
+    { src: "/banners/banner4.jpg", alt: "Perfect Hair Every Day" }
   ];
 
   const nextSlide = (e?: React.MouseEvent) => {

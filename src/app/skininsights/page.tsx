@@ -70,7 +70,7 @@ export default function SkinInsightsPage() {
           boxShadow: "var(--shadow-sm)"
         }} className="skininsights-hero-banner">
           <Image 
-            src="/images/skininsights-banner.png" 
+            src="/skininsights-banner.png" 
             alt="MAHQEE SkinInsights Diagnostic AI" 
             fill
             sizes="(max-width: 680px) 100vw, 680px"

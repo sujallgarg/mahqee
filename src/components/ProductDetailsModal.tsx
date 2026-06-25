@@ -174,7 +174,7 @@ export default function ProductDetailsModal({ product, onClose }: ProductDetails
               cursor: "zoom-in"
             }}
           >
-            {(product.image.startsWith("/images/") || product.image.startsWith("data:image/")) ? (
+            {(product.image.startsWith("/") || product.image.startsWith("data:image/")) ? (
               <Image 
                 src={product.images && product.images[activeImageIndex % product.images.length] ? product.images[activeImageIndex % product.images.length] : product.image} 
                 alt={product.name} 

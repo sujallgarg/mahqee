@@ -32,7 +32,7 @@
 //             left: 0,
 //             width: "100%",
 //             height: "100%",
-//             backgroundImage: "url('/images/eyelash-curler-banner.jpg')",
+//             backgroundImage: "url('/eyelash-curler-banner.jpg')",
 //             backgroundSize: "cover",
 //             backgroundPosition: "center",
 //             transition: "transform 0.8s cubic-bezier(0.25, 1, 0.5, 1)",

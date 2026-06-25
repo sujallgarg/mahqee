@@ -16,8 +16,8 @@ const fallbackProducts: Product[] = [
     category: "Hair",
     price: 182,
     description: "Medium-sized self-grip velcro rollers to create bouncy blowouts and root lift without thermal damage.",
-    image: "/images/hair-rollers-slider.png",
-    images: ["/images/hair-rollers-slider.png", "/images/hair-rollers-thumb.png"],
+    image: "/hair-rollers-slider.png",
+    images: ["/hair-rollers-slider.png", "/hair-rollers-thumb.png"],
     ingredients: ["Premium self-grip velcro material", "Lightweight hollow inner core"],
     benefits: ["Adds dramatic root lift and volume", "Gentle heatless styling for daily curls"]
   },
@@ -28,8 +28,8 @@ const fallbackProducts: Product[] = [
     category: "Makeup",
     price: 697,
     description: "Sleek, double-compartment vanity travel organizer bag crafted from premium brown textured vegan leather.",
-    image: "/images/makeup-bag-slider.png",
-    images: ["/images/makeup-bag-slider.png", "/images/makeup-bag-thumb.png"],
+    image: "/makeup-bag-slider.png",
+    images: ["/makeup-bag-slider.png", "/makeup-bag-thumb.png"],
     ingredients: ["Waterproof saffiano vegan leather", "Premium gold metallic zip hardware"],
     benefits: ["Double zipper compartments for layout organization", "Spacious layout with compact exterior shape"]
   },
@@ -40,8 +40,8 @@ const fallbackProducts: Product[] = [
     category: "Hair",
     price: 244,
     description: "Gently detangles and styles hair, featuring high-quality flexible bristles and a premium tropical bloom pattern.",
-    image: "/images/paddle-brush-slider.png",
-    images: ["/images/paddle-brush-slider.png", "/images/paddle-brush-thumb.png"],
+    image: "/paddle-brush-slider.png",
+    images: ["/paddle-brush-slider.png", "/paddle-brush-thumb.png"],
     ingredients: ["Anti-static ionic bristles", "Comfortable pneumatic cushion base"],
     benefits: ["Seamlessly detangles wet or dry hair", "Gentle on sensitive scalps", "Frizz-free finish"]
   },
@@ -52,8 +52,8 @@ const fallbackProducts: Product[] = [
     category: "Makeup",
     price: 839,
     description: "Premium glass facial ice globes to soothe skin, reduce puffiness, stimulate blood circulation, and enhance your daily skincare routine.",
-    image: "/images/ice-globes-slider.png",
-    images: ["/images/ice-globes-slider.png", "/images/ice-globes-thumb.png"],
+    image: "/ice-globes-slider.png",
+    images: ["/ice-globes-slider.png", "/ice-globes-thumb.png"],
     ingredients: ["High-borosilicate glass globes", "Non-freezing cosmetic fluid inside"],
     benefits: ["Soothes redness and calms skin", "Reduces morning under-eye puffiness", "Improves serum absorption"]
   },
@@ -64,8 +64,8 @@ const fallbackProducts: Product[] = [
     category: "Makeup",
     price: 665,
     description: "A soft, puffy marshmallow-style vanity storage pouch designed with a wide opening and travel-friendly handle.",
-    image: "/images/vanity-pouch-slider.png",
-    images: ["/images/vanity-pouch-slider.png", "/images/vanity-pouch-thumb.png"],
+    image: "/vanity-pouch-slider.png",
+    images: ["/vanity-pouch-slider.png", "/vanity-pouch-thumb.png"],
     ingredients: ["Premium soft quilted cotton outer", "Water-resistant interior lining"],
     benefits: ["Wide opening design for quick access", "Convenient carry handle", "Compact yet spacious"]
   }

@@ -347,16 +347,16 @@ export default function AdminPage() {
   }
 
   const imagePresets = [
-    { label: "Serum Bottle", path: "/images/serum.png" },
-    { label: "Moisturizer Tube", path: "/images/moisturizer.png" },
-    { label: "Cleanser", path: "/images/cleanser.png" },
-    { label: "Sunscreen", path: "/images/sunscreen.png" },
-    { label: "Floral Comb", path: "/images/floral-comb.png" },
-    { label: "Floral Comb 2", path: "/images/floral-comb2.png" },
-    { label: "MAHQEE Cleanser", path: "/images/mahqee-cleanser.png" },
-    { label: "MAHQEE Retinol Cream", path: "/images/mahqee-retinol-cream.png" },
-    { label: "MAHQEE Rose Water", path: "/images/mahqee-rose-water.png" },
-    { label: "MAHQEE Vitamin C", path: "/images/mahqee-vitamin-c.png" }
+    { label: "Serum Bottle", path: "/serum.png" },
+    { label: "Moisturizer Tube", path: "/moisturizer.png" },
+    { label: "Cleanser", path: "/cleanser.png" },
+    { label: "Sunscreen", path: "/sunscreen.png" },
+    { label: "Floral Comb", path: "/floral-comb.png" },
+    { label: "Floral Comb 2", path: "/floral-comb2.png" },
+    { label: "MAHQEE Cleanser", path: "/mahqee-cleanser.png" },
+    { label: "MAHQEE Retinol Cream", path: "/mahqee-retinol-cream.png" },
+    { label: "MAHQEE Rose Water", path: "/mahqee-rose-water.png" },
+    { label: "MAHQEE Vitamin C", path: "/mahqee-vitamin-c.png" }
   ];
 
   // Drag and drop multiple image processing
@@ -1157,7 +1157,7 @@ export default function AdminPage() {
                               backgroundColor: "#eaeae8",
                               border: "1px solid rgba(16, 34, 77, 0.05)"
                             }}>
-                              {prod.image && (prod.image.startsWith("/images/") || prod.image.startsWith("data:image/")) ? (
+                              {prod.image && (prod.image.startsWith("/") || prod.image.startsWith("data:image/")) ? (
                                 <Image
                                   src={prod.image}
                                   alt={prod.name}
@@ -1284,7 +1284,7 @@ export default function AdminPage() {
                     }}>
                       <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
                         <div style={{ position: "relative", width: "50px", height: "50px", borderRadius: "8px", overflow: "hidden", backgroundColor: "#eaeae8", flexShrink: 0 }}>
-                          {prod.image && (prod.image.startsWith("/images/") || prod.image.startsWith("data:image/")) ? (
+                          {prod.image && (prod.image.startsWith("/") || prod.image.startsWith("data:image/")) ? (
                             <Image src={prod.image} alt={prod.name} fill sizes="50px" style={{ objectFit: "cover" }} />
                           ) : (
                             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", fontSize: "9px" }}>Graph</div>

@@ -31,7 +31,7 @@ export default function BestSellersPage() {
           padding: "0 48px"
         }} className="shop-hero-banner">
           <Image 
-            src="/images/banners/collection banner.png" 
+            src="/banners/collection banner.png" 
             alt="MAHQEE Best Sellers Tools Collection" 
             fill
             sizes="(max-width: 1200px) 100vw, 1200px"

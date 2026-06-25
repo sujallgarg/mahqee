@@ -14,7 +14,7 @@ export default function BundleBanner() {
       <div className="container">
         {/* Banner Frame */}
         <div style={{
-          backgroundImage: "url('/images/banners/Bundle-background3.png')",
+          backgroundImage: "url('/banners/Bundle-background3.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           border: "1px solid var(--border-color)",

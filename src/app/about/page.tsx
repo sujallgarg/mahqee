@@ -15,37 +15,37 @@ export default function AboutPage() {
   const slides: SlideItem[] = [
     {
       title: "Your Daily Hair Care Essential",
-      image: "/images/floral-comb.png",
+      image: "/floral-comb.png",
       borderColor: "#ed74b2",
       tag: "Hand-crafted Styling"
     },
     {
       title: "Pinch-Free Lash Precision",
-      image: "/images/eyelash-curler.png",
+      image: "/eyelash-curler.png",
       borderColor: "#26d1f0",
       tag: "Perfect Lash Lift"
     },
     {
       title: "Deep Rejuvenating Massage",
-      image: "/images/face-roller.png",
+      image: "/face-roller.png",
       borderColor: "#ed74b2",
       tag: "Soothing Face Roller"
     },
     {
       title: "Absolute Precision Extraction",
-      image: "/images/blackhead-blemish-remover-tool-main.png",
+      image: "/blackhead-blemish-remover-tool-main.png",
       borderColor: "#26d1f0",
       tag: "Stainless Steel Tool"
     },
     {
       title: "Your Perfect Vanity Storage",
-      image: "/images/makeup-bag.png",
+      image: "/makeup-bag.png",
       borderColor: "#10224d",
       tag: "Sleek Pouch Bag"
     },
     {
       title: "Volumizing Hair Lift",
-      image: "/images/hair-rollers.png",
+      image: "/hair-rollers.png",
       borderColor: "#ed74b2",
       tag: "Detangling Rollers"
     }
@@ -115,7 +115,7 @@ export default function AboutPage() {
             <div className="intro-visual-col">
               <div className="sponge-image-wrapper">
                 <Image 
-                  src="/images/Mahqee beauty essential.png" 
+                  src="/Mahqee beauty essential.png" 
                   alt="Aesthetic Makeup Blender Wedges" 
                   fill
                   sizes="(max-width: 768px) 100vw, 450px"

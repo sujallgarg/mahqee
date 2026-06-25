@@ -8,7 +8,7 @@
         "price": 299,
         "quantity": 1,
         "color": null,
-        "image": "/images/eyelash-curler.png"
+        "image": "/eyelash-curler.png"
       }
     ],
     "subtotal": 299,
@@ -35,7 +35,7 @@
         "price": 182,
         "quantity": 1,
         "color": null,
-        "image": "/images/hair-rollers.png"
+        "image": "/hair-rollers.png"
       },
       {
         "id": "ice-globes",
@@ -43,7 +43,7 @@
         "price": 839,
         "quantity": 1,
         "color": null,
-        "image": "/images/ice-globes-slider.png"
+        "image": "/ice-globes-slider.png"
       },
       {
         "id": "floral-comb",
@@ -51,7 +51,7 @@
         "price": 199,
         "quantity": 1,
         "color": null,
-        "image": "/images/floracombmain.png"
+        "image": "/floracombmain.png"
       }
     ],
     "subtotal": 1220,

@@ -54,7 +54,7 @@ export default function ContactPage() {
           boxShadow: "var(--shadow-sm)"
         }} className="contact-hero-banner">
           <Image 
-            src="/images/contact-boutique.png" 
+            src="/contact-boutique.png" 
             alt="MAHQEE Apothecary Boutique" 
             fill
             sizes="(max-width: 900px) 100vw, 900px"

@@ -297,7 +297,7 @@ export default function TrackOrderPage() {
             minHeight: "140px"
           }} className="track-order-img-box">
             <Image 
-              src="/images/track-order-banner.png" 
+              src="/track-order-banner.png" 
               alt="MAHQEE Wrapped Gift Delivery Packaging" 
               fill
               sizes="(max-width: 600px) 100vw, 250px"

@@ -12,8 +12,8 @@ export default function DevProductAdder() {
   const [category, setCategory] = useState("Nail Accessory");
   const [price, setPrice] = useState("299");
   const [description, setDescription] = useState("");
-  const [image, setImage] = useState("/images/serum.png");
-  const [imagesInput, setImagesInput] = useState("/images/serum.png, /images/vit_c_texture.png, /images/vit_c_lifestyle.png");
+  const [image, setImage] = useState("/serum.png");
+  const [imagesInput, setImagesInput] = useState("/serum.png, /vit_c_texture.png, /vit_c_lifestyle.png");
   const [ingredients, setIngredients] = useState("Active Botanical Extract, Hyaluronic Acid, Vitamin E");
   const [benefits, setBenefits] = useState("Deeply hydrates epidermal layers, Calms skin redness, Restores glow");
   const [isBestSeller, setIsBestSeller] = useState(false);
@@ -26,7 +26,7 @@ export default function DevProductAdder() {
       const base64String = reader.result as string;
       setImage(base64String);
       // Pre-populate gallery with the same uploaded image plus standard fallbacks
-      setImagesInput(`${base64String}, /images/category-skincare.png, /images/category-bodycare.png`);
+      setImagesInput(`${base64String}, /category-skincare.png, /category-bodycare.png`);
     };
     reader.readAsDataURL(file);
   };
@@ -37,33 +37,33 @@ export default function DevProductAdder() {
   }
 
   const imagePresets = [
-    { label: "Serum Bottle", path: "/images/serum.png" },
-    { label: "Moisturizer Tube", path: "/images/moisturizer.png" },
-    { label: "Cleanser", path: "/images/cleanser.png" },
-    { label: "Sunscreen", path: "/images/sunscreen.png" },
-    { label: "Floral Comb", path: "/images/floral-comb.png" },
-    { label: "Floral Comb 2", path: "/images/floral-comb2.png" },
-    { label: "Floral Comb 3", path: "/images/floral-comb3.png" },
-    { label: "Floral Comb 4", path: "/images/floral-comb4.png" },
-    { label: "MAHQEE Cleanser", path: "/images/mahqee-cleanser.png" },
-    { label: "MAHQEE Retinol Cream", path: "/images/mahqee-retinol-cream.png" },
-    { label: "MAHQEE Rose Water", path: "/images/mahqee-rose-water.png" },
-    { label: "MAHQEE Vitamin C", path: "/images/mahqee-vitamin-c.png" }
+    { label: "Serum Bottle", path: "/serum.png" },
+    { label: "Moisturizer Tube", path: "/moisturizer.png" },
+    { label: "Cleanser", path: "/cleanser.png" },
+    { label: "Sunscreen", path: "/sunscreen.png" },
+    { label: "Floral Comb", path: "/floral-comb.png" },
+    { label: "Floral Comb 2", path: "/floral-comb2.png" },
+    { label: "Floral Comb 3", path: "/floral-comb3.png" },
+    { label: "Floral Comb 4", path: "/floral-comb4.png" },
+    { label: "MAHQEE Cleanser", path: "/mahqee-cleanser.png" },
+    { label: "MAHQEE Retinol Cream", path: "/mahqee-retinol-cream.png" },
+    { label: "MAHQEE Rose Water", path: "/mahqee-rose-water.png" },
+    { label: "MAHQEE Vitamin C", path: "/mahqee-vitamin-c.png" }
   ];
 
   const handlePresetSelect = (presetPath: string) => {
     setImage(presetPath);
     // Auto populate gallery images based on selection to make it quick
     if (presetPath.includes("comb")) {
-      setImagesInput("/images/floral-comb.png, /images/floral-comb2.png, /images/floral-comb3.png, /images/floral-comb4.png");
+      setImagesInput("/floral-comb.png, /floral-comb2.png, /floral-comb3.png, /floral-comb4.png");
     } else if (presetPath.includes("vitamin-c")) {
-      setImagesInput("/images/mahqee-vitamin-c.png, /images/vit_c_texture.png, /images/vit_c_lifestyle.png");
+      setImagesInput("/mahqee-vitamin-c.png, /vit_c_texture.png, /vit_c_lifestyle.png");
     } else if (presetPath.includes("rose-water")) {
-      setImagesInput("/images/mahqee-rose-water.png, /images/rose_water_texture.png, /images/rose_water_lifestyle.png");
+      setImagesInput("/mahqee-rose-water.png, /rose_water_texture.png, /rose_water_lifestyle.png");
     } else if (presetPath.includes("cleanser")) {
-      setImagesInput("/images/mahqee-cleanser.png, /images/cleanser_texture.png, /images/cleanser_lifestyle.png");
+      setImagesInput("/mahqee-cleanser.png, /cleanser_texture.png, /cleanser_lifestyle.png");
     } else {
-      setImagesInput(`${presetPath}, /images/category-skincare.png, /images/category-bodycare.png`);
+      setImagesInput(`${presetPath}, /category-skincare.png, /category-bodycare.png`);
     }
   };
 

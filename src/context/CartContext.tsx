@@ -52,13 +52,13 @@ export const productsData: Product[] = [
     "category": "Hair",
     "price": 199,
     "description": "Designed with a premium floral pattern, the 360 Floral Comb features wide-spaced teeth crafted to gently detangle thick, dense, and curly hair. Prevents hair breakage, distributes natural scalp oils evenly, and adds a luxury aesthetic to your vanity.",
-    "image": "/images/floracombmain.png",
+    "image": "/floracombmain.png",
     "images": [
-      "/images/floracombmain.png",
-      "/images/floral-comb.png",
-      "/images/floral-comb3.png",
-      "/images/floral-comb4.png",
-      "/images/floral-comb4.png"
+      "/floracombmain.png",
+      "/floral-comb.png",
+      "/floral-comb3.png",
+      "/floral-comb4.png",
+      "/floral-comb4.png"
     ],
     "ingredients": [
       "Premium Cellulose Acetate",
@@ -80,11 +80,11 @@ export const productsData: Product[] = [
     "category": "Makeup",
     "price": 299,
     "description": "\"Achieve beautifully lifted, high-definition curls with the MAHQUEE Premium Eyelash Curler. Designed with an ergonomic grip for steady control, it features a smooth mechanism that applies even pressure without pinching or pulling your lashes. Perfect for all eye shapes to instantly open up and brighten your look before mascara application.\"",
-    "image": "/images/eyelash-curler.png",
+    "image": "/eyelash-curler.png",
     "images": [
-      "/images/eyelash-curler.png",
-      "/images/premium-eyelash-curler-gallery-1.png",
-      "/images/premium-eyelash-curler-gallery-2.png"
+      "/eyelash-curler.png",
+      "/premium-eyelash-curler-gallery-1.png",
+      "/premium-eyelash-curler-gallery-2.png"
     ],
     "ingredients": [],
     "benefits": [],
@@ -98,14 +98,14 @@ export const productsData: Product[] = [
     "category": "Makeup",
     "price": 149,
     "description": "\"Achieve a clearer, blemish-free complexion with the MAHQEE Professional Blackhead Remover. This premium 12 cm stainless steel tool features a dual-sided design tailored for precision: a small spoon end for smooth extraction and an anti-loop tip for targeting stubborn blackheads and whiteheads. Designed with an anti-slip textured handle for maximum grip and steady control, it ensures safe, hygienic skin clearing at home without damaging surrounding tissue.\"",
-    "image": "/images/blackhead-blemish-remover-tool-main.png",
+    "image": "/blackhead-blemish-remover-tool-main.png",
     "images": [
-      "/images/blackhead-blemish-remover-tool-gallery-0.png",
-      "/images/blackhead-blemish-remover-tool-gallery-1.png",
-      "/images/blackhead-blemish-remover-tool-gallery-2.jpg",
-      "/images/blackhead-blemish-remover-tool-gallery-3.png",
-      "/images/blackhead-blemish-remover-tool-gallery-4.png",
-      "/images/blackhead-blemish-remover-tool-gallery-5.png"
+      "/blackhead-blemish-remover-tool-gallery-0.png",
+      "/blackhead-blemish-remover-tool-gallery-1.png",
+      "/blackhead-blemish-remover-tool-gallery-2.jpg",
+      "/blackhead-blemish-remover-tool-gallery-3.png",
+      "/blackhead-blemish-remover-tool-gallery-4.png",
+      "/blackhead-blemish-remover-tool-gallery-5.png"
     ],
     "ingredients": [],
     "benefits": [],
@@ -119,12 +119,12 @@ export const productsData: Product[] = [
     "category": "Hair",
     "price": 199,
     "description": "\"Experience professional styling at home with the MAHQEE 19 cm Geometric Dressing Comb. Crafted with an extra width design specifically optimized to handle dense, thick, or coarse hair without snapping or snagging. This multi-purpose comb features a detailed teeth classification system, seamlessly blending rounded coarse teeth for gentle detangling alongside a fine teeth section for precise sectioning and styling. Made from high-grade material with a vibrant pink geometric pattern, it ensures maximum comfort, scalp safety, and styling control.\"",
-    "image": "/images/geometric-comb.png",
+    "image": "/geometric-comb.png",
     "images": [
-      "/images/geometric-comb-gallery-0.png",
-      "/images/geometric-comb-gallery-1.png",
-      "/images/geometric-comb-gallery-2.png",
-      "/images/geometric-comb-gallery-3.png"
+      "/geometric-comb-gallery-0.png",
+      "/geometric-comb-gallery-1.png",
+      "/geometric-comb-gallery-2.png",
+      "/geometric-comb-gallery-3.png"
     ],
     "ingredients": [],
     "benefits": [],
@@ -138,10 +138,10 @@ export const productsData: Product[] = [
     "category": "Hair",
     "price": 182,
     "description": "Medium-sized self-grip velcro rollers to create bouncy blowouts and root lift without thermal damage.",
-    "image": "/images/hair-rollers-slider.png",
+    "image": "/hair-rollers-slider.png",
     "images": [
-      "/images/hair-rollers-slider.png",
-      "/images/hair-rollers-thumb.png"
+      "/hair-rollers-slider.png",
+      "/hair-rollers-thumb.png"
     ],
     "ingredients": [
       "Premium self-grip velcro material",
@@ -161,10 +161,10 @@ export const productsData: Product[] = [
     "category": "Makeup",
     "price": 697,
     "description": "Sleek, double-compartment vanity travel organizer bag crafted from premium brown textured vegan leather.",
-    "image": "/images/makeup-bag-slider.png",
+    "image": "/makeup-bag-slider.png",
     "images": [
-      "/images/makeup-bag-slider.png",
-      "/images/makeup-bag-thumb.png"
+      "/makeup-bag-slider.png",
+      "/makeup-bag-thumb.png"
     ],
     "ingredients": [
       "Waterproof saffiano vegan leather",
@@ -184,10 +184,10 @@ export const productsData: Product[] = [
     "category": "Hair",
     "price": 244,
     "description": "Gently detangles and styles hair, featuring high-quality flexible bristles and a premium tropical bloom pattern.",
-    "image": "/images/paddle-brush-slider.png",
+    "image": "/paddle-brush-slider.png",
     "images": [
-      "/images/paddle-brush-slider.png",
-      "/images/paddle-brush-thumb.png"
+      "/paddle-brush-slider.png",
+      "/paddle-brush-thumb.png"
     ],
     "ingredients": [
       "Anti-static ionic bristles",
@@ -208,10 +208,10 @@ export const productsData: Product[] = [
     "category": "Makeup",
     "price": 839,
     "description": "Premium glass facial ice globes to soothe skin, reduce puffiness, stimulate blood circulation, and enhance your daily skincare routine.",
-    "image": "/images/ice-globes-slider.png",
+    "image": "/ice-globes-slider.png",
     "images": [
-      "/images/ice-globes-slider.png",
-      "/images/ice-globes-thumb.png"
+      "/ice-globes-slider.png",
+      "/ice-globes-thumb.png"
     ],
     "ingredients": [
       "High-borosilicate glass globes",
@@ -232,10 +232,10 @@ export const productsData: Product[] = [
     "category": "Makeup",
     "price": 665,
     "description": "A soft, puffy marshmallow-style vanity storage pouch designed with a wide opening and travel-friendly handle.",
-    "image": "/images/vanity-pouch-slider.png",
+    "image": "/vanity-pouch-slider.png",
     "images": [
-      "/images/vanity-pouch-slider.png",
-      "/images/vanity-pouch-thumb.png"
+      "/vanity-pouch-slider.png",
+      "/vanity-pouch-thumb.png"
     ],
     "ingredients": [
       "Premium soft quilted cotton outer",

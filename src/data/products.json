@@ -6,13 +6,13 @@
     "category": "Hair",
     "price": 199,
     "description": "Designed with a premium floral pattern, the 360 Floral Comb features wide-spaced teeth crafted to gently detangle thick, dense, and curly hair. Prevents hair breakage, distributes natural scalp oils evenly, and adds a luxury aesthetic to your vanity.",
-    "image": "/images/floracombmain.png",
+    "image": "/floracombmain.png",
     "images": [
-      "/images/floracombmain.png",
-      "/images/floral-comb.png",
-      "/images/floral-comb3.png",
-      "/images/floral-comb4.png",
-      "/images/floral-comb4.png"
+      "/floracombmain.png",
+      "/floral-comb.png",
+      "/floral-comb3.png",
+      "/floral-comb4.png",
+      "/floral-comb4.png"
     ],
     "ingredients": [
       "Premium Cellulose Acetate",
@@ -34,11 +34,11 @@
     "category": "Makeup",
     "price": 299,
     "description": "\"Achieve beautifully lifted, high-definition curls with the MAHQUEE Premium Eyelash Curler. Designed with an ergonomic grip for steady control, it features a smooth mechanism that applies even pressure without pinching or pulling your lashes. Perfect for all eye shapes to instantly open up and brighten your look before mascara application.\"",
-    "image": "/images/eyelash-curler.png",
+    "image": "/eyelash-curler.png",
     "images": [
-      "/images/eyelash-curler.png",
-      "/images/premium-eyelash-curler-gallery-1.png",
-      "/images/premium-eyelash-curler-gallery-2.png"
+      "/eyelash-curler.png",
+      "/premium-eyelash-curler-gallery-1.png",
+      "/premium-eyelash-curler-gallery-2.png"
     ],
     "ingredients": [],
     "benefits": [],
@@ -52,14 +52,14 @@
     "category": "Makeup",
     "price": 149,
     "description": "\"Achieve a clearer, blemish-free complexion with the MAHQEE Professional Blackhead Remover. This premium 12 cm stainless steel tool features a dual-sided design tailored for precision: a small spoon end for smooth extraction and an anti-loop tip for targeting stubborn blackheads and whiteheads. Designed with an anti-slip textured handle for maximum grip and steady control, it ensures safe, hygienic skin clearing at home without damaging surrounding tissue.\"  ",
-    "image": "/images/blackhead-blemish-remover-tool-gallery-0.png",
+    "image": "/blackhead-blemish-remover-tool-gallery-0.png",
     "images": [
-      "/images/blackhead-blemish-remover-tool-gallery-0.png",
-      "/images/blackhead-blemish-remover-tool-gallery-1.png",
-      "/images/blackhead-blemish-remover-tool-gallery-2.jpg",
-      "/images/blackhead-blemish-remover-tool-gallery-3.png",
-      "/images/blackhead-blemish-remover-tool-gallery-4.png",
-      "/images/blackhead-blemish-remover-tool-gallery-5.png"
+      "/blackhead-blemish-remover-tool-gallery-0.png",
+      "/blackhead-blemish-remover-tool-gallery-1.png",
+      "/blackhead-blemish-remover-tool-gallery-2.jpg",
+      "/blackhead-blemish-remover-tool-gallery-3.png",
+      "/blackhead-blemish-remover-tool-gallery-4.png",
+      "/blackhead-blemish-remover-tool-gallery-5.png"
     ],
     "ingredients": [],
     "benefits": [],
@@ -73,12 +73,12 @@
     "category": "Hair",
     "price": 199,
     "description": "\"Experience professional styling at home with the MAHQEE 19 cm Geometric Dressing Comb. Crafted with an extra width design specifically optimized to handle dense, thick, or coarse hair without snapping or snagging. This multi-purpose comb features a detailed teeth classification system, seamlessly blending rounded coarse teeth for gentle detangling alongside a fine teeth section for precise sectioning and styling. Made from high-grade material with a vibrant pink geometric pattern, it ensures maximum comfort, scalp safety, and styling control.\"  ",
-    "image": "/images/geometric-comb.png",
+    "image": "/geometric-comb.png",
     "images": [
-      "/images/geometric-comb-gallery-0.png",
-      "/images/geometric-comb-gallery-1.png",
-      "/images/geometric-comb-gallery-2.png",
-      "/images/geometric-comb-gallery-3.png"
+      "/geometric-comb-gallery-0.png",
+      "/geometric-comb-gallery-1.png",
+      "/geometric-comb-gallery-2.png",
+      "/geometric-comb-gallery-3.png"
     ],
     "ingredients": [],
     "benefits": [],
@@ -92,9 +92,9 @@
     "category": "Hair",
     "price": 247,
     "description": "\"Glise through tangles effortlessly with the MAHQEE Marble Purple Wide-Tooth Detangling Comb. Specially engineered with widely spaced, rounded teeth, this premium comb minimizes friction to prevent hair breakage and split ends, making it ideal for both wet and dry hair. Its beautiful multi-toned purple marble texture offers an elegant, comfortable grip, ensuring a gentle, smooth detangling experience for all hair types.\"",
-    "image": "/images/hair-rollers-main.png",
+    "image": "/hair-rollers-main.png",
     "images": [
-      "/images/hair-rollers-gallery-0.png"
+      "/hair-rollers-gallery-0.png"
     ],
     "ingredients": [
       "Premium self-grip velcro material",
@@ -114,10 +114,10 @@
     "category": "Bath",
     "price": 179,
     "description": "\"Cleanse hard-to-reach areas effortlessly with the MAHQEE Braided Back Scrubber Loofah. Designed in a flexible, long braided mesh format with a vibrant pink and white dual-tone look, it provides a gentle yet thorough full-body exfoliation. The premium, highly dense mesh creates a rich, luxurious lather with your favorite body wash or soap while smoothly clearing dead skin and impurities. Equipped with durable dual handles on both ends, it ensures an ergonomic grip, making it a perfect addition to your daily shower routine.\"",
-    "image": "/images/mahquee-premium-braided-back-scrubber-loofah-main.png",
+    "image": "/mahquee-premium-braided-back-scrubber-loofah-main.png",
     "images": [
-      "/images/mahquee-premium-braided-back-scrubber-loofah-gallery-0.png",
-      "/images/mahquee-premium-braided-back-scrubber-loofah-gallery-1.png"
+      "/mahquee-premium-braided-back-scrubber-loofah-gallery-0.png",
+      "/mahquee-premium-braided-back-scrubber-loofah-gallery-1.png"
     ],
     "ingredients": [],
     "benefits": [
@@ -135,12 +135,12 @@
     "category": "Foot",
     "price": 199,
     "description": "Achieve salon-smooth feet at home with the Mahqee Professional Foot Scraper. Featuring a high-grade stainless steel micro-grate surface, it effortlessly and safely removes stubborn calluses, cracked skin, and dead tissue without irritating your feet. The sturdy, ergonomic blue handle provides an easy grip and excellent leverage, making it simple to restore your feet to a soft, beautifully smooth texture.",
-    "image": "/images/foot-scraper-callus-remover-main.png",
+    "image": "/foot-scraper-callus-remover-main.png",
     "images": [
-      "/images/foot-scraper-callus-remover-gallery-0.png",
-      "/images/foot-scraper-callus-remover-gallery-1.png",
-      "/images/foot-scraper-callus-remover-gallery-2.png",
-      "/images/foot-scraper-callus-remover-gallery-3.png"
+      "/foot-scraper-callus-remover-gallery-0.png",
+      "/foot-scraper-callus-remover-gallery-1.png",
+      "/foot-scraper-callus-remover-gallery-2.png",
+      "/foot-scraper-callus-remover-gallery-3.png"
     ],
     "ingredients": [
       "Designed with a precise micro-abrasive rasp texture that tackles thick calluses and hardened dry skin cleanly and safely.",
@@ -157,12 +157,12 @@
     "category": "Foot",
     "price": 149,
     "description": "Pamper your feet with the Mahqee Classic Foot File & Scrubber. Featuring a dual-sided design, this tool handles different levels of exfoliation: a coarse black abrasive pad on one side to gently buff away dry skin, hard calluses, and rough patches, and a finer texture on the reverse to smoothly polish your skin to perfection. Crafted with a premium, sleek white contoured handle, it offers a secure, ergonomic grip for effortless pedicure sessions at home.",
-    "image": "/images/dual-sided-classic-foot-file-scrubber-main.jpg",
+    "image": "/dual-sided-classic-foot-file-scrubber-main.jpg",
     "images": [
-      "/images/dual-sided-classic-foot-file-scrubber-gallery-0.jpg",
-      "/images/dual-sided-classic-foot-file-scrubber-gallery-1.jpg",
-      "/images/dual-sided-classic-foot-file-scrubber-gallery-2.jpg",
-      "/images/dual-sided-classic-foot-file-scrubber-gallery-3.jpg"
+      "/dual-sided-classic-foot-file-scrubber-gallery-0.jpg",
+      "/dual-sided-classic-foot-file-scrubber-gallery-1.jpg",
+      "/dual-sided-classic-foot-file-scrubber-gallery-2.jpg",
+      "/dual-sided-classic-foot-file-scrubber-gallery-3.jpg"
     ],
     "ingredients": [
       "Engineered with an effective coarse black grit surface designed to quickly smooth rough areas while keeping the skin soft and protected.",
@@ -179,12 +179,12 @@
     "category": "Nail Accessory",
     "price": 199,
     "description": "Achieve a professional, airbrushed complexion with the Mahqee Premium Precision Beauty Blender Sponge. This ultra-soft, latex-free makeup sponge is designed to deliver seamless application for liquid, cream, and powder products. Featuring a classic teardrop shape, its broad base easily covers larger areas like your cheeks and forehead, while the precision pointed tip fits perfectly around the contours of your eyes and nose. Encased in an elegant, clear protective box, it expands when wet to absorb minimal product and ensure an effortless, streak-free blend every time.",
-    "image": "/images/precision-beauty-blender-sponge-main.jpg",
+    "image": "/precision-beauty-blender-sponge-main.jpg",
     "images": [
-      "/images/precision-beauty-blender-sponge-gallery-0.jpg",
-      "/images/precision-beauty-blender-sponge-gallery-1.jpg",
-      "/images/precision-beauty-blender-sponge-gallery-2.png",
-      "/images/precision-beauty-blender-sponge-gallery-3.jpg"
+      "/precision-beauty-blender-sponge-gallery-0.jpg",
+      "/precision-beauty-blender-sponge-gallery-1.jpg",
+      "/precision-beauty-blender-sponge-gallery-2.png",
+      "/precision-beauty-blender-sponge-gallery-3.jpg"
     ],
     "ingredients": [
       "Features a rounded base for fast, even blending over large areas alongside a fine, tapered tip for detailed contouring and concealing around tight spaces.",
