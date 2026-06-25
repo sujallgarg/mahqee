@@ -95,11 +95,9 @@ export default function Navbar() {
             <Image 
               src="/images/Mahqee-logo.png" 
               alt="MAHQEE Logo" 
-              width={96} 
+              width={106} 
               height={48}
               style={{ 
-                height: "48px", 
-                width: "106px",
                 objectFit: "contain", 
                 position:"relative",
               }}

@@ -17,9 +17,9 @@ export default function CategoryGrid() {
   const progress = useScrollProgress(gridRef);
 
   const categories: CatBlock[] = [
-    { title: "Nail Accessory", label: "Nails & Care", image: "/images/makeup-bag.png", route: "/shop?cat=nail-accessory" },
+    { title: "Nails & Care", label: "Nails & Care", image: "/images/accessory-cat.png", route: "/shop?cat=nail-accessory" },
     { title: "Hair", label: "Styling & Detangling", image: "/images/floral-comb2.png", route: "/shop?cat=hair" },
-    { title: "Foot", label: "Foot Care & Hydration", image: "/images/category-skincare.png", route: "/shop?cat=foot" },
+    { title: "Foot", label: "Foot Care & Hydration", image: "/images/category-foot.png", route: "/shop?cat=foot" },
     { title: "Bath", label: "Bath & Body Rejuvenation", image: "/images/bathcategory-image.png", route: "/shop?cat=bath" },
     { title: "Makeup", label: "Cosmetics & Blenders", image: "/images/Eyelash-cat.png", route: "/shop?cat=makeup" }
   ];
