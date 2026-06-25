@@ -31,7 +31,6 @@ export default function CartDrawer() {
   // Shipping & Address details states
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
-  const [shippingAddress, setShippingAddress] = useState("");
   
   // Split Address Details States
   const [houseNo, setHouseNo] = useState("");
@@ -134,7 +133,6 @@ export default function CartDrawer() {
 
     // Combine split address fields into formatted address string
     const combinedAddress = `${houseNo.trim()}, ${area.trim()}${landmark.trim() ? `, Landmark: ${landmark.trim()}` : ""}, ${city.trim()}, ${stateName.trim()}`;
-    setShippingAddress(combinedAddress);
     handleCheckout(combinedAddress);
   };
 
@@ -229,7 +227,6 @@ export default function CartDrawer() {
       // Reset form fields
       setCustomerName("");
       setCustomerPhone("");
-      setShippingAddress("");
       setHouseNo("");
       setArea("");
       setLandmark("");
@@ -937,22 +934,22 @@ export default function CartDrawer() {
         />
       )}
 
-      {/* Local keyframe animations & spinner styles */}
       <style jsx global>{`
         .cart-drawer-panel {
           width: 100% !important;
           max-width: 440px !important;
-          height: 100% !important;
+          height: 100vh !important;
+          height: 100dvh !important;
         }
         @media (max-width: 480px) {
           .cart-drawer-panel {
-            padding: 24px 20px !important;
+            padding: 16px 16px !important;
           }
           .shipping-step-container {
-            height: calc(100% - 40px) !important;
+            height: calc(100% - 30px) !important;
           }
           .shipping-form-scroll {
-            margin-bottom: 12px !important;
+            margin-bottom: 8px !important;
           }
         }
         .cart-item-title-link:hover {

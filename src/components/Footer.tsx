@@ -29,25 +29,7 @@ export default function Footer() {
               <li><Link href="/shop?cat=makeup" className="footer-link">Makeup</Link></li>
             </ul>
           </div>
-          <div>
-            <h4 style={{ color: "var(--text-primary)", fontWeight: "500", marginBottom: "16px", fontSize: "12px" }}>Science & Values</h4>
-            <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "10px" }}>
-              <li><a href="#" className="footer-link">Cellular Biotechnology</a></li>
-              <li><a href="#" className="footer-link">Botanical Sourcing</a></li>
-              <li><a href="#" className="footer-link">Clinical Studies</a></li>
-              <li><a href="#" className="footer-link">100% Recyclable Glass</a></li>
-              <li><a href="#" className="footer-link">Cruelty-Free Pledge</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 style={{ color: "var(--text-primary)", fontWeight: "500", marginBottom: "16px", fontSize: "12px" }}>Services</h4>
-            <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "10px" }}>
-              <li><a href="#" className="footer-link">Skin Consultation</a></li>
-              <li><a href="#" className="footer-link">Concierge Delivery</a></li>
-              <li><a href="#" className="footer-link">Auto-Replenish Plan</a></li>
-              <li><a href="#" className="footer-link">Corporate Gifting</a></li>
-            </ul>
-          </div>
+
           <div>
             <h4 style={{ color: "var(--text-primary)", fontWeight: "500", marginBottom: "16px", fontSize: "12px" }}>Account & Bag</h4>
             <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -74,9 +56,9 @@ export default function Footer() {
           flexDirection: "column",
           gap: "16px"
         }}>
-          <p style={{ lineHeight: "1.6" }}>
+          {/* <p style={{ lineHeight: "1.6" }}>
             More ways to shop: <a href="#" style={{ textDecoration: "underline", color: "var(--text-primary)" }}>Find an Aesthetician</a> or call 1-800-MAHQEE.
-          </p>
+          </p> */}
           <div style={{
             display: "flex",
             flexWrap: "wrap",

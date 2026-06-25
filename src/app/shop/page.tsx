@@ -25,6 +25,7 @@ export default function ShopPage() {
           else if (cat === "foot") setActiveCategory("Foot");
           else if (cat === "bath") setActiveCategory("Bath");
           else if (cat === "makeup") setActiveCategory("Makeup");
+          else if (cat === "bundle") setActiveCategory("Bundle");
         }, 0);
       }
       const search = params.get("search");
@@ -36,7 +37,7 @@ export default function ShopPage() {
     }
   }, []);
 
-  const categories = ["All", "Nail Accessory", "Hair", "Foot", "Bath", "Makeup"];
+  const categories = ["All", "Nail Accessory", "Hair", "Foot", "Bath", "Makeup", "Bundle"];
 
   const filteredProducts = products.filter((product) => {
     const matchesCategory = activeCategory === "All" || product.category === activeCategory;

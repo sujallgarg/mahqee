@@ -54,6 +54,7 @@ export default function PaymentDonePage() {
     return `https://wa.me/${WHATSAPP_BUSINESS_PHONE}?text=${encodeURIComponent(message)}`;
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleSimulateStatus = (newStatus: "processing" | "verified" | "failed") => {
     if (!lastOrder) return;
     const updatedOrder = { ...lastOrder, paymentStatus: newStatus };

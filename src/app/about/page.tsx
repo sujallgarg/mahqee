@@ -115,11 +115,11 @@ export default function AboutPage() {
             <div className="intro-visual-col">
               <div className="sponge-image-wrapper">
                 <Image 
-                  src="/images/makeup-wedges.png" 
+                  src="/images/Mahqee beauty essential.png" 
                   alt="Aesthetic Makeup Blender Wedges" 
                   fill
                   sizes="(max-width: 768px) 100vw, 450px"
-                  style={{ objectFit: "cover" }}
+                  style={{ objectFit: "contain" }}
                   priority
                 />
               </div>
@@ -278,7 +278,7 @@ export default function AboutPage() {
 
                 <div className="note-signature-block">
                   <span className="note-closing">With love,</span>
-                  <span className="note-author-name">Meera Sen</span>
+                  <span className="note-author-name">Team Mahqee</span>
                 </div>
               </div>
             </div>
@@ -362,7 +362,7 @@ export default function AboutPage() {
           aspect-ratio: 1.1 / 1;
           border-radius: 24px;
           overflow: hidden;
-          background-color: #d6e2e9;
+          background-color: #ffff;
           box-shadow: var(--shadow-md);
         }
 

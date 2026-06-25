@@ -11,7 +11,6 @@ interface Review {
   title: string;
   body: string;
   productTag: string;
-  productType: "balm" | "serum" | "cream" | "oil";
 }
 
 export default function Testimonials() {
@@ -21,81 +20,51 @@ export default function Testimonials() {
 
   const reviews: Review[] = [
     {
-      author: "PALLAVI ..",
+      author: "Ananya R.",
       verified: true,
-      date: "06/15/26",
+      date: "06/25/26",
       rating: 5,
-      title: "Colour is good and material",
-      body: "Colour is good and material is excellent and size is also best have to carry and the bag is literally so good and it is very beautiful. Perfectly matched with the brand colors.",
-      productTag: "MAHQEE Velvet Tote Bag",
-      productType: "balm"
+      title: "Game changer for thick hair!",
+      body: "I have super dense hair and most combs either pull or snap within weeks. The Mahqee dressing comb has been a complete game changer. The rounded teeth feel amazing on my scalp and it glides through knots effortlessly without a single snag. Plus, the pink geometric design looks beautiful on my vanity!",
+      productTag: "Hair Collection (Comb)"
     },
     {
-      author: "kashish L.",
+      author: "Rahul M.",
       verified: true,
-      date: "06/15/26",
+      date: "06/25/26",
       rating: 5,
-      title: "Minimalist & Elegant",
-      body: "Great product for dry skin. It has solved my flaky patches overnight. I highly recommend it for anybody looking to repair their barrier.",
-      productTag: "MAHQEE Dry Skincare Kit",
-      productType: "cream"
+      title: "Professional quality at home",
+      body: "The dual-ended extractor tool feels incredibly premium and sturdy. The textured diamond handle means it doesn't slip out of my fingers at all, giving me total control. It's so much more hygienic than using my fingers and completely clears pores without damaging my skin. A must-have tool!",
+      productTag: "Skincare Tools (Blackhead Remover)"
     },
     {
-      author: "Poonam S.",
+      author: "Priya K.",
       verified: true,
-      date: "06/15/26",
+      date: "06/25/26",
       rating: 5,
-      title: "Hydrating",
-      body: "It is extremely hydrating and nonsticky on skin. I'm using it on my skin daily and it keeps my face hydrated throughout the day. Velvet Rose formula is outstanding.",
-      productTag: "Rose Water Hydrosol",
-      productType: "serum"
+      title: "Perfect lift, zero pinching!",
+      body: "I’ve always been terrified of eyelash curlers pinching my eyelids, but this one is incredibly smooth and precise. It fits my eye shape perfectly and gives an instant, uniform lift that lasts all day. Truly designed for your daily rituals!",
+      productTag: "Eyelash Curler Review"
     },
     {
-      author: "Abishekaprabu ..",
+      author: "Sneha J.",
       verified: true,
-      date: "06/15/26",
+      date: "06/25/26",
       rating: 5,
-      title: "Very happy with the purchase",
-      body: "Very good, truly lightweight moisturizer. Absorbs instantly and leaves a cashmere matte finish without making my face oily. Will repurchase.",
-      productTag: "Jasmine Velvet Cream",
-      productType: "cream"
+      title: "Luxurious shower essential",
+      body: "Absolutely love the braided back scrubber! The dual handles make it so easy to clean hard-to-reach areas comfortably. The mesh is dense, high-quality, and creates an insane amount of lather with just a drop of body wash. It leaves my skin feeling incredibly soft and exfoliated.",
+      productTag: "Bath Collection (Loofah)"
+    },
+    {
+      author: "Vikram S.",
+      verified: true,
+      date: "06/25/26",
+      rating: 5,
+      title: "Beautifully designed essentials",
+      body: "Mahqee really stays true to its motto, 'Miracle of Beauty'. What I love most is that their products feel like they were genuinely designed for my daily rituals, not the other way around. Everything from the marble textures to the ergonomic grips shows they actually care about the user experience. Highly recommend!",
+      productTag: "Overall Brand Feedback"
     }
   ];
-
-  // const scrollRight = () => {
-  //   if (scrollRef.current) {
-  //     scrollRef.current.scrollBy({ left: 300, behavior: "smooth" });
-  //   }
-  // };
-
-  // const scrollLeft = () => {
-  //   if (scrollRef.current) {
-  //     scrollRef.current.scrollBy({ left: -300, behavior: "smooth" });
-  //   }
-  // };
-
-  const renderProductThumbnail = (type: string) => {
-    // Mini visual thumbnail representation
-    return (
-      <div style={{
-        width: "24px",
-        height: "24px",
-        backgroundColor: "var(--bg-primary)",
-        borderRadius: "4px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flexShrink: 0
-      }}>
-        <div style={{
-          width: "10px",
-          height: "15px",
-          borderRadius: "1px",
-          background: type === "serum" ? "var(--accent-blue)" : type === "oil" ? "var(--accent-pink)" : "var(--text-primary)"
-        }} />
-      </div>
-    );
-  };
 
   return (
     <section 
@@ -131,49 +100,6 @@ export default function Testimonials() {
         }}>
           What Our Customers Say
         </h2>
-
-        {/* Carousel buttons */}
-        {/* <div style={{
-          position: "absolute",
-          top: "0px",
-          right: "24px",
-          display: "flex",
-          gap: "8px",
-          zIndex: 10
-        }}>
-          <button 
-            onClick={scrollLeft}
-            style={{
-              width: "36px",
-              height: "36px",
-              borderRadius: "50%",
-              backgroundColor: "var(--bg-primary)",
-              border: "1px solid var(--border-color)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center"
-            }}
-            aria-label="Scroll reviews left"
-          >
-            ‹
-          </button>
-          <button 
-            onClick={scrollRight}
-            style={{
-              width: "36px",
-              height: "36px",
-              borderRadius: "50%",
-              backgroundColor: "var(--bg-primary)",
-              border: "1px solid var(--border-color)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center"
-            }}
-            aria-label="Scroll reviews right"
-          >
-            ›
-          </button>
-        </div> */}
 
         {/* Horizontal Reviews Track */}
         <div 
@@ -254,16 +180,16 @@ export default function Testimonials() {
                 
                 <p style={{
                   fontSize: "12.5px",
-                  lineHeight: "1.6",
+                  lineHeight: "1.65",
                   color: "var(--text-secondary)",
                   marginBottom: "24px",
-                  minHeight: "80px"
+                  minHeight: "135px"
                 }}>
                   &ldquo;{rev.body}&rdquo;
                 </p>
               </div>
 
-              {/* Reviewed Product Thumbnail details */}
+              {/* Reviewed Product tag */}
               <div style={{
                 display: "flex",
                 alignItems: "center",
@@ -271,11 +197,12 @@ export default function Testimonials() {
                 borderTop: "1px solid var(--border-color)",
                 paddingTop: "16px"
               }}>
-                {renderProductThumbnail(rev.productType)}
                 <span style={{
-                  fontSize: "11.5px",
-                  fontWeight: "500",
-                  color: "var(--text-primary)"
+                  fontSize: "11px",
+                  fontWeight: "600",
+                  color: "var(--accent-pink)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.05em"
                 }}>
                   {rev.productTag}
                 </span>

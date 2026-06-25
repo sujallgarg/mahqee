@@ -5,6 +5,34 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { useCart, Product } from "@/context/CartContext";
 
+interface OrderItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  color: string | null;
+  image: string | null;
+}
+
+interface Order {
+  orderNumber: string;
+  items: OrderItem[];
+  subtotal: number;
+  discount: number;
+  couponCode: string | null;
+  shippingFee: number;
+  grandTotal: number;
+  customer: {
+    name: string;
+    phone: string;
+    address: string;
+    pincode: string;
+  };
+  date: string;
+  paymentStatus?: "processing" | "verified" | "failed";
+  deliveryStatus?: string;
+}
+
 // Configuration: Set to true to completely disable the /admin page in production (returns a 404)
 const BLOCK_IN_PRODUCTION = false;
 
@@ -19,7 +47,7 @@ export default function AdminPage() {
 
   // Orders dashboard states
   const [activeTab, setActiveTab] = useState<"catalog" | "orders">("catalog");
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -688,11 +716,12 @@ export default function AdminPage() {
                     onChange={(e) => setCategory(e.target.value)}
                     style={inputStyle}
                   >
-                    <option value="Nail Accessory">Nail Accessory</option>
+                    <option value="Nail Accessory">Accessory</option>
                     <option value="Hair">Hair</option>
                     <option value="Foot">Foot</option>
                     <option value="Bath">Bath</option>
                     <option value="Makeup">Makeup</option>
+                    <option value="Bundle">Bundle</option>
                   </select>
                 </div>
                 <div>
@@ -1315,7 +1344,7 @@ export default function AdminPage() {
                             {/* Order Items */}
                             <td style={{ padding: "16px", fontSize: "12px" }}>
                               <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                                {ord.items?.map((it: any, i: number) => (
+                                {ord.items?.map((it: OrderItem, i: number) => (
                                   <div key={i}>
                                     • {it.quantity}x {it.name} {it.color ? `(${it.color})` : ""}
                                   </div>

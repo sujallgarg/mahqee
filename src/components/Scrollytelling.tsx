@@ -91,11 +91,7 @@ export default function Scrollytelling({ onLearnMore }: ScrollytellingProps) {
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   // Safe clamp activeIndex if products list changes size dynamically
-  useEffect(() => {
-    if (activeIndex >= displayProducts.length) {
-      setActiveIndex(Math.max(0, Math.floor(displayProducts.length / 2)));
-    }
-  }, [displayProducts.length, activeIndex]);
+  const clampedActiveIndex = Math.min(activeIndex, Math.max(0, displayProducts.length - 1));
 
   // Set up autoplay timer
   useEffect(() => {
@@ -107,13 +103,15 @@ export default function Scrollytelling({ onLearnMore }: ScrollytellingProps) {
   }, [isAutoplay, displayProducts.length]);
 
   const isLongCarousel = displayProducts.length > 4;
-  const [isIntersecting, setIsIntersecting] = useState(false);
+  const [isIntersecting, setIsIntersecting] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return !("IntersectionObserver" in window);
+  });
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   // Setup Intersection Observer to only scroll active elements when in viewport (prevents initial page jump)
   useEffect(() => {
     if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
-      setIsIntersecting(true); // Fallback if IntersectionObserver is not supported
       return;
     }
     const observer = new IntersectionObserver(
@@ -137,7 +135,7 @@ export default function Scrollytelling({ onLearnMore }: ScrollytellingProps) {
   useEffect(() => {
     const isMobile = typeof window !== "undefined" && window.innerWidth <= 900;
     if ((isMobile || isLongCarousel) && isIntersecting) {
-      const card = cardRefs.current[activeIndex];
+      const card = cardRefs.current[clampedActiveIndex];
       const container = card?.parentElement;
       if (card && container) {
         container.scrollTo({
@@ -146,7 +144,7 @@ export default function Scrollytelling({ onLearnMore }: ScrollytellingProps) {
         });
       }
     }
-  }, [activeIndex, isLongCarousel, isIntersecting]);
+  }, [clampedActiveIndex, isLongCarousel, isIntersecting]);
 
   return (
     <section 
@@ -197,7 +195,7 @@ export default function Scrollytelling({ onLearnMore }: ScrollytellingProps) {
             className="showcase-columns-row"
           >
             {displayProducts.map((prod, idx) => {
-              const isActive = activeIndex === idx;
+              const isActive = clampedActiveIndex === idx;
               const thumbPath = prod.images && prod.images[1] ? prod.images[1] : prod.image;
 
               return (

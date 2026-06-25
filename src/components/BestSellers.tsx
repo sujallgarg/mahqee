@@ -56,7 +56,7 @@ export default function BestSellers({ onLearnMore, isSubpage = false }: BestSell
         <div 
           className="best-sellers-grid"
         >
-          {bestSellerProducts.map((prod, idx) => {
+          {bestSellerProducts.map((prod) => {
             if (!prod) return null;
             return (
               <div 

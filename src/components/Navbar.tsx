@@ -146,7 +146,7 @@ export default function Navbar() {
                   <div>
                     <h4 style={{ fontSize: "11px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "1px", color: "var(--accent-pink)", marginBottom: "12px" }}>Categories</h4>
                     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                      <Link href="/shop?cat=nail-accessory" className="dropdown-item">Nail Accessory</Link>
+                      <Link href="/shop?cat=nail-accessory" className="dropdown-item"> Accessory</Link>
                       <Link href="/shop?cat=hair" className="dropdown-item">Hair</Link>
                       <Link href="/shop?cat=foot" className="dropdown-item">Foot</Link>
                       <Link href="/shop?cat=bath" className="dropdown-item">Bath</Link>

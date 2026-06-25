@@ -287,11 +287,12 @@ export default function DevProductAdder() {
                         onChange={(e) => setCategory(e.target.value)}
                         style={inputStyle}
                       >
-                        <option value="Nail Accessory">Nail Accessory</option>
+                        <option value="Nail Accessory">Accessory</option>
                         <option value="Hair">Hair</option>
                         <option value="Foot">Foot</option>
                         <option value="Bath">Bath</option>
                         <option value="Makeup">Makeup</option>
+                        <option value="Bundle">Bundle</option>
                       </select>
                     </div>
                     <div>

@@ -51,7 +51,7 @@ export default function BundleBanner() {
               Get Additional Discount <strong style={{ color: "var(--text-primary)" }}>UPTO 15%</strong> on custom kit + <strong style={{ color: "var(--accent-pink)" }}>5% Cashback</strong> as MAHQEE Cash.
             </p>
 
-            <Link href="/shop" className="btn-primary" style={{
+            <Link href="/shop?cat=bundle" className="btn-primary" style={{
               borderRadius: "6px",
               padding: "14px 32px",
               fontSize: "14px",
