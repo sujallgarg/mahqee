@@ -301,9 +301,33 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (savedCart) {
       try {
         const parsed = JSON.parse(savedCart);
-        setTimeout(() => {
-          setCartItems(parsed);
-        }, 0);
+        const hasOutdatedCartPaths = parsed.some((item: any) => 
+          item.product && (
+            (item.product.image && item.product.image.startsWith("/images/")) ||
+            (item.product.images && item.product.images.some((img: string) => img.startsWith("/images/")))
+          )
+        );
+        if (hasOutdatedCartPaths) {
+          const migratedCart = parsed.map((item: any) => {
+            if (!item.product) return item;
+            return {
+              ...item,
+              product: {
+                ...item.product,
+                image: item.product.image ? item.product.image.replace(/^\/images\//, "/") : item.product.image,
+                images: item.product.images ? item.product.images.map((img: string) => img.replace(/^\/images\//, "/")) : item.product.images
+              }
+            };
+          });
+          setTimeout(() => {
+            setCartItems(migratedCart);
+            safeSaveCart(migratedCart);
+          }, 0);
+        } else {
+          setTimeout(() => {
+            setCartItems(parsed);
+          }, 0);
+        }
       } catch (e) {
         console.error("Failed to parse cart", e);
       }
@@ -314,9 +338,25 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (savedProducts) {
       try {
         const parsedProducts = JSON.parse(savedProducts);
-        setTimeout(() => {
-          setProducts(parsedProducts);
-        }, 0);
+        const hasOutdatedPaths = parsedProducts.some((p: any) => 
+          (p.image && p.image.startsWith("/images/")) || 
+          (p.images && p.images.some((img: string) => img.startsWith("/images/")))
+        );
+        if (hasOutdatedPaths) {
+          const migratedProducts = parsedProducts.map((p: any) => ({
+            ...p,
+            image: p.image ? p.image.replace(/^\/images\//, "/") : p.image,
+            images: p.images ? p.images.map((img: string) => img.replace(/^\/images\//, "/")) : p.images
+          }));
+          setTimeout(() => {
+            setProducts(migratedProducts);
+            safeSaveProducts(migratedProducts);
+          }, 0);
+        } else {
+          setTimeout(() => {
+            setProducts(parsedProducts);
+          }, 0);
+        }
       } catch (e) {
         console.error("Failed to parse cached products", e);
       }
