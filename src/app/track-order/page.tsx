@@ -81,12 +81,13 @@ export default function TrackOrderPage() {
       };
     } else {
       // placed or default
+      const isVerified = paymentStatus === "verified";
       return {
         status: "placed" as const,
         carrier: "MAHQEE Express Logistics (DHL Partner)",
-        estDelivery: "On Hold (Payment Unverified)",
+        estDelivery: isVerified ? "Awaiting Shipment" : "On Hold (Payment Unverified)",
         events: [
-          { time: `${formattedDate}, 09:12 AM`, location: "Digital Operations", status: "Order details registered. Awaiting Paytm payment receipt verification on WhatsApp." }
+          { time: `${formattedDate}, 09:12 AM`, location: "Digital Operations", status: isVerified ? "Paytm payment verified. Awaiting shipment sorting at warehouse." : "Order details registered. Awaiting Paytm payment receipt verification on WhatsApp." }
         ]
       };
     }

@@ -143,8 +143,7 @@ export default function PaymentDonePage() {
             if (foundServer) {
               return { ...localOrd, paymentStatus: foundServer.paymentStatus };
             }
-            // If the order has been deleted on the server, reflect it as failed/cancelled
-            return { ...localOrd, paymentStatus: "failed" as const };
+            return localOrd;
           });
           
           setAllOrders(updatedLocalList);
@@ -158,10 +157,6 @@ export default function PaymentDonePage() {
               const foundServer = ordersList.find(s => s.orderNumber === parsedLast.orderNumber);
               if (foundServer) {
                 const updatedLast = { ...parsedLast, paymentStatus: foundServer.paymentStatus };
-                setLastOrder(updatedLast);
-                localStorage.setItem("mahqee_last_order", JSON.stringify(updatedLast));
-              } else {
-                const updatedLast = { ...parsedLast, paymentStatus: "failed" as const };
                 setLastOrder(updatedLast);
                 localStorage.setItem("mahqee_last_order", JSON.stringify(updatedLast));
               }
