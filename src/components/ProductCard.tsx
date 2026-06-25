@@ -238,37 +238,6 @@ export default function ProductCard({
           </div>
         )}
 
-        {/* Left chevron arrow */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setActiveVisual((prev) => (prev - 1 + 3) % 3);
-          }}
-          style={{
-            position: "absolute",
-            left: "12px",
-            top: "50%",
-            transform: "translateY(-50%)",
-            width: "28px",
-            height: "28px",
-            borderRadius: "50%",
-            backgroundColor: "rgba(255, 255, 255, 0.85)",
-            border: "none",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-            zIndex: 5,
-            fontSize: "16px",
-            color: "var(--text-primary)",
-            transition: "var(--transition-fast)"
-          }}
-          className="visual-nav-btn"
-          aria-label="Previous visual"
-        >
-          ‹
-        </button>
-
         {/* Dynamic Visual Content */}
         <div className="floating-element-1" style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
           {(product.image.startsWith("/") || product.image.startsWith("data:image/")) ? (
@@ -285,37 +254,6 @@ export default function ProductCard({
             </div>
           )}
         </div>
-
-        {/* Right chevron arrow */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setActiveVisual((prev) => (prev + 1) % 3);
-          }}
-          style={{
-            position: "absolute",
-            right: "12px",
-            top: "50%",
-            transform: "translateY(-50%)",
-            width: "28px",
-            height: "28px",
-            borderRadius: "50%",
-            backgroundColor: "rgba(255, 255, 255, 0.85)",
-            border: "none",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-            zIndex: 5,
-            fontSize: "16px",
-            color: "var(--text-primary)",
-            transition: "var(--transition-fast)"
-          }}
-          className="visual-nav-btn"
-          aria-label="Next visual"
-        >
-          ›
-        </button>
 
         {/* Visual switcher indicator dots overlay */}
         <div style={{

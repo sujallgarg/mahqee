@@ -24,7 +24,6 @@ const defaultProducts: Product[] = [
       "/floral-comb.png",
       "/floral-comb3.png",
       "/floral-comb4.png",
-      
     ],
     "ingredients": [
       "Premium Cellulose Acetate",
