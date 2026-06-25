@@ -143,7 +143,8 @@ export default function PaymentDonePage() {
             if (foundServer) {
               return { ...localOrd, paymentStatus: foundServer.paymentStatus };
             }
-            return localOrd;
+            // If the order has been deleted on the server, reflect it as failed/cancelled
+            return { ...localOrd, paymentStatus: "failed" as const };
           });
           
           setAllOrders(updatedLocalList);
@@ -157,6 +158,10 @@ export default function PaymentDonePage() {
               const foundServer = ordersList.find(s => s.orderNumber === parsedLast.orderNumber);
               if (foundServer) {
                 const updatedLast = { ...parsedLast, paymentStatus: foundServer.paymentStatus };
+                setLastOrder(updatedLast);
+                localStorage.setItem("mahqee_last_order", JSON.stringify(updatedLast));
+              } else {
+                const updatedLast = { ...parsedLast, paymentStatus: "failed" as const };
                 setLastOrder(updatedLast);
                 localStorage.setItem("mahqee_last_order", JSON.stringify(updatedLast));
               }
@@ -191,8 +196,35 @@ export default function PaymentDonePage() {
       <div className="container" style={{ maxWidth: "680px" }}>
         
         {/* DYNAMIC SUCCESS ICON HEADER */}
-        {(() => {
-          const status = lastOrder?.paymentStatus || "processing";
+        {!lastOrder ? (
+          <div style={{ textAlign: "center", marginBottom: "40px" }}>
+            <div style={{
+              width: "72px",
+              height: "72px",
+              borderRadius: "50%",
+              backgroundColor: "rgba(16, 34, 77, 0.05)",
+              border: "2px solid var(--border-color)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "0 auto 20px auto"
+            }}>
+              <span style={{ fontSize: "28px" }}>📦</span>
+            </div>
+            <h1 style={{
+              fontSize: "36px",
+              color: "var(--text-primary)",
+              fontFamily: "var(--font-serif)",
+              marginBottom: "8px"
+            }}>
+              No Order Found
+            </h1>
+            <p style={{ color: "var(--text-secondary)", fontSize: "14px", lineHeight: "1.5", maxWidth: "480px", margin: "0 auto" }}>
+              We could not find any active checkout session details. You can view your order history or return to shop.
+            </p>
+          </div>
+        ) : (() => {
+          const status = lastOrder.paymentStatus || "processing";
           if (status === "verified") {
             return (
               <div style={{ textAlign: "center", marginBottom: "40px" }}>

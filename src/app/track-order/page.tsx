@@ -12,17 +12,30 @@ interface TrackingEvent {
 export default function TrackOrderPage() {
   const [orderCode, setOrderCode] = useState("");
   const [searchedCode, setSearchedCode] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const [trackingInfo, setTrackingInfo] = useState<{
-    status: "placed" | "processing" | "shipped" | "transit" | "delivered";
+    status: "placed" | "processing" | "shipped" | "transit" | "delivered" | "failed";
     carrier: string;
     estDelivery: string;
     events: TrackingEvent[];
   } | null>(null);
 
-  const getTrackingData = (deliveryStatus: string, dateStr: string) => {
+  const getTrackingData = (deliveryStatus: string, dateStr: string, paymentStatus?: string) => {
     const date = dateStr ? new Date(dateStr) : new Date();
     const formattedDate = date.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
     
+    if (paymentStatus === "failed" || deliveryStatus === "failed") {
+      return {
+        status: "failed" as const,
+        carrier: "None",
+        estDelivery: "Verification Failed / Rejected",
+        events: [
+          { time: "Today", location: "Billing Ops", status: "Order rejected by administration. Paytm payment receipt could not be verified by agent." },
+          { time: `${formattedDate}`, location: "Digital Operations", status: "Order details registered on server. Paytm receipt verification failed." }
+        ]
+      };
+    }
+
     if (deliveryStatus === "processing") {
       return {
         status: "processing" as const,
@@ -95,7 +108,27 @@ export default function TrackOrderPage() {
           );
           if (foundOrder) {
             const status = foundOrder.deliveryStatus || (foundOrder.paymentStatus === "verified" ? "shipped" : "placed");
-            setTrackingInfo(getTrackingData(status, foundOrder.date));
+            setTrackingInfo(getTrackingData(status, foundOrder.date, foundOrder.paymentStatus));
+            setErrorMsg("");
+          } else {
+            // Check local storage as well
+            let foundLocal = false;
+            if (typeof window !== "undefined") {
+              const storedOrders = localStorage.getItem("mahqee_orders");
+              if (storedOrders) {
+                try {
+                  const orders = JSON.parse(storedOrders);
+                  foundLocal = orders.some(
+                    (o: any) => o.orderNumber.trim().toLowerCase() === searchedCode.trim().toLowerCase()
+                  );
+                } catch {}
+              }
+            }
+            const isDemo = searchedCode.trim().toLowerCase() === "mq-834915";
+            if (!foundLocal && !isDemo) {
+              setTrackingInfo(null);
+              setErrorMsg(`No order registered with code "${searchedCode}".`);
+            }
           }
         })
         .catch(err => {
@@ -113,6 +146,7 @@ export default function TrackOrderPage() {
     if (!orderCode.trim()) return;
 
     setSearchedCode(orderCode);
+    setErrorMsg("");
 
     // Look up the order in localStorage
     let foundOrder = null;
@@ -132,8 +166,8 @@ export default function TrackOrderPage() {
 
     if (foundOrder) {
       const status = foundOrder.deliveryStatus || (foundOrder.paymentStatus === "verified" ? "shipped" : "placed");
-      setTrackingInfo(getTrackingData(status, foundOrder.date));
-    } else {
+      setTrackingInfo(getTrackingData(status, foundOrder.date, foundOrder.paymentStatus));
+    } else if (orderCode.trim().toLowerCase() === "mq-834915") {
       // Fallback: Simulate looking up tracking details for other codes (mock fallback)
       setTrackingInfo({
         status: "shipped", // mock status
@@ -145,12 +179,16 @@ export default function TrackOrderPage() {
           { time: "Yesterday, 09:12 AM", location: "Digital Operations", status: "Payment verified, invoice generated, order confirmed" }
         ]
       });
+    } else {
+      setTrackingInfo(null);
+      setErrorMsg("Searching for order code...");
     }
   };
 
   const getStepClass = (stepName: string) => {
     if (!trackingInfo) return "inactive";
     const statusMap = {
+      failed: 0,
       placed: 1,
       processing: 2,
       shipped: 3,
@@ -178,7 +216,7 @@ export default function TrackOrderPage() {
   return (
     <main style={{
       minHeight: "100vh",
-      padding: "160px 24px 120px 24px",
+      padding: "var(--page-top-padding) 24px var(--page-bottom-padding) 24px",
       backgroundColor: "var(--bg-primary)"
     }}>
       <div className="container" style={{ maxWidth: "600px" }}>
@@ -243,9 +281,9 @@ export default function TrackOrderPage() {
                 Track
               </button>
             </div>
-            <span style={{ fontSize: "11px", color: "var(--text-secondary)", fontStyle: "italic" }}>
+            {/* <span style={{ fontSize: "11px", color: "var(--text-secondary)", fontStyle: "italic" }}>
               Don&apos;t have an order code? Try entering <strong>MQ-834915</strong> to test the tracker simulation.
-            </span>
+            </span> */}
           </form>
 
           {/* Premium Packaging Side Image */}
@@ -267,122 +305,199 @@ export default function TrackOrderPage() {
           </div>
         </div>
 
+        {/* Error message */}
+        {errorMsg && (
+          <div style={{
+            backgroundColor: "rgba(220, 38, 38, 0.05)",
+            border: "1.5px solid rgba(220, 38, 38, 0.15)",
+            borderRadius: "16px",
+            padding: "16px 20px",
+            color: "#dc2626",
+            fontSize: "13px",
+            textAlign: "center",
+            marginBottom: "24px"
+          }}>
+            {errorMsg}
+          </div>
+        )}
+
         {/* Tracking status visualizer */}
         {trackingInfo && (
           <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
             
-            {/* Visual Milestones bar */}
-            <div style={{
-              backgroundColor: "#ffffff",
-              border: "1px solid var(--border-color)",
-              borderRadius: "24px",
-              padding: "36px 30px",
-              boxShadow: "var(--shadow-sm)"
-            }}>
-              <h3 style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)", marginBottom: "28px", textTransform: "uppercase", letterSpacing: "1px" }}>
-                Delivery Milestones for {searchedCode}
-              </h3>
-
-              {/* Progress Steps container */}
+            {trackingInfo.status === "failed" ? (
               <div style={{
-                display: "flex",
-                justifyContent: "space-between",
-                position: "relative",
-                marginBottom: "40px"
+                backgroundColor: "rgba(220, 38, 38, 0.03)",
+                border: "1px solid rgba(220, 38, 38, 0.15)",
+                borderRadius: "24px",
+                padding: "36px 30px",
+                boxShadow: "var(--shadow-sm)",
+                textAlign: "center"
               }}>
-                {/* Connecting lines */}
                 <div style={{
-                  position: "absolute",
-                  top: "10px",
-                  left: "5%",
-                  right: "5%",
-                  height: "2px",
-                  backgroundColor: "var(--border-color)",
-                  zIndex: 0
-                }} />
-
-                {/* Milestones steps */}
-                {["placed", "processing", "shipped", "transit", "delivered"].map((step, idx) => {
-                  const stepClass = getStepClass(step);
-                  let displayLabel = "Placed";
-                  if (step === "processing") displayLabel = "Processing";
-                  else if (step === "shipped") displayLabel = "Shipped";
-                  else if (step === "transit") displayLabel = "In Transit";
-                  else if (step === "delivered") displayLabel = "Delivered";
-
-                  let color = "var(--text-secondary)";
-                  let bg = "#ffffff";
-                  let border = "2px solid var(--border-color)";
-
-                  if (stepClass === "completed") {
-                    color = "var(--text-primary)";
-                    bg = "var(--accent-pink)";
-                    border = "2px solid var(--accent-pink)";
-                  } else if (stepClass === "active") {
-                    color = "var(--accent-pink)";
-                    bg = "#ffffff";
-                    border = "2px solid var(--accent-pink)";
-                  }
-
-                  return (
-                    <div key={idx} style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      gap: "8px",
-                      position: "relative",
-                      zIndex: 2,
-                      width: "18%"
-                    }}>
-                      {/* Step Bubble */}
-                      <div style={{
-                        width: "20px",
-                        height: "20px",
-                        borderRadius: "50%",
-                        backgroundColor: bg,
-                        border: border,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        transition: "all 0.3s ease"
-                      }}>
-                        {stepClass === "completed" && (
-                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="3">
-                            <path d="M20 6L9 17L4 12" />
-                          </svg>
-                        )}
-                      </div>
-
-                      {/* Label */}
-                      <span style={{
-                        fontSize: "9.5px",
-                        fontWeight: "600",
-                        color: color,
-                        textAlign: "center",
-                        whiteSpace: "nowrap"
-                      }}>
-                        {displayLabel}
-                      </span>
-                    </div>
-                  );
-                })}
+                  width: "56px",
+                  height: "56px",
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(220, 38, 38, 0.1)",
+                  color: "#dc2626",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  margin: "0 auto 20px auto"
+                }}>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </div>
+                <h3 style={{ fontSize: "18px", color: "#dc2626", marginBottom: "12px", fontFamily: "var(--font-serif)", fontWeight: "600" }}>
+                  Verification Failed / Rejected
+                </h3>
+                <p style={{ fontSize: "13.5px", color: "var(--text-secondary)", lineHeight: "1.6", maxWidth: "460px", margin: "0 auto 24px auto" }}>
+                  This order was rejected or marked as failed by our billing operations team. This typically occurs when a Paytm payment receipt could not be verified or the order was manually cancelled.
+                </p>
+                <div style={{
+                  backgroundColor: "#ffffff",
+                  border: "1px solid rgba(220, 38, 38, 0.12)",
+                  borderRadius: "12px",
+                  padding: "16px",
+                  fontSize: "12.5px",
+                  color: "var(--text-secondary)",
+                  textAlign: "left",
+                  display: "inline-block",
+                  width: "100%",
+                  maxWidth: "400px"
+                }}>
+                  <div style={{ marginBottom: "6px" }}>Order Number: <strong style={{ color: "var(--text-primary)" }}>{searchedCode}</strong></div>
+                  <div>Resolution: <span style={{ fontStyle: "italic" }}>Please contact our customer concierge desk on WhatsApp at <strong>+91 9671655023</strong> with your transaction reference.</span></div>
+                </div>
               </div>
-
-              {/* Courier info */}
+            ) : (
               <div style={{
-                backgroundColor: "var(--bg-secondary)",
-                borderRadius: "10px",
-                padding: "16px",
-                fontSize: "12px",
-                color: "var(--text-primary)",
-                display: "flex",
-                flexDirection: "column",
-                gap: "6px"
+                backgroundColor: "#ffffff",
+                border: "1px solid var(--border-color)",
+                borderRadius: "24px",
+                padding: "36px 30px",
+                boxShadow: "var(--shadow-sm)"
               }}>
-                <div>Carrier: <strong style={{ color: "var(--text-primary)" }}>{trackingInfo.carrier}</strong></div>
-                <div>Est. Transit: <strong style={{ color: "var(--accent-pink)" }}>{trackingInfo.estDelivery}</strong></div>
+                <h3 style={{ fontSize: "14px", fontWeight: "600", color: "var(--text-primary)", marginBottom: "28px", textTransform: "uppercase", letterSpacing: "1px" }}>
+                  Delivery Milestones for {searchedCode}
+                </h3>
+
+                {/* Progress Steps container */}
+                <div 
+                  className="progress-steps-container"
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    position: "relative",
+                    marginBottom: "40px"
+                  }}
+                >
+                  {/* Connecting lines */}
+                  <div 
+                    className="progress-steps-line"
+                    style={{
+                      position: "absolute",
+                      top: "10px",
+                      left: "5%",
+                      right: "5%",
+                      height: "2px",
+                      backgroundColor: "var(--border-color)",
+                      zIndex: 0
+                    }}
+                  />
+
+                  {/* Milestones steps */}
+                  {["placed", "processing", "shipped", "transit", "delivered"].map((step, idx) => {
+                    const stepClass = getStepClass(step);
+                    let displayLabel = "Placed";
+                    if (step === "processing") displayLabel = "Processing";
+                    else if (step === "shipped") displayLabel = "Shipped";
+                    else if (step === "transit") displayLabel = "In Transit";
+                    else if (step === "delivered") displayLabel = "Delivered";
+
+                    let color = "var(--text-secondary)";
+                    let bg = "#ffffff";
+                    let border = "2px solid var(--border-color)";
+
+                    if (stepClass === "completed") {
+                      color = "var(--text-primary)";
+                      bg = "var(--accent-pink)";
+                      border = "2px solid var(--accent-pink)";
+                    } else if (stepClass === "active") {
+                      color = "var(--accent-pink)";
+                      bg = "#ffffff";
+                      border = "2px solid var(--accent-pink)";
+                    }
+
+                    return (
+                      <div 
+                        key={idx} 
+                        className="progress-step-item"
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          gap: "8px",
+                          position: "relative",
+                          zIndex: 2,
+                          width: "18%"
+                        }}
+                      >
+                        {/* Step Bubble */}
+                        <div style={{
+                          width: "20px",
+                          height: "20px",
+                          borderRadius: "50%",
+                          backgroundColor: bg,
+                          border: border,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          transition: "all 0.3s ease"
+                        }}>
+                          {stepClass === "completed" && (
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="3">
+                              <path d="M20 6L9 17L4 12" />
+                            </svg>
+                          )}
+                        </div>
+
+                        {/* Label */}
+                        <span 
+                          className="progress-step-label"
+                          style={{
+                            fontSize: "9.5px",
+                            fontWeight: "600",
+                            color: color,
+                            textAlign: "center",
+                            whiteSpace: "nowrap"
+                          }}
+                        >
+                          {displayLabel}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Courier info */}
+                <div style={{
+                  backgroundColor: "var(--bg-secondary)",
+                  borderRadius: "10px",
+                  padding: "16px",
+                  fontSize: "12px",
+                  color: "var(--text-primary)",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "6px"
+                }}>
+                  <div>Carrier: <strong style={{ color: "var(--text-primary)" }}>{trackingInfo.carrier}</strong></div>
+                  <div>Est. Transit: <strong style={{ color: "var(--accent-pink)" }}>{trackingInfo.estDelivery}</strong></div>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Event Timeline Logs */}
             <div style={{
@@ -450,6 +565,36 @@ export default function TrackOrderPage() {
           }
           .track-order-img-box {
             min-height: 180px !important;
+          }
+        }
+        @media (max-width: 600px) {
+          .progress-steps-container {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 24px !important;
+            padding-left: 20px !important;
+            margin-bottom: 24px !important;
+          }
+          .progress-steps-line {
+            display: block !important;
+            position: absolute !important;
+            left: 29px !important;
+            top: 10px !important;
+            bottom: 10px !important;
+            width: 2px !important;
+            height: auto !important;
+            background-color: var(--border-color) !important;
+            z-index: 0 !important;
+          }
+          .progress-step-item {
+            flex-direction: row !important;
+            align-items: center !important;
+            gap: 16px !important;
+            width: 100% !important;
+          }
+          .progress-step-label {
+            text-align: left !important;
+            font-size: 11px !important;
           }
         }
       `}</style>

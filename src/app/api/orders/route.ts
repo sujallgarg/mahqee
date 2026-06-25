@@ -84,7 +84,6 @@ const writeOrders = (orders: any[]) => {
   }
 };
 
-export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
   try {
@@ -189,13 +188,21 @@ export async function DELETE(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const clear = searchParams.get("clear");
+    const orderNumber = searchParams.get("orderNumber");
 
     if (clear === "true") {
       writeOrders([]);
       return NextResponse.json([]);
     }
 
-    return NextResponse.json({ error: "Specify clear=true to empty orders queue" }, { status: 400 });
+    if (orderNumber) {
+      const orders = readOrders();
+      const updatedOrders = orders.filter((o: any) => o.orderNumber !== orderNumber);
+      writeOrders(updatedOrders);
+      return NextResponse.json({ success: true });
+    }
+
+    return NextResponse.json({ error: "Specify clear=true or orderNumber=MQ-XXXX to delete" }, { status: 400 });
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json({ error: msg }, { status: 500 });

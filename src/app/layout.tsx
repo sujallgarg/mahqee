@@ -7,6 +7,8 @@ import CartDrawer from "@/components/CartDrawer";
 import Footer from "@/components/Footer";
 import DevProductAdder from "@/components/DevProductAdder";
 
+export const unstable_instant = { prefetch: "static" };
+
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],

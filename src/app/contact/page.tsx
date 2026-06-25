@@ -37,7 +37,7 @@ export default function ContactPage() {
   return (
     <main style={{
       minHeight: "100vh",
-      padding: "160px 24px 120px 24px",
+      padding: "var(--page-top-padding) 24px var(--page-bottom-padding) 24px",
       backgroundColor: "var(--bg-primary)"
     }}>
       <div className="container" style={{ maxWidth: "900px" }}>
@@ -81,7 +81,7 @@ export default function ContactPage() {
           }}>
             Get in Touch
           </span>
-          <h1 style={{
+          <h1 className="contact-title" style={{
             fontSize: "40px",
             color: "var(--text-primary)",
             fontFamily: "var(--font-serif)",
@@ -300,6 +300,12 @@ export default function ContactPage() {
           .contact-grid {
             grid-template-columns: 1fr !important;
             gap: 32px !important;
+          }
+          .contact-hero-banner {
+            height: 180px !important;
+          }
+          .contact-title {
+            font-size: 28px !important;
           }
         }
       `}</style>

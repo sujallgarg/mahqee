@@ -49,7 +49,7 @@ export default function ShopPage() {
   return (
     <main style={{
       minHeight: "100vh",
-      padding: "160px 24px 120px 24px",
+      padding: "var(--page-top-padding) 24px var(--page-bottom-padding) 24px",
       backgroundColor: "var(--bg-primary)"
     }}>
       <div className="container">
@@ -92,7 +92,7 @@ export default function ShopPage() {
             border: "1px solid rgba(255, 255, 255, 0.6)",
             boxShadow: "var(--shadow-md)"
           }} className="glass-title-card">
-            <h1 style={{
+            <h1 className="shop-title" style={{
               fontSize: "36px",
               color: "var(--text-primary)",
               marginBottom: "8px",
@@ -187,11 +187,7 @@ export default function ShopPage() {
             <p style={{ color: "var(--text-secondary)", fontSize: "13px", marginTop: "8px" }}>Try searching for another keyword or filter.</p>
           </div>
         ) : (
-          <div className="grid-3" style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-            gap: "36px"
-          }}>
+          <div className="shop-products-grid">
             {filteredProducts.map((prod) => (
               <ProductCard
                 key={prod.id}
@@ -209,6 +205,40 @@ export default function ShopPage() {
         product={selectedProduct} 
         onClose={() => setSelectedProduct(null)} 
       />
+      <style jsx global>{`
+        .shop-products-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 36px;
+        }
+        @media (max-width: 1024px) {
+          .shop-products-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+          }
+        }
+        @media (max-width: 600px) {
+          .shop-products-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+          }
+        }
+        @media (max-width: 768px) {
+          .shop-hero-banner {
+            height: 180px !important;
+            padding: 0 20px !important;
+            margin-bottom: 24px !important;
+          }
+          .glass-title-card {
+            padding: 16px 20px !important;
+            max-width: 100% !important;
+          }
+          .shop-title {
+            font-size: 28px !important;
+          }
+        }
+      `}</style>
     </main>
   );
 }
+

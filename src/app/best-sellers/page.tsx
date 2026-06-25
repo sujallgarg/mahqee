@@ -12,7 +12,7 @@ export default function BestSellersPage() {
   return (
     <main style={{
       minHeight: "100vh",
-      padding: "160px 24px 120px 24px",
+      padding: "var(--page-top-padding) 24px var(--page-bottom-padding) 24px",
       backgroundColor: "var(--bg-primary)"
     }}>
       <div className="container">
@@ -55,7 +55,7 @@ export default function BestSellersPage() {
             border: "1px solid rgba(255, 255, 255, 0.6)",
             boxShadow: "var(--shadow-md)"
           }} className="glass-title-card">
-            <h1 style={{
+            <h1 className="bestsellers-title" style={{
               fontSize: "36px",
               color: "var(--text-primary)",
               marginBottom: "8px",
@@ -79,6 +79,22 @@ export default function BestSellersPage() {
           onClose={() => setSelectedProduct(null)} 
         />
       </div>
+      <style jsx global>{`
+        @media (max-width: 768px) {
+          .shop-hero-banner {
+            height: 180px !important;
+            padding: 0 20px !important;
+            margin-bottom: 24px !important;
+          }
+          .glass-title-card {
+            padding: 16px 20px !important;
+            max-width: 100% !important;
+          }
+          .bestsellers-title {
+            font-size: 28px !important;
+          }
+        }
+      `}</style>
     </main>
   );
 }

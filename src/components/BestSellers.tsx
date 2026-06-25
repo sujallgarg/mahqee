@@ -78,11 +78,11 @@ export default function BestSellers({ onLearnMore, isSubpage = false }: BestSell
         <style jsx>{`
           .best-sellers-grid {
             display: grid;
-            grid-template-columns: repeat(1, 1fr);
-            gap: 32px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
             width: 100%;
           }
-          @media (min-width: 576px) {
+          @media (min-width: 768px) {
             .best-sellers-grid {
               grid-template-columns: repeat(2, 1fr);
               gap: 24px;
@@ -91,6 +91,7 @@ export default function BestSellers({ onLearnMore, isSubpage = false }: BestSell
           @media (min-width: 992px) {
             .best-sellers-grid {
               grid-template-columns: repeat(4, 1fr);
+              gap: 32px;
             }
           }
         `}</style>

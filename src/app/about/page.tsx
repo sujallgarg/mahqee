@@ -704,6 +704,36 @@ export default function AboutPage() {
             padding: 40px 24px;
           }
         }
+        @media (max-width: 600px) {
+          .floating-badge {
+            display: none !important;
+          }
+          .carousel-container {
+            padding: 0 10px !important;
+          }
+          .carousel-btn {
+            width: 36px !important;
+            height: 36px !important;
+            font-size: 18px !important;
+          }
+          .carousel-btn.prev {
+            left: 10px !important;
+          }
+          .carousel-btn.next {
+            right: 10px !important;
+          }
+          .letter-sticker-speech {
+            right: 10px !important;
+            font-size: 9px !important;
+            padding: 4px 10px !important;
+            top: -20px !important;
+          }
+          .letter-tape {
+            width: 100px !important;
+            height: 24px !important;
+            top: -12px !important;
+          }
+        }
       `}</style>
     </main>
   );

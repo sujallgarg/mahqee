@@ -193,6 +193,33 @@ export default function AdminPage() {
     });
   };
 
+  const handleDeleteOrder = (orderNumber: string) => {
+    if (confirm(`Are you sure you want to delete order ${orderNumber}?`)) {
+      fetch(`/api/orders?orderNumber=${orderNumber}`, { method: "DELETE" })
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to delete order");
+          const updatedOrders = orders.filter(o => o.orderNumber !== orderNumber);
+          setOrders(updatedOrders);
+          localStorage.setItem("mahqee_admin_orders", JSON.stringify(updatedOrders));
+          
+          const storedLastOrder = localStorage.getItem("mahqee_last_order");
+          if (storedLastOrder) {
+            try {
+              const lastOrder = JSON.parse(storedLastOrder);
+              if (lastOrder.orderNumber === orderNumber) {
+                localStorage.removeItem("mahqee_last_order");
+              }
+            } catch {}
+          }
+          alert(`Order ${orderNumber} deleted.`);
+        })
+        .catch(err => {
+          console.error("Failed to delete order", err);
+          alert("Failed to delete order.");
+        });
+    }
+  };
+
   // Admin form states
   const [editingId, setEditingId] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -506,7 +533,7 @@ export default function AdminPage() {
   return (
     <main style={{
       minHeight: "100vh",
-      padding: "160px 24px 120px 24px",
+      padding: "var(--page-top-padding) 24px var(--page-bottom-padding) 24px",
       backgroundColor: "var(--bg-primary)"
     }}>
       <div className="container" style={{ maxWidth: "1200px" }}>
@@ -526,9 +553,10 @@ export default function AdminPage() {
             <span style={{ fontSize: "11px", fontWeight: "600", color: "var(--accent-pink)", letterSpacing: "1.5px", textTransform: "uppercase" }}>
               MAHQEE Control Center
             </span>
-            <div style={{ display: "flex", gap: "24px", marginTop: "12px", alignItems: "center" }}>
+            <div style={{ display: "flex", gap: "24px", marginTop: "12px", alignItems: "center" }} className="admin-tabs-row">
               <button 
                 onClick={() => setActiveTab("catalog")}
+                className="admin-tab-btn"
                 style={{
                   background: "none",
                   border: "none",
@@ -545,6 +573,7 @@ export default function AdminPage() {
               </button>
               <button 
                 onClick={() => setActiveTab("orders")}
+                className="admin-tab-btn"
                 style={{
                   background: "none",
                   border: "none",
@@ -1100,143 +1129,188 @@ export default function AdminPage() {
                 </span>
               </div>
             ) : (
-              <div style={{ overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
-                  <thead>
-                    <tr style={{ borderBottom: "1.5px solid var(--border-color)", color: "var(--text-secondary)", fontSize: "12px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                      <th style={{ padding: "12px 16px" }}>Visual</th>
-                      <th style={{ padding: "12px 16px" }}>Product Name & Tag</th>
-                      <th style={{ padding: "12px 16px" }}>Category</th>
-                      <th style={{ padding: "12px 16px" }}>Price</th>
-                      <th style={{ padding: "12px 16px" }}>Best Seller</th>
-                      <th style={{ padding: "12px 16px" }}>Loved By MAHQEE</th>
-                      <th style={{ padding: "12px 16px", textAlign: "right" }}>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {products.map((prod) => (
-                      <tr key={prod.id} style={{ borderBottom: "1px solid rgba(16, 34, 77, 0.06)", fontSize: "13.5px", transition: "background-color 0.2s" }} className="admin-table-row">
-                        <td style={{ padding: "16px" }}>
-                          <div style={{
-                            position: "relative",
-                            width: "50px",
-                            height: "50px",
-                            borderRadius: "8px",
-                            overflow: "hidden",
-                            backgroundColor: "#eaeae8",
-                            border: "1px solid rgba(16, 34, 77, 0.05)"
-                          }}>
-                            {prod.image && (prod.image.startsWith("/images/") || prod.image.startsWith("data:image/")) ? (
-                              <Image
-                                src={prod.image}
-                                alt={prod.name}
-                                fill
-                                sizes="50px"
-                                style={{ objectFit: "cover" }}
-                              />
-                            ) : (
-                              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", fontSize: "10px", color: "var(--text-secondary)" }}>
-                                Graph
-                              </div>
-                            )}
-                          </div>
-                        </td>
-                        <td style={{ padding: "16px" }}>
-                          <div style={{ fontWeight: "600", color: "var(--text-primary)" }}>{prod.name}</div>
-                          <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "2px" }}>{prod.tagline}</div>
-                        </td>
-                        <td style={{ padding: "16px" }}>
-                          <span style={{
-                            padding: "4px 10px",
-                            borderRadius: "99px",
-                            fontSize: "11px",
-                            fontWeight: "500",
-                            backgroundColor: "rgba(16, 34, 77, 0.05)",
-                            color: "var(--text-primary)"
-                          }}>
-                            {prod.category}
-                          </span>
-                        </td>
-                        <td style={{ padding: "16px", fontWeight: "600", color: "var(--text-primary)" }}>
-                          ₹{prod.price}.00
-                        </td>
-                        <td style={{ padding: "16px" }}>
-                          {prod.isBestSeller ? (
-                            <span style={{
-                              padding: "4px 10px",
-                              borderRadius: "99px",
-                              fontSize: "10px",
-                              fontWeight: "600",
-                              backgroundColor: "rgba(237, 116, 178, 0.12)",
-                              color: "var(--accent-pink)",
-                              textTransform: "uppercase"
-                            }}>
-                              Yes
-                            </span>
-                          ) : (
-                            <span style={{ color: "var(--text-secondary)", fontSize: "12px" }}>-</span>
-                          )}
-                        </td>
-                        <td style={{ padding: "16px" }}>
-                          {prod.isLovedByMahqee ? (
-                            <span style={{
-                              padding: "4px 10px",
-                              borderRadius: "99px",
-                              fontSize: "10px",
-                              fontWeight: "600",
-                              backgroundColor: "rgba(16, 34, 77, 0.12)",
-                              color: "var(--text-primary)",
-                              textTransform: "uppercase"
-                            }}>
-                              Yes
-                            </span>
-                          ) : (
-                            <span style={{ color: "var(--text-secondary)", fontSize: "12px" }}>-</span>
-                          )}
-                        </td>
-                        <td style={{ padding: "16px", textAlign: "right" }}>
-                          <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
-                            <button
-                              onClick={() => handleEditClick(prod)}
-                              style={{
-                                padding: "6px 12px",
-                                borderRadius: "6px",
-                                border: "1px solid var(--border-color)",
-                                backgroundColor: "#ffffff",
-                                color: "var(--text-primary)",
-                                fontSize: "12px",
-                                cursor: "pointer",
-                                fontWeight: "500",
-                                transition: "all 0.2s"
-                              }}
-                              className="admin-edit-btn"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleDeleteClick(prod.id, prod.name)}
-                              style={{
-                                padding: "6px 12px",
-                                borderRadius: "6px",
-                                border: "1px solid #fca5a5",
-                                backgroundColor: "#ffffff",
-                                color: "#991b1b",
-                                fontSize: "12px",
-                                cursor: "pointer",
-                                fontWeight: "500",
-                                transition: "all 0.2s"
-                              }}
-                              className="admin-delete-btn"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </td>
+              <>
+                {/* Desktop View */}
+                <div className="admin-desktop-view" style={{ overflowX: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+                    <thead>
+                      <tr style={{ borderBottom: "1.5px solid var(--border-color)", color: "var(--text-secondary)", fontSize: "12px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                        <th style={{ padding: "12px 16px" }}>Visual</th>
+                        <th style={{ padding: "12px 16px" }}>Product Name & Tag</th>
+                        <th style={{ padding: "12px 16px" }}>Category</th>
+                        <th style={{ padding: "12px 16px" }}>Price</th>
+                        <th style={{ padding: "12px 16px" }}>Best Seller</th>
+                        <th style={{ padding: "12px 16px" }}>Loved By MAHQEE</th>
+                        <th style={{ padding: "12px 16px", textAlign: "right" }}>Actions</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {products.map((prod) => (
+                        <tr key={prod.id} style={{ borderBottom: "1px solid rgba(16, 34, 77, 0.06)", fontSize: "13.5px", transition: "background-color 0.2s" }} className="admin-table-row">
+                          <td style={{ padding: "16px" }}>
+                            <div style={{
+                              position: "relative",
+                              width: "50px",
+                              height: "50px",
+                              borderRadius: "8px",
+                              overflow: "hidden",
+                              backgroundColor: "#eaeae8",
+                              border: "1px solid rgba(16, 34, 77, 0.05)"
+                            }}>
+                              {prod.image && (prod.image.startsWith("/images/") || prod.image.startsWith("data:image/")) ? (
+                                <Image
+                                  src={prod.image}
+                                  alt={prod.name}
+                                  fill
+                                  sizes="50px"
+                                  style={{ objectFit: "cover" }}
+                                />
+                              ) : (
+                                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", fontSize: "10px", color: "var(--text-secondary)" }}>
+                                  Graph
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                          <td style={{ padding: "16px" }}>
+                            <div style={{ fontWeight: "600", color: "var(--text-primary)" }}>{prod.name}</div>
+                            <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "2px" }}>{prod.tagline}</div>
+                          </td>
+                          <td style={{ padding: "16px" }}>
+                            <span style={{
+                              padding: "4px 10px",
+                              borderRadius: "99px",
+                              fontSize: "11px",
+                              fontWeight: "500",
+                              backgroundColor: "rgba(16, 34, 77, 0.05)",
+                              color: "var(--text-primary)"
+                            }}>
+                              {prod.category}
+                            </span>
+                          </td>
+                          <td style={{ padding: "16px", fontWeight: "600", color: "var(--text-primary)" }}>
+                            ₹{prod.price}.00
+                          </td>
+                          <td style={{ padding: "16px" }}>
+                            {prod.isBestSeller ? (
+                              <span style={{
+                                padding: "4px 10px",
+                                borderRadius: "99px",
+                                fontSize: "10px",
+                                fontWeight: "600",
+                                backgroundColor: "rgba(237, 116, 178, 0.12)",
+                                color: "var(--accent-pink)",
+                                textTransform: "uppercase"
+                              }}>
+                                Yes
+                              </span>
+                            ) : (
+                              <span style={{ color: "var(--text-secondary)", fontSize: "12px" }}>-</span>
+                            )}
+                          </td>
+                          <td style={{ padding: "16px" }}>
+                            {prod.isLovedByMahqee ? (
+                              <span style={{
+                                padding: "4px 10px",
+                                borderRadius: "99px",
+                                fontSize: "10px",
+                                fontWeight: "600",
+                                backgroundColor: "rgba(16, 34, 77, 0.12)",
+                                color: "var(--text-primary)",
+                                textTransform: "uppercase"
+                              }}>
+                                Yes
+                              </span>
+                            ) : (
+                              <span style={{ color: "var(--text-secondary)", fontSize: "12px" }}>-</span>
+                            )}
+                          </td>
+                          <td style={{ padding: "16px", textAlign: "right" }}>
+                            <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+                              <button
+                                onClick={() => handleEditClick(prod)}
+                                style={{
+                                  padding: "6px 12px",
+                                  borderRadius: "6px",
+                                  border: "1px solid var(--border-color)",
+                                  backgroundColor: "#ffffff",
+                                  color: "var(--text-primary)",
+                                  fontSize: "12px",
+                                  cursor: "pointer",
+                                  fontWeight: "500",
+                                  transition: "all 0.2s"
+                                }}
+                                className="admin-edit-btn"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => handleDeleteClick(prod.id, prod.name)}
+                                style={{
+                                  padding: "6px 12px",
+                                  borderRadius: "6px",
+                                  border: "1px solid #fca5a5",
+                                  backgroundColor: "#ffffff",
+                                  color: "#991b1b",
+                                  fontSize: "12px",
+                                  cursor: "pointer",
+                                  fontWeight: "500",
+                                  transition: "all 0.2s"
+                                }}
+                                className="admin-delete-btn"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile View */}
+                <div className="admin-mobile-view">
+                  {products.map((prod) => (
+                    <div key={prod.id} style={{
+                      backgroundColor: "var(--bg-primary)",
+                      border: "1px solid var(--border-color)",
+                      borderRadius: "16px",
+                      padding: "16px",
+                      marginBottom: "16px",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "12px"
+                    }}>
+                      <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                        <div style={{ position: "relative", width: "50px", height: "50px", borderRadius: "8px", overflow: "hidden", backgroundColor: "#eaeae8", flexShrink: 0 }}>
+                          {prod.image && (prod.image.startsWith("/images/") || prod.image.startsWith("data:image/")) ? (
+                            <Image src={prod.image} alt={prod.name} fill sizes="50px" style={{ objectFit: "cover" }} />
+                          ) : (
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", fontSize: "9px" }}>Graph</div>
+                          )}
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: "700", color: "var(--text-primary)", fontSize: "14px" }}>{prod.name}</div>
+                          <div style={{ fontSize: "11px", color: "var(--text-secondary)" }}>{prod.tagline}</div>
+                        </div>
+                      </div>
+                      
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", fontSize: "12px" }}>
+                        <div>Cat: <strong>{prod.category}</strong></div>
+                        <div>Price: <strong>₹{prod.price}.00</strong></div>
+                        <div>Best Seller: <strong>{prod.isBestSeller ? "Yes" : "No"}</strong></div>
+                        <div>Loved: <strong>{prod.isLovedByMahqee ? "Yes" : "No"}</strong></div>
+                      </div>
+
+                      <div style={{ display: "flex", gap: "8px", borderTop: "1px solid rgba(16, 34, 77, 0.05)", paddingTop: "12px" }}>
+                        <button onClick={() => handleEditClick(prod)} className="admin-edit-btn" style={{ flex: 1, padding: "8px", borderRadius: "6px", border: "1px solid var(--border-color)", backgroundColor: "#ffffff", fontSize: "12px", fontWeight: "600" }}>Edit</button>
+                        <button onClick={() => handleDeleteClick(prod.id, prod.name)} className="admin-delete-btn" style={{ flex: 1, padding: "8px", borderRadius: "6px", border: "1px solid #fca5a5", backgroundColor: "#ffffff", color: "#991b1b", fontSize: "12px", fontWeight: "600" }}>Delete</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
           </div>
         </div>
@@ -1286,16 +1360,59 @@ export default function AdminPage() {
               boxShadow: "var(--shadow-sm)",
               overflow: "hidden"
             }}>
-              <h2 style={{
-                fontSize: "20px",
-                color: "var(--text-primary)",
+              <div style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
                 marginBottom: "24px",
-                fontFamily: "var(--font-serif)",
                 borderBottom: "1px solid rgba(16, 34, 77, 0.05)",
-                paddingBottom: "12px"
+                paddingBottom: "12px",
+                flexWrap: "wrap",
+                gap: "12px"
               }}>
-                Paytm Payments Verification Queue ({orders.length})
-              </h2>
+                <h2 style={{
+                  fontSize: "20px",
+                  color: "var(--text-primary)",
+                  fontFamily: "var(--font-serif)",
+                  margin: 0
+                }}>
+                  Paytm Payments Verification Queue ({orders.length})
+                </h2>
+                {orders.length > 0 && (
+                  <button
+                    onClick={() => {
+                      if (confirm("Are you sure you want to delete ALL orders in the system? This action is irreversible.")) {
+                        fetch("/api/orders?clear=true", { method: "DELETE" })
+                          .then((res) => {
+                            if (!res.ok) throw new Error("Failed to clear orders");
+                            setOrders([]);
+                            localStorage.setItem("mahqee_admin_orders", "[]");
+                            localStorage.removeItem("mahqee_last_order");
+                            alert("All orders deleted successfully.");
+                          })
+                          .catch(err => {
+                            console.error("Failed to delete all orders", err);
+                            alert("Failed to delete all orders.");
+                          });
+                      }
+                    }}
+                    style={{
+                      padding: "8px 16px",
+                      borderRadius: "8px",
+                      fontSize: "12px",
+                      backgroundColor: "#fee2e2",
+                      color: "#b91c1c",
+                      border: "1px solid #fca5a5",
+                      cursor: "pointer",
+                      fontWeight: "600",
+                      transition: "all 0.2s"
+                    }}
+                    className="admin-delete-btn"
+                  >
+                    Delete All Orders
+                  </button>
+                )}
+              </div>
 
               {orders.length === 0 ? (
                 <div style={{ textAlign: "center", padding: "60px 0" }}>
@@ -1304,89 +1421,238 @@ export default function AdminPage() {
                   </span>
                 </div>
               ) : (
-                <div style={{ overflowX: "auto" }}>
-                  <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
-                    <thead>
-                      <tr style={{ borderBottom: "1.5px solid var(--border-color)", color: "var(--text-secondary)", fontSize: "12px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                        <th style={{ padding: "12px 16px" }}>Order Info</th>
-                        <th style={{ padding: "12px 16px" }}>Customer Details</th>
-                        <th style={{ padding: "12px 16px" }}>Order Items</th>
-                        <th style={{ padding: "12px 16px" }}>Total Amount</th>
-                        <th style={{ padding: "12px 16px" }}>Paytm Status</th>
-                        <th style={{ padding: "12px 16px" }}>Delivery Status</th>
-                        <th style={{ padding: "12px 16px", textAlign: "right" }}>Agent Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {orders.map((ord) => {
-                        const status = ord.paymentStatus || "processing";
-                        return (
-                          <tr key={ord.orderNumber} style={{ borderBottom: "1px solid rgba(16, 34, 77, 0.06)", fontSize: "13.5px", verticalAlign: "top" }} className="admin-table-row">
-                            {/* Order Info */}
-                            <td style={{ padding: "16px" }}>
-                              <div style={{ fontWeight: "700", color: "var(--text-primary)" }}>{ord.orderNumber}</div>
-                              <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "4px" }}>
-                                {new Date(ord.date).toLocaleDateString("en-IN", {
-                                  day: "numeric",
-                                  month: "short",
-                                  year: "numeric",
-                                  hour: "2-digit",
-                                  minute: "2-digit"
-                                })}
+                <>
+                  {/* Desktop Table View */}
+                  <div className="admin-desktop-view" style={{ overflowX: "auto" }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+                      <thead>
+                        <tr style={{ borderBottom: "1.5px solid var(--border-color)", color: "var(--text-secondary)", fontSize: "12px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                          <th style={{ padding: "12px 16px" }}>Order Info</th>
+                          <th style={{ padding: "12px 16px" }}>Customer Details</th>
+                          <th style={{ padding: "12px 16px" }}>Order Items</th>
+                          <th style={{ padding: "12px 16px" }}>Total Amount</th>
+                          <th style={{ padding: "12px 16px" }}>Paytm Status</th>
+                          <th style={{ padding: "12px 16px" }}>Delivery Status</th>
+                          <th style={{ padding: "12px 16px", textAlign: "right" }}>Agent Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {orders.map((ord) => {
+                          const status = ord.paymentStatus || "processing";
+                          return (
+                            <tr key={ord.orderNumber} style={{ borderBottom: "1px solid rgba(16, 34, 77, 0.06)", fontSize: "13.5px", verticalAlign: "top" }} className="admin-table-row">
+                              {/* Order Info */}
+                              <td style={{ padding: "16px" }}>
+                                <div style={{ fontWeight: "700", color: "var(--text-primary)" }}>{ord.orderNumber}</div>
+                                <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "4px" }}>
+                                  {new Date(ord.date).toLocaleDateString("en-IN", {
+                                    day: "numeric",
+                                    month: "short",
+                                    year: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit"
+                                  })}
+                                </div>
+                              </td>
+                              {/* Customer Details */}
+                              <td style={{ padding: "16px", maxWidth: "220px" }}>
+                                <div style={{ fontWeight: "600" }}>{ord.customer?.name}</div>
+                                <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "2px" }}>{ord.customer?.phone}</div>
+                                <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "4px", lineHeight: "1.3" }}>{ord.customer?.address}, {ord.customer?.pincode}</div>
+                              </td>
+                              {/* Order Items */}
+                              <td style={{ padding: "16px", fontSize: "12px" }}>
+                                <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                                  {ord.items?.map((it: OrderItem, i: number) => (
+                                    <div key={i}>
+                                      • {it.quantity}x {it.name} {it.color ? `(${it.color})` : ""}
+                                    </div>
+                                  ))}
+                                </div>
+                              </td>
+                              {/* Total */}
+                              <td style={{ padding: "16px", fontWeight: "700", color: "var(--text-primary)" }}>
+                                ₹{ord.grandTotal?.toLocaleString("en-IN")}.00
+                              </td>
+                              {/* Status */}
+                              <td style={{ padding: "16px" }}>
+                                {status === "verified" && (
+                                  <span style={{ fontSize: "11px", color: "#16a34a", backgroundColor: "rgba(22, 163, 74, 0.1)", padding: "4px 10px", borderRadius: "99px", textTransform: "uppercase", fontWeight: "600" }}>
+                                    ✓ Verified
+                                  </span>
+                                )}
+                                {status === "failed" && (
+                                  <span style={{ fontSize: "11px", color: "#dc2626", backgroundColor: "rgba(220, 38, 38, 0.1)", padding: "4px 10px", borderRadius: "99px", textTransform: "uppercase", fontWeight: "600" }}>
+                                    ❌ Failed
+                                  </span>
+                                )}
+                                {status === "processing" && (
+                                  <span style={{ fontSize: "11px", color: "#d97706", backgroundColor: "rgba(217, 119, 6, 0.1)", padding: "4px 10px", borderRadius: "99px", textTransform: "uppercase", fontWeight: "600" }}>
+                                    ⏳ Processing
+                                  </span>
+                                )}
+                              </td>
+                              {/* Delivery Status Select dropdown */}
+                              <td style={{ padding: "16px" }}>
+                                <select
+                                  value={ord.deliveryStatus || "placed"}
+                                  onChange={(e) => handleUpdateDeliveryStatus(ord.orderNumber, e.target.value)}
+                                  style={{
+                                    padding: "6px 8px",
+                                    borderRadius: "6px",
+                                    border: "1px solid var(--border-color)",
+                                    backgroundColor: "#ffffff",
+                                    fontSize: "12px",
+                                    color: "var(--text-primary)",
+                                    outline: "none",
+                                    cursor: "pointer"
+                                  }}
+                                >
+                                  <option value="placed">Placed</option>
+                                  <option value="processing">Processing</option>
+                                  <option value="shipped">Shipped</option>
+                                  <option value="transit">In Transit</option>
+                                  <option value="delivered">Delivered</option>
+                                </select>
+                              </td>
+                              {/* Action Buttons */}
+                              <td style={{ padding: "16px", textAlign: "right" }}>
+                                <div style={{ display: "flex", gap: "6px", justifyContent: "flex-end", flexWrap: "wrap" }}>
+                                  <button
+                                    onClick={() => handleUpdateOrderStatus(ord.orderNumber, "verified")}
+                                    disabled={status === "verified"}
+                                    style={{
+                                      padding: "6px 10px",
+                                      borderRadius: "6px",
+                                      border: "none",
+                                      backgroundColor: status === "verified" ? "#e5e7eb" : "#2e7d32",
+                                      color: status === "verified" ? "#9ca3af" : "#ffffff",
+                                      fontSize: "11px",
+                                      cursor: status === "verified" ? "not-allowed" : "pointer",
+                                      fontWeight: "600",
+                                      transition: "opacity 0.2s"
+                                    }}
+                                  >
+                                    Verify
+                                  </button>
+                                  <button
+                                    onClick={() => handleUpdateOrderStatus(ord.orderNumber, "failed")}
+                                    disabled={status === "failed"}
+                                    style={{
+                                      padding: "6px 10px",
+                                      borderRadius: "6px",
+                                      border: "none",
+                                      backgroundColor: status === "failed" ? "#e5e7eb" : "#dc2626",
+                                      color: status === "failed" ? "#9ca3af" : "#ffffff",
+                                      fontSize: "11px",
+                                      cursor: status === "failed" ? "not-allowed" : "pointer",
+                                      fontWeight: "600",
+                                      transition: "opacity 0.2s"
+                                    }}
+                                  >
+                                    Reject
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteOrder(ord.orderNumber)}
+                                    style={{
+                                      padding: "6px 10px",
+                                      borderRadius: "6px",
+                                      border: "1px solid #fca5a5",
+                                      backgroundColor: "#ffffff",
+                                      color: "#b91c1c",
+                                      fontSize: "11px",
+                                      cursor: "pointer",
+                                      fontWeight: "600",
+                                      transition: "all 0.2s"
+                                    }}
+                                    className="admin-delete-btn"
+                                  >
+                                    Delete
+                                  </button>
+                                  {status !== "processing" && (
+                                    <button
+                                      onClick={() => handleUpdateOrderStatus(ord.orderNumber, "processing")}
+                                      style={{
+                                        padding: "6px 10px",
+                                        borderRadius: "6px",
+                                        border: "1px solid var(--border-color)",
+                                        backgroundColor: "#ffffff",
+                                        color: "var(--text-primary)",
+                                        fontSize: "11px",
+                                        cursor: "pointer",
+                                        fontWeight: "600"
+                                      }}
+                                    >
+                                      Reset
+                                    </button>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Mobile Card-based View */}
+                  <div className="admin-mobile-view">
+                    {orders.map((ord) => {
+                      const status = ord.paymentStatus || "processing";
+                      return (
+                        <div key={ord.orderNumber} style={{
+                          backgroundColor: "var(--bg-primary)",
+                          border: "1px solid var(--border-color)",
+                          borderRadius: "16px",
+                          padding: "16px",
+                          marginBottom: "16px",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "12px"
+                        }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "1px solid rgba(16, 34, 77, 0.05)", paddingBottom: "10px" }}>
+                            <div>
+                              <div style={{ fontWeight: "700", fontSize: "14px", color: "var(--text-primary)" }}>{ord.orderNumber}</div>
+                              <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "2px" }}>
+                                {new Date(ord.date).toLocaleDateString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
                               </div>
-                            </td>
-                            {/* Customer Details */}
-                            <td style={{ padding: "16px", maxWidth: "220px" }}>
-                              <div style={{ fontWeight: "600" }}>{ord.customer?.name}</div>
-                              <div style={{ fontSize: "12px", color: "var(--text-secondary)", marginTop: "2px" }}>{ord.customer?.phone}</div>
-                              <div style={{ fontSize: "11px", color: "var(--text-secondary)", marginTop: "4px", lineHeight: "1.3" }}>{ord.customer?.address}, {ord.customer?.pincode}</div>
-                            </td>
-                            {/* Order Items */}
-                            <td style={{ padding: "16px", fontSize: "12px" }}>
-                              <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                                {ord.items?.map((it: OrderItem, i: number) => (
-                                  <div key={i}>
-                                    • {it.quantity}x {it.name} {it.color ? `(${it.color})` : ""}
-                                  </div>
-                                ))}
-                              </div>
-                            </td>
-                            {/* Total */}
-                            <td style={{ padding: "16px", fontWeight: "700", color: "var(--text-primary)" }}>
-                              ₹{ord.grandTotal?.toLocaleString("en-IN")}.00
-                            </td>
-                            {/* Status */}
-                            <td style={{ padding: "16px" }}>
-                              {status === "verified" && (
-                                <span style={{ fontSize: "11px", color: "#16a34a", backgroundColor: "rgba(22, 163, 74, 0.1)", padding: "4px 10px", borderRadius: "99px", textTransform: "uppercase", fontWeight: "600" }}>
-                                  ✓ Verified
-                                </span>
-                              )}
-                              {status === "failed" && (
-                                <span style={{ fontSize: "11px", color: "#dc2626", backgroundColor: "rgba(220, 38, 38, 0.1)", padding: "4px 10px", borderRadius: "99px", textTransform: "uppercase", fontWeight: "600" }}>
-                                  ❌ Failed
-                                </span>
-                              )}
-                              {status === "processing" && (
-                                <span style={{ fontSize: "11px", color: "#d97706", backgroundColor: "rgba(217, 119, 6, 0.1)", padding: "4px 10px", borderRadius: "99px", textTransform: "uppercase", fontWeight: "600" }}>
-                                  ⏳ Processing
-                                </span>
-                              )}
-                            </td>
-                            {/* Delivery Status Select dropdown */}
-                            <td style={{ padding: "16px" }}>
+                            </div>
+                            <div>
+                              {status === "verified" && <span style={{ fontSize: "10px", color: "#16a34a", backgroundColor: "rgba(22, 163, 74, 0.1)", padding: "3px 8px", borderRadius: "99px", fontWeight: "600" }}>VERIFIED</span>}
+                              {status === "failed" && <span style={{ fontSize: "10px", color: "#dc2626", backgroundColor: "rgba(220, 38, 38, 0.1)", padding: "3px 8px", borderRadius: "99px", fontWeight: "600" }}>FAILED</span>}
+                              {status === "processing" && <span style={{ fontSize: "10px", color: "#d97706", backgroundColor: "rgba(217, 119, 6, 0.1)", padding: "3px 8px", borderRadius: "99px", fontWeight: "600" }}>PROCESSING</span>}
+                            </div>
+                          </div>
+
+                          <div style={{ fontSize: "12px", display: "flex", flexDirection: "column", gap: "4px" }}>
+                            <div>Customer: <strong>{ord.customer?.name}</strong> ({ord.customer?.phone})</div>
+                            <div style={{ color: "var(--text-secondary)", fontSize: "11px", lineHeight: "1.3" }}>Address: {ord.customer?.address}, {ord.customer?.pincode}</div>
+                          </div>
+
+                          <div style={{ backgroundColor: "#ffffff", borderRadius: "8px", padding: "10px", border: "1px solid rgba(16, 34, 77, 0.04)" }}>
+                            <div style={{ fontSize: "11px", fontWeight: "600", textTransform: "uppercase", letterSpacing: "0.5px", color: "var(--text-secondary)", marginBottom: "6px" }}>Items</div>
+                            <div style={{ display: "flex", flexDirection: "column", gap: "4px", fontSize: "12px" }}>
+                              {ord.items?.map((it: OrderItem, i: number) => (
+                                <div key={i}>• {it.quantity}x {it.name} {it.color ? `(${it.color})` : ""}</div>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "13px" }}>
+                            <div>Total: <strong style={{ color: "var(--text-primary)" }}>₹{ord.grandTotal?.toLocaleString("en-IN")}.00</strong></div>
+                            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                              <span style={{ fontSize: "11px", color: "var(--text-secondary)" }}>Delivery:</span>
                               <select
                                 value={ord.deliveryStatus || "placed"}
                                 onChange={(e) => handleUpdateDeliveryStatus(ord.orderNumber, e.target.value)}
                                 style={{
-                                  padding: "6px 8px",
+                                  padding: "4px 6px",
                                   borderRadius: "6px",
                                   border: "1px solid var(--border-color)",
                                   backgroundColor: "#ffffff",
-                                  fontSize: "12px",
+                                  fontSize: "11.5px",
                                   color: "var(--text-primary)",
-                                  outline: "none",
-                                  cursor: "pointer"
+                                  outline: "none"
                                 }}
                               >
                                 <option value="placed">Placed</option>
@@ -1395,69 +1661,84 @@ export default function AdminPage() {
                                 <option value="transit">In Transit</option>
                                 <option value="delivered">Delivered</option>
                               </select>
-                            </td>
-                            {/* Action Buttons */}
-                            <td style={{ padding: "16px", textAlign: "right" }}>
-                              <div style={{ display: "flex", gap: "6px", justifyContent: "flex-end", flexWrap: "wrap" }}>
-                                <button
-                                  onClick={() => handleUpdateOrderStatus(ord.orderNumber, "verified")}
-                                  disabled={status === "verified"}
-                                  style={{
-                                    padding: "6px 10px",
-                                    borderRadius: "6px",
-                                    border: "none",
-                                    backgroundColor: status === "verified" ? "#e5e7eb" : "#2e7d32",
-                                    color: status === "verified" ? "#9ca3af" : "#ffffff",
-                                    fontSize: "11px",
-                                    cursor: status === "verified" ? "not-allowed" : "pointer",
-                                    fontWeight: "600",
-                                    transition: "opacity 0.2s"
-                                  }}
-                                >
-                                  Verify
-                                </button>
-                                <button
-                                  onClick={() => handleUpdateOrderStatus(ord.orderNumber, "failed")}
-                                  disabled={status === "failed"}
-                                  style={{
-                                    padding: "6px 10px",
-                                    borderRadius: "6px",
-                                    border: "none",
-                                    backgroundColor: status === "failed" ? "#e5e7eb" : "#dc2626",
-                                    color: status === "failed" ? "#9ca3af" : "#ffffff",
-                                    fontSize: "11px",
-                                    cursor: status === "failed" ? "not-allowed" : "pointer",
-                                    fontWeight: "600",
-                                    transition: "opacity 0.2s"
-                                  }}
-                                >
-                                  Reject
-                                </button>
-                                {status !== "processing" && (
-                                  <button
-                                    onClick={() => handleUpdateOrderStatus(ord.orderNumber, "processing")}
-                                    style={{
-                                      padding: "6px 10px",
-                                      borderRadius: "6px",
-                                      border: "1px solid var(--border-color)",
-                                      backgroundColor: "#ffffff",
-                                      color: "var(--text-primary)",
-                                      fontSize: "11px",
-                                      cursor: "pointer",
-                                      fontWeight: "600"
-                                    }}
-                                  >
-                                    Reset
-                                  </button>
-                                )}
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
+                            </div>
+                          </div>
+
+                          <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", borderTop: "1px solid rgba(16, 34, 77, 0.05)", paddingTop: "12px" }}>
+                            <button
+                              onClick={() => handleUpdateOrderStatus(ord.orderNumber, "verified")}
+                              disabled={status === "verified"}
+                              style={{
+                                flex: 1,
+                                padding: "8px",
+                                borderRadius: "6px",
+                                border: "none",
+                                backgroundColor: status === "verified" ? "#e5e7eb" : "#2e7d32",
+                                color: status === "verified" ? "#9ca3af" : "#ffffff",
+                                fontSize: "11px",
+                                fontWeight: "600",
+                                cursor: status === "verified" ? "not-allowed" : "pointer"
+                              }}
+                            >
+                              Verify
+                            </button>
+                            <button
+                              onClick={() => handleUpdateOrderStatus(ord.orderNumber, "failed")}
+                              disabled={status === "failed"}
+                              style={{
+                                flex: 1,
+                                padding: "8px",
+                                borderRadius: "6px",
+                                border: "none",
+                                backgroundColor: status === "failed" ? "#e5e7eb" : "#dc2626",
+                                color: status === "failed" ? "#9ca3af" : "#ffffff",
+                                fontSize: "11px",
+                                fontWeight: "600",
+                                cursor: status === "failed" ? "not-allowed" : "pointer"
+                              }}
+                            >
+                              Reject
+                            </button>
+                            <button
+                              onClick={() => handleDeleteOrder(ord.orderNumber)}
+                              style={{
+                                flex: 1,
+                                padding: "8px",
+                                borderRadius: "6px",
+                                border: "1px solid #fca5a5",
+                                backgroundColor: "#ffffff",
+                                color: "#b91c1c",
+                                fontSize: "11px",
+                                fontWeight: "600",
+                                cursor: "pointer"
+                              }}
+                              className="admin-delete-btn"
+                            >
+                              Delete
+                            </button>
+                            {status !== "processing" && (
+                              <button
+                                onClick={() => handleUpdateOrderStatus(ord.orderNumber, "processing")}
+                                style={{
+                                  padding: "8px 12px",
+                                  borderRadius: "6px",
+                                  border: "1px solid var(--border-color)",
+                                  backgroundColor: "#ffffff",
+                                  color: "var(--text-primary)",
+                                  fontSize: "11px",
+                                  fontWeight: "600",
+                                  cursor: "pointer"
+                                }}
+                              >
+                                Reset
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
               )}
             </div>
           </>
@@ -1466,6 +1747,12 @@ export default function AdminPage() {
       </div>
 
       <style jsx global>{`
+        .admin-desktop-view {
+          display: block;
+        }
+        .admin-mobile-view {
+          display: none;
+        }
         .admin-table-row:hover {
           background-color: rgba(16, 34, 77, 0.01);
         }
@@ -1475,6 +1762,28 @@ export default function AdminPage() {
         }
         .admin-delete-btn:hover {
           background-color: #fee2e2 !important;
+        }
+        @media (max-width: 768px) {
+          .admin-desktop-view {
+            display: none !important;
+          }
+          .admin-mobile-view {
+            display: block !important;
+          }
+          .admin-tab-btn {
+            font-size: 18px !important;
+          }
+          .admin-tabs-row {
+            gap: 12px !important;
+          }
+          .admin-panels-grid {
+            gap: 24px !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .admin-tab-btn {
+            font-size: 15px !important;
+          }
         }
       `}</style>
     </main>

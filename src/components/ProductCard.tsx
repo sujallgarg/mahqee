@@ -47,7 +47,7 @@ export default function ProductCard({
     const starsCount = product.id.includes("balm") ? 4 : 5;
     const hasHalf = product.id.includes("balm");
     return (
-      <div style={{ display: "flex", gap: "2px", color: "var(--text-primary)", margin: "4px 0", justifyContent: "flex-start" }}>
+      <div className="product-card-stars" style={{ display: "flex", gap: "2px", color: "var(--text-primary)", margin: "4px 0", justifyContent: "flex-start" }}>
         {[...Array(starsCount)].map((_, i) => (
           <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
@@ -355,7 +355,7 @@ export default function ProductCard({
 
       {/* Option swatches (colors) if available */}
       {showSwatches && product.colors && (
-        <div style={{ display: "flex", gap: "6px", marginBottom: "12px", width: "100%", justifyContent: "flex-start" }}>
+        <div className="product-card-swatches" style={{ display: "flex", gap: "6px", marginBottom: "12px", width: "100%", justifyContent: "flex-start" }}>
           {product.colors.map((color) => {
             const isSelected = activeColor?.name === color.name;
             return (
@@ -380,7 +380,7 @@ export default function ProductCard({
       )}
 
       {/* Text Details Block (Left aligned) */}
-      <div style={{ textAlign: "left", width: "100%", padding: "4px 0" }}>
+      <div className="product-card-details" style={{ textAlign: "left", width: "100%", padding: "4px 0" }}>
         {showNewBadge && (
           <span style={{
             fontSize: "10px",
@@ -470,6 +470,39 @@ export default function ProductCard({
         }
         @keyframes spin {
           to { transform: rotate(360deg); }
+        }
+        @media (max-width: 600px) {
+          .product-card-container {
+            align-items: stretch !important;
+            margin: 0 !important;
+            max-width: 100% !important;
+          }
+          .card-visual-wrapper {
+            height: 160px !important;
+            margin-bottom: 8px !important;
+          }
+          .product-card-details {
+            text-align: left !important;
+            padding: 2px 4px !important;
+          }
+          .product-card-swatches, .product-card-stars {
+            justify-content: flex-start !important;
+          }
+          .product-card-details h3 {
+            font-size: 13px !important;
+            margin-bottom: 2px !important;
+          }
+          .product-card-details p {
+            font-size: 10.5px !important;
+            min-height: auto !important;
+            margin-bottom: 4px !important;
+          }
+          .card-cta-btn {
+            padding: 8px !important;
+            font-size: 11px !important;
+            letter-spacing: 0.02em !important;
+            border-radius: 4px !important;
+          }
         }
       `}</style>
     </div>

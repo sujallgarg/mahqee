@@ -293,7 +293,6 @@ const writeProducts = (products: Product[]) => {
   }
 };
 
-export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
