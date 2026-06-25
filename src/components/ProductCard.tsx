@@ -43,6 +43,24 @@ export default function ProductCard({
     addToCart(product, 1, activeColor);
   };
 
+  // Mouse move visual switcher (slides/scrolls through images based on cursor X position)
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const width = rect.width;
+    const numImages = (product.image.startsWith("/") || product.image.startsWith("data:image/")) && product.images ? product.images.length : 3;
+    
+    if (numImages > 1) {
+      const index = Math.floor((x / width) * numImages);
+      const clampedIndex = Math.max(0, Math.min(numImages - 1, index));
+      setActiveVisual(clampedIndex);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setActiveVisual(0);
+  };
+
   const renderStars = () => {
     const starsCount = product.id.includes("balm") ? 4 : 5;
     const hasHalf = product.id.includes("balm");
@@ -203,6 +221,8 @@ export default function ProductCard({
       {/* Visual Illustration Wrapper */}
       <div 
         className="card-visual-wrapper"
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
         style={{ 
           width: "100%", 
           height: "300px", 
