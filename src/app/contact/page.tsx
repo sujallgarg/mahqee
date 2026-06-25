@@ -257,11 +257,11 @@ export default function ContactPage() {
               <div style={{ display: "flex", flexDirection: "column", gap: "12px", fontSize: "12.5px" }}>
                 <div>
                   <span style={{ color: "var(--text-secondary)", display: "block" }}>Email Inquiries</span>
-                  <strong style={{ color: "var(--text-primary)" }}>concierge@mahqee.com</strong>
+                  <strong style={{ color: "var(--text-primary)" }}>Mahqeebeautycare@gmail.com</strong>
                 </div>
                 <div>
                   <span style={{ color: "var(--text-secondary)", display: "block" }}>Concierge Support</span>
-                  <strong style={{ color: "var(--text-primary)" }}>+91 (11) 4829-0158</strong>
+                  <strong style={{ color: "var(--text-primary)" }}>+91 9671655023</strong>
                 </div>
                 <div>
                   <span style={{ color: "var(--text-secondary)", display: "block" }}>Working Hours</span>
@@ -283,12 +283,8 @@ export default function ContactPage() {
               </h3>
               <div style={{ display: "flex", flexDirection: "column", gap: "16px", fontSize: "12.5px" }}>
                 <div>
-                  <strong style={{ color: "var(--text-primary)", display: "block", marginBottom: "4px" }}>The Chanakya Boutique</strong>
-                  <span style={{ color: "var(--text-secondary)" }}>First Floor, The Chanakya Mall, Chanakyapuri, New Delhi - 110021</span>
-                </div>
-                <div>
-                  <strong style={{ color: "var(--text-primary)", display: "block", marginBottom: "4px" }}>Palladium Boutique</strong>
-                  <span style={{ color: "var(--text-secondary)" }}>Ground Level, Palladium Mall, Lower Parel, Mumbai - 400013</span>
+                  {/* <strong style={{ color: "var(--text-primary)", display: "block", marginBottom: "4px" }}>The Chanakya Boutique</strong> */}
+                  <span style={{ color: "var(--text-secondary)" }}>Shop No. - 1 Radhe Radhe Market, Quila Road, Mandir Wali Gali, Rohtak, Haryana - 124001</span>
                 </div>
               </div>
             </div>
