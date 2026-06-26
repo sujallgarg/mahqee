@@ -54,11 +54,11 @@ export default function ContactPage() {
           boxShadow: "var(--shadow-sm)"
         }} className="contact-hero-banner">
           <Image 
-            src="/contact-boutique.png" 
+            src="/banners/Contactus-banner.png" 
             alt="MAHQEE Apothecary Boutique" 
             fill
             sizes="(max-width: 900px) 100vw, 900px"
-            style={{ objectFit: "cover", objectPosition: "center" }}
+            style={{ objectFit: "fill", objectPosition: "center" }}
             priority
           />
           <div style={{

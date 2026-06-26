@@ -15,7 +15,7 @@ export default function AboutPage() {
   const slides: SlideItem[] = [
     {
       title: "Your Daily Hair Care Essential",
-      image: "/floral-comb.png",
+      image: "/floracombmain.png",
       borderColor: "#ed74b2",
       tag: "Hand-crafted Styling"
     },
@@ -27,7 +27,7 @@ export default function AboutPage() {
     },
     {
       title: "Deep Rejuvenating Massage",
-      image: "/face-roller.png",
+      image: "/dual-sided-classic-foot-file-scrubber-gallery-2.jpg",
       borderColor: "#ed74b2",
       tag: "Soothing Face Roller"
     },
@@ -38,16 +38,16 @@ export default function AboutPage() {
       tag: "Stainless Steel Tool"
     },
     {
-      title: "Your Perfect Vanity Storage",
-      image: "/makeup-bag.png",
+      title: "Precision Application",
+      image: "/precision-beauty-blender-sponge-gallery-2.png",
       borderColor: "#10224d",
-      tag: "Sleek Pouch Bag"
+      tag: "Precision Beauty Blender Sponge"
     },
     {
-      title: "Volumizing Hair Lift",
-      image: "/hair-rollers.png",
+      title: "Manicure Tool with glittery handle",
+      image: "/manicure-tool.png",
       borderColor: "#ed74b2",
-      tag: "Detangling Rollers"
+      tag: "Manicure Tool with glittery handle",
     }
   ];
 
@@ -178,7 +178,7 @@ export default function AboutPage() {
                         alt={slide.title} 
                         fill
                         sizes="260px"
-                        style={{ objectFit: "cover" }}
+                        style={{ objectFit: "contain" }}
                       />
                     </div>
                     {isActive && (
